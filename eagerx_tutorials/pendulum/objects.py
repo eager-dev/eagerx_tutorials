@@ -92,10 +92,10 @@ class Pendulum(Object):
     def ode_bridge(spec: ObjectSpec, graph: EngineGraph):
         """Engine-specific implementation (OdeBridge) of the object."""
         # Import any object specific entities for this bridge
-        import eagerx_tutorials.pendulum.ode  # noqa # pylint: disable=unused-import
+        import eagerx_tutorials.pendulum  # noqa # pylint: disable=unused-import
 
         # Set object arguments (nothing to set here in this case)
-        spec.OdeBridge.ode = "eagerx_tutorials.pendulum.ode.pendulum_ode/pendulum_ode"
+        spec.OdeBridge.ode = "eagerx_tutorials.pendulum.pendulum_ode/pendulum_ode"
         # Set default params of pendulum ode [J, m, l, b, K, R].
         spec.OdeBridge.ode_params = [0.000189238, 0.0563641, 0.0437891, 0.000142205, 0.0502769, 9.83536]
 
@@ -106,7 +106,9 @@ class Pendulum(Object):
         # Create sensor engine nodes
         obs = EngineNode.make("OdeOutput", "angle_sensor", rate=spec.sensors.angle_sensor.rate, process=2)
         image = EngineNode.make(
-            "PendulumImage", "image", shape=spec.config.render_shape, rate=spec.sensors.image.rate, process=0
+            "OdeRender", "image", shape=spec.config.render_shape,
+            render_fn="eagerx_tutorials.pendulum.pendulum_render/pendulum_render_fn",
+            rate=spec.sensors.image.rate, process=0
         )
 
         # Create actuator engine nodes
@@ -117,7 +119,8 @@ class Pendulum(Object):
         # Connect all engine nodes
         graph.add([obs, image, action])
         graph.connect(source=obs.outputs.observation, sensor="angle_sensor")
-        graph.connect(source=obs.outputs.observation, target=image.inputs.theta)
+        graph.connect(source=obs.outputs.observation, target=image.inputs.observation)
+        graph.connect(source=action.outputs.action_applied, target=image.inputs.action_applied)
         graph.connect(source=image.outputs.image, sensor="image")
         graph.connect(actuator="voltage", target=action.inputs.action)
 
