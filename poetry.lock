@@ -302,7 +302,7 @@ termcolor = ">=1.1.0,<2.0.0"
 
 [[package]]
 name = "eagerx-ode"
-version = "0.1.5"
+version = "0.1.7"
 description = "Bridge (with corresponding nodes) that uses arbitrary ODEs to simulate objects in EAGERx."
 category = "main"
 optional = false
@@ -1887,8 +1887,8 @@ eagerx = [
     {file = "eagerx-0.1.14.tar.gz", hash = "sha256:e2b0c30797bf416d35f7e0338fd2124942e2e06b464ce44faf24edaa9187649d"},
 ]
 eagerx-ode = [
-    {file = "eagerx_ode-0.1.5-py3-none-any.whl", hash = "sha256:d36246548933163d24410ddd519aad2b4122549efaf28987b67fc92fa8458d45"},
-    {file = "eagerx_ode-0.1.5.tar.gz", hash = "sha256:c5a13d6701a9845397aa487292a7bb30f80a51c78b1d68622a65f0805d56b3ab"},
+    {file = "eagerx_ode-0.1.7-py3-none-any.whl", hash = "sha256:f2a78c8b5eff88abfdea756b733785e461fca9cde7c5d97f9eb6b5a23a35cc7e"},
+    {file = "eagerx_ode-0.1.7.tar.gz", hash = "sha256:5df18cc6b55877c9069811b9dab9aa8cd9fde31709eb3b37f0ac18bc5da2f418"},
 ]
 entrypoints = [
     {file = "entrypoints-0.4-py3-none-any.whl", hash = "sha256:f174b5ff827504fd3cd97cc3f8649f3693f51538c7e4bdf3ef002c8429d42f9f"},
