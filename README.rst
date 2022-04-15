@@ -44,8 +44,9 @@ Tutorials
 
 The following tutorials are currently available:
 
-Pendulum:
-- [Tutorial 1: EAGERx Environment Creation and Training](https://github.com/eager-dev/eagerx_tutorials/blob/master/tutorials/pendulum/pendulum_1.ipynb)
+Pendulum: 
+
+- `Tutorial 1: EAGERx Environment Creation and Training <https://github.com/eager-dev/eagerx_tutorials/blob/master/tutorials/pendulum/pendulum_1.ipynb>`_
 
 Cite EAGERx
 ===========
