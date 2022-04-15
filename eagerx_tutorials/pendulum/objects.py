@@ -112,7 +112,7 @@ class Pendulum(Object):
             shape=spec.config.render_shape,
             render_fn="eagerx_tutorials.pendulum.pendulum_render/pendulum_render_fn",
             rate=spec.sensors.image.rate,
-            process=0,
+            process=2,
         )
 
         # Create actuator engine nodes
@@ -129,7 +129,7 @@ class Pendulum(Object):
         graph.connect(actuator="voltage", target=action.inputs.action)
 
         # Add action applied
-        applied = EngineNode.make("ActionApplied", "applied", rate=spec.sensors.action_applied.rate, process=0)
+        applied = EngineNode.make("ActionApplied", "applied", rate=spec.sensors.action_applied.rate, process=2)
         graph.add(applied)
         graph.connect(source=action.outputs.action_applied, target=applied.inputs.action_applied, skip=True)
         graph.connect(source=applied.outputs.action_applied, sensor="action_applied")
