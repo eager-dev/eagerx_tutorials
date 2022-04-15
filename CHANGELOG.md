@@ -2,6 +2,14 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.4 (2022-04-15)
+### Fix
+* Codestyle ([`bf58aca`](https://github.com/eager-dev/eagerx_tutorials/commit/bf58acaf95bc2ae6e0fd94bd40fcca63f129a9a7))
+* Update codestyle ([`bcde978`](https://github.com/eager-dev/eagerx_tutorials/commit/bcde978643cca8aa601280347329e0fd882b822a))
+* Move helper fn ([`c1cbd90`](https://github.com/eager-dev/eagerx_tutorials/commit/c1cbd90139ca10b6cdc9daa7761a0870a66f8fb5))
+* Include scripts in package ([`2957954`](https://github.com/eager-dev/eagerx_tutorials/commit/2957954b6f8d79cb90fa2bf1cb32aaf49d54761a))
+* Add shell scripts and helper function ([`cc9b384`](https://github.com/eager-dev/eagerx_tutorials/commit/cc9b3844de6c2b26062b894b8d90dd61ffd7499c))
+
 ## v0.1.3 (2022-04-15)
 ### Fix
 * Engine nodes pendulum object in bridge process and use Jupyter lab instead of Notebook ([`96fffbf`](https://github.com/eager-dev/eagerx_tutorials/commit/96fffbfb88f7c60ad1a97c8702383cb1edf32fd9))
