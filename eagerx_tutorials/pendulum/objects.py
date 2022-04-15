@@ -107,9 +107,12 @@ class Pendulum(Object):
         # Create sensor engine nodes
         obs = EngineNode.make("OdeOutput", "angle_sensor", rate=spec.sensors.angle_sensor.rate, process=2)
         image = EngineNode.make(
-            "OdeRender", "image", shape=spec.config.render_shape,
+            "OdeRender",
+            "image",
+            shape=spec.config.render_shape,
             render_fn="eagerx_tutorials.pendulum.pendulum_render/pendulum_render_fn",
-            rate=spec.sensors.image.rate, process=0
+            rate=spec.sensors.image.rate,
+            process=0,
         )
 
         # Create actuator engine nodes
