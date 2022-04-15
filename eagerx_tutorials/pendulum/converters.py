@@ -3,7 +3,7 @@ from std_msgs.msg import Float32MultiArray
 
 # RX IMPORTS
 import eagerx.core.register as register
-from eagerx import Processor, SpaceConverter
+from eagerx import SpaceConverter
 from eagerx.core.specs import ConverterSpec
 import numpy as np
 from gym.spaces import Box

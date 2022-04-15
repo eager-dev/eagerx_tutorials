@@ -4,7 +4,7 @@ from sensor_msgs.msg import Image
 
 # EAGERx IMPORTS
 from eagerx_ode.bridge import OdeBridge
-from eagerx import Object, EngineNode, SpaceConverter, EngineState, Processor
+from eagerx import Object, EngineNode, SpaceConverter, EngineState
 from eagerx.core.specs import ObjectSpec
 from eagerx.core.graph_engine import EngineGraph
 import eagerx.core.register as register

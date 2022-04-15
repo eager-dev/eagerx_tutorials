@@ -1,2 +1,2 @@
-import eagerx_tutorials.pendulum.objects
-import eagerx_tutorials.pendulum.converters
+import eagerx_tutorials.pendulum.objects  # noqa:
+import eagerx_tutorials.pendulum.converters  # noqa:
