@@ -11,9 +11,9 @@ documentation = "https://eagerx.readthedocs.io/en/master/"
 [tool.poetry.dependencies]
 python = "^3.7"
 eagerx = "^0.1.14"
-eagerx-ode = "^0.1.5"
+eagerx-ode = "^0.1.6"
 stable-baselines3 = "^1.2"
-notebook = "^6.4.10"
+jupyterlab = "^3.3.4"
 
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"
