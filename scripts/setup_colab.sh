@@ -10,7 +10,7 @@ if [ $ubuntu_version == "18.04" ]; then
 #  ROS_NAME="noetic"
 else
   echo -e "Unsupported Ubuntu version: $ubuntu_version"
-  echo -e "This colab setup script only works with 16.04, 18.04, or 20.04"
+  echo -e "This colab setup script only works with 18.04"
   exit 1
 fi
 
@@ -43,5 +43,3 @@ else
 
   echo "ROS installation complete, took $elapsed seconds in total"
 fi
-
-pip install eagerx-tutorials  >> /tmp/eagerx_install.txt

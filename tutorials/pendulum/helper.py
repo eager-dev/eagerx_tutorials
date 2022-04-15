@@ -1,5 +1,6 @@
 import os
 import site
+import importlib
 
 
 def setup_notebook():
@@ -16,14 +17,20 @@ def setup_notebook():
         from datetime import datetime
         import subprocess
         try:
-            master.terminate()
+            roscore.terminate()
             print(f"[{datetime.today()}] Roscore restarted!")
         except NameError as e:
             print(f"[{datetime.today()}] Roscore started!")
 
-        # Start the master node
-        master = subprocess.Popen(["/content/roscore"])
+        # Start the roscore node
+        cmd = get_tutorial_path() + "/../scripts/roscore"
+        roscore = subprocess.Popen([cmd])
     else:
         print('Not running on CoLab')
 
     os.environ["EAGERX_RELOAD"] = "1"
+
+
+def get_tutorial_path():
+    spec = importlib.util.find_spec("eagerx_tutorials")
+    return os.path.dirname(spec.origin)
