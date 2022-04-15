@@ -25,7 +25,7 @@ def setup_notebook():
 
         # Start the roscore node
         cmd = get_tutorial_path() + "/../scripts/roscore"
-        roscore = subprocess.Popen([cmd]) # noqa:
+        roscore = subprocess.Popen([cmd])  # noqa:
     else:
         print("Not running on CoLab")
 
