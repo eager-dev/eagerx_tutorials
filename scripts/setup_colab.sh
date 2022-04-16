@@ -1,5 +1,26 @@
 #!/bin/bash
 
+echo 'Running on CoLab.'
+
+if [ ! -f "/root/roscore" ]; then
+  echo "#!/bin/bash \n" > /root/roscore
+  echo "source /opt/ros/melodic/setup.bash" > /root/roscore
+  echo "/opt/ros/melodic/bin/roscore" > /root/roscore
+  chmod +x /root/roscore
+  echo "/root/roscore created."
+fi
+
+if [ ! -f "/root/roslab" ]; then
+  echo "#!/bin/bash \n" > /root/roslab
+  echo "source /opt/ros/melodic/setup.bash" > /root/roslab
+  echo "ROS_MASTER_URI="0.0.0.0"" > /root/roslab
+  echo "exec $@" > /root/roslab
+  chmod +x /root/roscore
+  echo '/root/roslab created.'
+fi
+
+echo 'Execute ROS commands as "!~/roslab ...".'
+
 ubuntu_version="$(lsb_release -r -s)"
 
 if [ $ubuntu_version == "18.04" ]; then
@@ -15,7 +36,7 @@ else
 fi
 
 if [ -d "/opt/ros/melodic" ]; then
-  echo "ros-$ROS_NAME-desktop is already installed."
+  echo "Ros distribution already installed: ros-$ROS_NAME-desktop."
 else
   start_time="$(date -u +%s)"
 
