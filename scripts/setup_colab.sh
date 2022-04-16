@@ -2,22 +2,24 @@
 
 echo 'Running on CoLab.'
 
+
 if [ ! -f "/root/roscore" ]; then
-  echo "#!/bin/bash \n" > /root/roscore
-  echo "source /opt/ros/melodic/setup.bash" > /root/roscore
-  echo "/opt/ros/melodic/bin/roscore" > /root/roscore
+  echo -e "#!/bin/bash \n" >> /root/roscore
+  echo -e "source /opt/ros/melodic/setup.bash \n" >> /root/roscore
+  echo -e "/opt/ros/melodic/bin/roscore" >> /root/roscore
   chmod +x /root/roscore
   echo "/root/roscore created."
 fi
 
 if [ ! -f "/root/roslab" ]; then
-  echo "#!/bin/bash \n" > /root/roslab
-  echo "source /opt/ros/melodic/setup.bash" > /root/roslab
-  echo "ROS_MASTER_URI="0.0.0.0"" > /root/roslab
-  echo "exec $@" > /root/roslab
-  chmod +x /root/roscore
+  echo -e "#!/bin/bash \n" >> /root/roslab
+  echo -e "source /opt/ros/melodic/setup.bash \n" >> /root/roslab
+  echo -e 'ROS_MASTER_URI="0.0.0.0"\n' >> /root/roslab
+  echo -e "exec \$@" >> /root/roslab
+  chmod +x /root/roslab
   echo '/root/roslab created.'
 fi
+
 
 echo 'Execute ROS commands as "!~/roslab ...".'
 
