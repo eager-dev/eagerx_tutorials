@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.5 (2022-04-16)
+### Fix
+* Curl helper_fn and check ros version  ([`08df685`](https://github.com/eager-dev/eagerx_tutorials/commit/08df685508ac8ef8c8e6cd1a5ca9f41100a2f319))
+
 ## v0.1.4 (2022-04-15)
 ### Fix
 * Codestyle ([`bf58aca`](https://github.com/eager-dev/eagerx_tutorials/commit/bf58acaf95bc2ae6e0fd94bd40fcca63f129a9a7))
