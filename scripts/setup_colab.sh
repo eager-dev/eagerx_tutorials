@@ -1,8 +1,5 @@
 #!/bin/bash
 
-echo 'Running on CoLab.'
-
-
 if [ ! -f "/root/roscore" ]; then
   echo -e "#!/bin/bash \n" >> /root/roscore
   echo -e "source /opt/ros/melodic/setup.bash \n" >> /root/roscore
@@ -13,13 +10,12 @@ fi
 
 if [ ! -f "/root/roslab" ]; then
   echo -e "#!/bin/bash \n" >> /root/roslab
-  echo -e "source /opt/ros/melodic/setup.bash \n" >> /root/roslab
   echo -e 'ROS_MASTER_URI="0.0.0.0"\n' >> /root/roslab
+  echo -e "source /opt/ros/melodic/setup.bash \n" >> /root/roslab
   echo -e "exec \$@" >> /root/roslab
   chmod +x /root/roslab
   echo '/root/roslab created.'
 fi
-
 
 echo 'Execute ROS commands as "!~/roslab ...".'
 
@@ -27,7 +23,7 @@ ubuntu_version="$(lsb_release -r -s)"
 
 if [ $ubuntu_version == "18.04" ]; then
   ROS_NAME="melodic"
-#elif [ $ubuntu_version == "16.04" ]; then
+#elif [ $ubuntu_version == "16.04" ]; then&1
 #  ROS_NAME="kinetic"
 #elif [ $ubuntu_version == "20.04" ]; then
 #  ROS_NAME="noetic"
@@ -37,7 +33,7 @@ else
   exit 1
 fi
 
-if [ -d "/opt/ros/melodic" ]; then
+if [ ! -d "/opt/ros/melodic" ]; then
   echo "Ros distribution already installed: ros-$ROS_NAME-desktop."
 else
   start_time="$(date -u +%s)"
@@ -45,24 +41,44 @@ else
   echo "Ubuntu $ubuntu_version detected. ROS-$ROS_NAME chosen for installation.";
 
   echo -e "\e[1;33m ******************************************** \e[0m"
-  echo -e "\e[1;33m The installation may take around 5  Minutes! \e[0m"
+  echo -e "\e[1;33m The installation may take around 3  Minutes! \e[0m"
   echo -e "\e[1;33m ******************************************** \e[0m"
   sleep 4
 
-  echo "deb http://packages.ros.org/ros/ubuntu bionic main" >> /etc/apt/sources.list.d/ros-latest.list
-  echo "- deb added"
+  {
+    echo "deb http://packages.ros.org/ros/ubuntu bionic main" >> /etc/apt/sources.list.d/ros-latest.list 2>/tmp/ros_install.txt
+  } || {
+    echo "ROS installation failed. Check the log in /tmp/ros_install.txt."
+    exit 1
+  }
+  echo "- deb added."
 
-  apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 >> /tmp/key.txt
-  echo "- key added"
+  {
+    apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 >> /tmp/ros_install.txt 2>&1
+  } || {
+    echo "ROS installation failed. Check the log in /tmp/ros_install.txt."
+    exit 1
+  }
+  echo "- key added."
 
-  apt update >> /tmp/update.txt
-  echo "- apt updated"
+  {
+    apt update >> /tmp/ros_install.txt 2>&1
+  } || {
+    echo "ROS installation failed. Check the log in /tmp/ros_install.txt."
+    exit 1
+  }
+  echo "- apt updated."
 
-  apt install ros-melodic-desktop  > /tmp/ros_install.txt
+  {
+    apt install ros-melodic-desktop  > /tmp/ros_install.txt 2>&1
+  } || {
+    echo "ROS installation failed. Check the log in /tmp/ros_install.txt."
+    exit 1
+  }
   echo "- ROS-$ROS_NAME-desktop installed.";
 
   end_time="$(date -u +%s)"
   elapsed="$(($end_time-$start_time))"
 
-  echo "ROS installation complete, took $elapsed seconds in total"
+  echo "ROS installation complete, took $elapsed seconds in total."
 fi
