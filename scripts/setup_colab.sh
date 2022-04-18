@@ -33,7 +33,7 @@ else
   exit 1
 fi
 
-if [ ! -d "/opt/ros/melodic" ]; then
+if [ -d "/opt/ros/melodic" ]; then
   echo "Ros distribution already installed: ros-$ROS_NAME-desktop."
 else
   start_time="$(date -u +%s)"
