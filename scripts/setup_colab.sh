@@ -34,7 +34,7 @@ else
 fi
 
 if [ -d "/opt/ros/melodic" ]; then
-  echo "Ros distribution already installed: ros-$ROS_NAME-desktop."
+  echo "Ros distribution already installed: ros-$ROS_NAME-ros-base."
 else
   start_time="$(date -u +%s)"
 
@@ -70,12 +70,13 @@ else
   echo "- apt updated."
 
   {
-    apt install ros-melodic-desktop  > /tmp/ros_install.txt 2>&1
+    apt install ros-melodic-ros-base  > /tmp/ros_install.txt 2>&1
+    apt-get install ros-melodic-cv-bridge
   } || {
     echo "ROS installation failed. Check the log in /tmp/ros_install.txt."
     exit 1
   }
-  echo "- ROS-$ROS_NAME-desktop installed.";
+  echo "- ROS-$ROS_NAME-ros-base installed.";
 
   end_time="$(date -u +%s)"
   elapsed="$(($end_time-$start_time))"
