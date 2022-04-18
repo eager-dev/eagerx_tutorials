@@ -71,8 +71,8 @@ else
 
   {
     apt install ros-melodic-ros-base  > /tmp/ros_install.txt 2>&1
-    apt-get install ros-melodic-cv-bridge
-  } || {
+    apt-get install ros-melodic-cv-bridge > /tmp/ros_install.txt 2>&1
+  } || { 
     echo "ROS installation failed. Check the log in /tmp/ros_install.txt."
     exit 1
   }
