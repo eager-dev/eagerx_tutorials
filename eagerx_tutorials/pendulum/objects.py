@@ -66,13 +66,13 @@ class Pendulum(Object):
     @staticmethod
     @register.spec(entity_id, Object)
     def spec(
-            spec: ObjectSpec,
-            name: str,
-            actuators: List[str] = None,
-            sensors: List[str] = None,
-            states: List[str] = None,
-            rate: float = 30.,
-            render_shape: List[int] = None,
+        spec: ObjectSpec,
+        name: str,
+        actuators: List[str] = None,
+        sensors: List[str] = None,
+        states: List[str] = None,
+        rate: float = 30.0,
+        render_shape: List[int] = None,
     ):
         """Object spec of Pendulum"""
         # Performs all the steps to fill-in the params with registered info about all functions.

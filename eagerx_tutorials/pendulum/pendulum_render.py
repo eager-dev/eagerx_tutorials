@@ -22,7 +22,9 @@ def pendulum_render_fn(img, observation, action):
     )
 
     # Draw mass
-    img = cv2.circle(img, (width // 2 + int(length * sin_theta), height // 2 - int(length * cos_theta)), side_length // 16, (0, 0, 0), -1)
+    img = cv2.circle(
+        img, (width // 2 + int(length * sin_theta), height // 2 - int(length * cos_theta)), side_length // 16, (0, 0, 0), -1
+    )
 
     # Draw velocity vector
     img = cv2.arrowedLine(
