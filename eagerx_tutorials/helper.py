@@ -1,6 +1,7 @@
 import os
 import site
 from datetime import datetime
+import time
 import subprocess
 
 
@@ -44,3 +45,4 @@ def setup_notebook():
 
         # Start the roscore node
         roscore = subprocess.Popen(["bash", "/root/roscore"])  # noqa:
+        time.sleep(1.0)
