@@ -38,15 +38,15 @@ You can install the package using pip:
 .. note::
     EAGERx depends on a minimal ROS installation. Fortunately, you **can** use eagerx anywhere as you would any python package,
     so it does **not** impose a ROS package structure on your project.
-    
+
 Tutorials
 =========
 
 The following tutorials are currently available:
 
-Pendulum: 
+Pendulum:
 
-- `Tutorial 1: EAGERx Environment Creation and Training <https://github.com/eager-dev/eagerx_tutorials/blob/master/tutorials/pendulum/pendulum_1.ipynb>`_
+- `Tutorial 1: EAGERx Environment Creation and Training <https://colab.research.google.com/github/eager-dev/eagerx_tutorials/blob/master/tutorials/pendulum/pendulum_1.ipynb>`_
 
 Cite EAGERx
 ===========
