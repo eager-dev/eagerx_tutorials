@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.6 (2022-04-20)
+### Fix
+* Update pendulum tutorial 1 ([`ca44ae6`](https://github.com/eager-dev/eagerx_tutorials/commit/ca44ae6c64206af241b3ab0f57589178e26cb380))
+
 ## v0.1.5 (2022-04-16)
 ### Fix
 * Curl helper_fn and check ros version  ([`08df685`](https://github.com/eager-dev/eagerx_tutorials/commit/08df685508ac8ef8c8e6cd1a5ca9f41100a2f319))
