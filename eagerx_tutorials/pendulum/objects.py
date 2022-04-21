@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 
 # ROS IMPORTS
 from std_msgs.msg import Float32MultiArray
@@ -19,7 +19,7 @@ class Pendulum(Object):
     @staticmethod
     @register.sensors(angle_sensor=Float32MultiArray, image=Image)
     @register.actuators(voltage=Float32MultiArray)
-    @register.engine_states(model_state=Float32MultiArray)
+    @register.engine_states(model_state=Float32MultiArray, model_parameters=Float32MultiArray)
     @register.config(render_shape=[480, 480])
     def agnostic(spec: ObjectSpec, rate: float):
         """Agnostic definition of the Pendulum.
@@ -33,6 +33,7 @@ class Pendulum(Object):
 
         States
         model_state: allows resetting the angle and angular velocity
+        model_parameters: allows resetting ODE parameters [J, m, l, b, K, R]
 
         Config
         render_shape: shape of render window [height, width]
@@ -61,6 +62,15 @@ class Pendulum(Object):
         # Set model_state properties: (space_converters)
         spec.states.model_state.space_converter = SpaceConverter.make(
             "Space_Float32MultiArray", low=[-pi, -9], high=[pi, 9], dtype="float32"
+        )
+
+        # Set model_parameters properties: (space_converters)
+        mean = [0.0002, 0.05, 0.04, 0.0001, 0.05, 9.]
+        diff = [0, 0, 0, 0.05, 0.05, 0.05, 0.05]  # Percentual delta with respect to fixed value
+        low = [val - diff * val for val, diff in zip(mean, diff)]
+        high = [val + diff * val for val, diff in zip(mean, diff)]
+        spec.states.model_parameters.space_converter = SpaceConverter.make(
+            "Space_Float32MultiArray", low=low, high=high, dtype="float32"
         )
 
     @staticmethod
@@ -95,16 +105,18 @@ class Pendulum(Object):
     @register.bridge(entity_id, OdeBridge)  # This decorator pre-initializes bridge implementation with default object_params
     def ode_bridge(spec: ObjectSpec, graph: EngineGraph):
         """Engine-specific implementation (OdeBridge) of the object."""
-        # Import any object specific entities for this bridge
-        import eagerx_tutorials.pendulum  # noqa # pylint: disable=unused-import
-
         # Set object arguments (nothing to set here in this case)
         spec.OdeBridge.ode = "eagerx_tutorials.pendulum.pendulum_ode/pendulum_ode"
+        spec.OdeBridge.Dfun = "eagerx_tutorials.pendulum.pendulum_ode/pendulum_dfun"
         # Set default params of pendulum ode [J, m, l, b, K, R].
-        spec.OdeBridge.ode_params = [0.000189238, 0.0563641, 0.0437891, 0.000142205, 0.0502769, 9.83536]
+        spec.OdeBridge.ode_params = [0.0002, 0.05, 0.04, 0.0001, 0.05, 9.]
 
         # Create engine_states (no agnostic states defined in this case)
         spec.OdeBridge.states.model_state = EngineState.make("OdeEngineState")
+
+        # Create engine_states (no agnostic states defined in this case)
+        spec.OdeBridge.states.model_parameters = EngineState.make("OdeParameters", list(range(5)))
+
 
         # Create sensor engine nodes
         obs = EngineNode.make("OdeOutput", "angle_sensor", rate=spec.sensors.angle_sensor.rate, process=2)
