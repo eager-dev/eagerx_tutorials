@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 
 # ROS IMPORTS
 from std_msgs.msg import Float32MultiArray

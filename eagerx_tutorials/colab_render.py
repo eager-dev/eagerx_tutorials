@@ -4,7 +4,7 @@ from google.colab.output import eval_js
 from base64 import b64encode
 import numpy as np
 from collections import deque
-from typing import List, Union
+from typing import List, Union, Optional
 import PIL
 import io
 import threading
@@ -12,11 +12,11 @@ import time
 
 
 class InlineRender:
-    def __init__(self, fps: int, maxlen=200, shape: List[int] = [28, 28], maxwidth=300):
+    def __init__(self, fps: int, maxlen: int = 200, shape: Optional[List[int]] = None, maxwidth: int = 300):
         self.fps = fps
         self.buffer = deque(maxlen=maxlen)
         self.maxlen = maxlen
-        self.shape = shape
+        self.shape = shape if isinstance(shape, list) else [28, 28]
         self.timestamp = time.time()
         interval = max(1, int(1000 / fps))
         js = Javascript(
