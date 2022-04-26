@@ -1,7 +1,7 @@
 from typing import List
 
 # ROS IMPORTS
-from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import Float32MultiArray, Float32
 from sensor_msgs.msg import Image
 from math import pi
 
@@ -17,19 +17,21 @@ class Pendulum(Object):
     entity_id = "Pendulum"
 
     @staticmethod
-    @register.sensors(angle_sensor=Float32MultiArray, image=Image)
-    @register.actuators(voltage=Float32MultiArray)
+    @register.sensors(theta=Float32, dtheta=Float32, image=Image, u=Float32MultiArray)
+    @register.actuators(u=Float32MultiArray)
     @register.engine_states(model_state=Float32MultiArray, model_parameters=Float32MultiArray)
     @register.config(render_shape=[480, 480])
     def agnostic(spec: ObjectSpec, rate: float):
         """Agnostic definition of the Pendulum.
 
         Sensors
-        angle_sensor: angle data [angle, angular velocity]
+        theta: angle of the pendulum wrt upward position
+        dtheta: angular velocity of the pendulum
         image: render of pendulum system
+        u: DC motor voltage
 
         Actuators
-        voltage: DC motor voltage
+        u: DC motor voltage
 
         States
         model_state: allows resetting the angle and angular velocity
@@ -42,9 +44,14 @@ class Pendulum(Object):
         import eagerx.converters  # noqa # pylint: disable=unused-import
 
         # Set observation properties: (space_converters, rate, etc...)
-        spec.sensors.angle_sensor.rate = rate
-        spec.sensors.angle_sensor.space_converter = SpaceConverter.make(
-            "Space_Float32MultiArray", low=[-9999, -9999], high=[9999, 9999], dtype="float32"
+        spec.sensors.theta.rate = rate
+        spec.sensors.theta.space_converter = SpaceConverter.make(
+            "Space_Float32", low=-9999, high=9999, dtype="float32"
+        )
+
+        spec.sensors.dtheta.rate = rate
+        spec.sensors.dtheta.space_converter = SpaceConverter.make(
+            "Space_Float32", low=-9999, high=9999, dtype="float32"
         )
 
         spec.sensors.image.rate = 15
@@ -52,10 +59,15 @@ class Pendulum(Object):
             "Space_Image", low=0, high=255, shape=spec.config.render_shape, dtype="uint8"
         )
 
+        spec.sensors.u.rate = rate
+        spec.sensors.u.space_converter = SpaceConverter.make(
+            "Space_Float32MultiArray", low=[-3], high=[3], dtype="float32"
+        )
+
         # Set actuator properties: (space_converters, rate, etc...)
-        spec.actuators.voltage.rate = rate
-        spec.actuators.voltage.window = 1
-        spec.actuators.voltage.space_converter = SpaceConverter.make(
+        spec.actuators.u.rate = rate
+        spec.actuators.u.window = 1
+        spec.actuators.u.space_converter = SpaceConverter.make(
             "Space_Float32MultiArray", low=[-3], high=[3], dtype="float32"
         )
 
@@ -66,7 +78,7 @@ class Pendulum(Object):
 
         # Set model_parameters properties: (space_converters)
         mean = [0.0002, 0.05, 0.04, 0.0001, 0.05, 9.]
-        diff = [0, 0, 0, 0.05, 0.05, 0.05, 0.05]  # Percentual delta with respect to fixed value
+        diff = [0.05, 0, 0, 0.05, 0.05, 0.05]  # Percentual delta with respect to fixed value
         low = [val - diff * val for val, diff in zip(mean, diff)]
         high = [val + diff * val for val, diff in zip(mean, diff)]
         spec.states.model_parameters.space_converter = SpaceConverter.make(
@@ -91,9 +103,9 @@ class Pendulum(Object):
         # Modify default agnostic params
         # Only allow changes to the agnostic params (rates, windows, (space)converters, etc...
         spec.config.name = name
-        spec.config.sensors = sensors if sensors else ["angle_sensor"]
-        spec.config.actuators = actuators if actuators else ["voltage"]
-        spec.config.states = states if states else ["model_state"]
+        spec.config.sensors = ["theta", "dtheta"] if sensors is None else sensors
+        spec.config.actuators = ["u"] if actuators is None else actuators
+        spec.config.states = ["model_state"] if states is None else states
 
         # Add custom agnostic params
         spec.config.render_shape = render_shape if render_shape else [480, 480]
@@ -119,7 +131,16 @@ class Pendulum(Object):
 
 
         # Create sensor engine nodes
-        obs = EngineNode.make("OdeOutput", "angle_sensor", rate=spec.sensors.angle_sensor.rate, process=2)
+        x = EngineNode.make("OdeOutput", "x", rate=spec.sensors.theta.rate, process=2)
+
+        # For didactic purposes, we create two sensors, i.e. one with angle and one with angular velocity.
+        # We could also have created a sensor that contains both, but in this way it is more clear which sensor
+        # contains what information.
+        theta = EngineNode.make("FloatOutput", "theta", rate=spec.sensors.theta.rate, idx=0)
+        dtheta = EngineNode.make("FloatOutput", "dtheta", rate=spec.sensors.dtheta.rate, idx=1)
+
+        u = EngineNode.make("ActionApplied", "u", rate=spec.sensors.u.rate, process=2)
+
         image = EngineNode.make(
             "OdeRender",
             "image",
@@ -130,16 +151,29 @@ class Pendulum(Object):
 
         # Create actuator engine nodes
         action = EngineNode.make(
-            "OdeInput", "pendulum_actuator", rate=spec.actuators.voltage.rate, process=2, default_action=[0]
+            "OdeInput", "pendulum_actuator", rate=spec.actuators.u.rate, process=2, default_action=[0]
         )
 
         # Connect all engine nodes
-        graph.add([obs, image, action])
-        graph.connect(source=obs.outputs.observation, sensor="angle_sensor")
-        graph.connect(source=obs.outputs.observation, target=image.inputs.observation)
-        graph.connect(source=action.outputs.action_applied, target=image.inputs.action_applied, skip=True)
+        graph.add([x, theta, dtheta, image, action, u])
+
+        # theta
+        graph.connect(source=x.outputs.observation, target=theta.inputs.observation_array)
+        graph.connect(source=theta.outputs.observation, sensor="theta")
+
+        # dtheta
+        graph.connect(source=x.outputs.observation, target=dtheta.inputs.observation_array)
+        graph.connect(source=dtheta.outputs.observation, sensor="dtheta")
+
+        # image
+        graph.connect(source=x.outputs.observation, target=image.inputs.observation)
         graph.connect(source=image.outputs.image, sensor="image")
-        graph.connect(actuator="voltage", target=action.inputs.action)
+        graph.connect(source=action.outputs.action_applied, target=image.inputs.action_applied, skip=True)
+
+        # u
+        graph.connect(actuator="u", target=action.inputs.action)
+        graph.connect(source=action.outputs.action_applied, target=u.inputs.action_applied, skip=True)
+        graph.connect(source=u.outputs.action_applied, sensor="u")
 
         # Check graph validity (commented out)
         # graph.is_valid(plot=True)
