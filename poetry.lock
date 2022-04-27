@@ -320,7 +320,7 @@ termcolor = ">=1.1.0,<2.0.0"
 
 [[package]]
 name = "eagerx-ode"
-version = "0.1.9"
+version = "0.1.10"
 description = "Bridge (with corresponding nodes) that uses arbitrary ODEs to simulate objects in EAGERx."
 category = "main"
 optional = false
@@ -1789,7 +1789,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "7b662ebb6834904c5ce4580d767889845d2345e12fc45f8dc6d0376528e54d71"
+content-hash = "6e831f934be8b52b1fdb2dc72abbbe2dd380ca51ce36895c6a50971142c91801"
 
 [metadata.files]
 alabaster = [
@@ -2044,8 +2044,8 @@ eagerx = [
     {file = "eagerx-0.1.16.tar.gz", hash = "sha256:66fdd4104a1dce78d83c09f10215e788d713dd23b658b49f8367e34db33363db"},
 ]
 eagerx-ode = [
-    {file = "eagerx_ode-0.1.9-py3-none-any.whl", hash = "sha256:78c1c7aa3a15d7c780b4ead4c734d4e0a6b2a4ef784895fa2d16ec421a98762a"},
-    {file = "eagerx_ode-0.1.9.tar.gz", hash = "sha256:dc0fc33eaefca6cf22043812b790c62aaced1b9e2a8e21b0b7dd417a623ed0c6"},
+    {file = "eagerx_ode-0.1.10-py3-none-any.whl", hash = "sha256:3f6c1ea18d38fe11a39f9e35ef48e89219a541628ab6ffbae12ea53dab866340"},
+    {file = "eagerx_ode-0.1.10.tar.gz", hash = "sha256:56674888896dd3957d2b3bd13b9c86b7610a683e8280740b5b4977ebe98726f5"},
 ]
 entrypoints = [
     {file = "entrypoints-0.4-py3-none-any.whl", hash = "sha256:f174b5ff827504fd3cd97cc3f8649f3693f51538c7e4bdf3ef002c8429d42f9f"},

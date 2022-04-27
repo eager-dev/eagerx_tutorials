@@ -46,7 +46,7 @@ The following tutorials are currently available:
 
 Pendulum:
 
-- `Tutorial 1: EAGERx Environment Creation and Training <https://colab.research.google.com/github/eager-dev/eagerx_tutorials/blob/master/tutorials/pendulum/pendulum_1.ipynb>`_
+- `Tutorial 1: EAGERx Environment Creation and Training <https://colab.research.google.com/github/eager-dev/eagerx_tutorials/blob/master/tutorials/pendulum/1_environment_creation.ipynb>`_
 
 Cite EAGERx
 ===========
