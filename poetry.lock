@@ -294,7 +294,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "eagerx"
-version = "0.1.16"
+version = "0.1.17"
 description = "Engine Angostic Gym Environments for Robotics"
 category = "main"
 optional = false
@@ -320,14 +320,14 @@ termcolor = ">=1.1.0,<2.0.0"
 
 [[package]]
 name = "eagerx-ode"
-version = "0.1.10"
+version = "0.1.11"
 description = "Bridge (with corresponding nodes) that uses arbitrary ODEs to simulate objects in EAGERx."
 category = "main"
 optional = false
 python-versions = ">=3.6.2,<4.0.0"
 
 [package.dependencies]
-eagerx = ">=0.1.14,<0.2.0"
+eagerx = ">=0.1.17,<0.2.0"
 scipy = ">=1.5.4,<2.0.0"
 
 [[package]]
@@ -365,7 +365,7 @@ pyflakes = ">=2.3.0,<2.4.0"
 
 [[package]]
 name = "flake8-bugbear"
-version = "22.3.23"
+version = "22.4.25"
 description = "A plugin for flake8 finding likely bugs and design problems in your program. Contains warnings that don't belong in pyflakes and pycodestyle."
 category = "dev"
 optional = false
@@ -1225,7 +1225,7 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "pytest"
-version = "7.1.1"
+version = "7.1.2"
 description = "pytest: simple powerful testing with Python"
 category = "dev"
 optional = false
@@ -1789,7 +1789,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "5caf9bc6ffbde23c1cf48cba8b7d4129dbacf3e46dd02dbbf3609f51e176d138"
+content-hash = "2ff578e304af89a48850bd95659dee9960e6357dfa827ac3f918c94c1b5e0fc7"
 
 [metadata.files]
 alabaster = [
@@ -2040,12 +2040,12 @@ docutils = [
     {file = "docutils-0.17.1.tar.gz", hash = "sha256:686577d2e4c32380bb50cbb22f575ed742d58168cee37e99117a854bcd88f125"},
 ]
 eagerx = [
-    {file = "eagerx-0.1.16-py3-none-any.whl", hash = "sha256:09e7bf848cbaf826d71c7a4f11d9f68c8b22c9f666b1871a5b0c349ec04ce04e"},
-    {file = "eagerx-0.1.16.tar.gz", hash = "sha256:66fdd4104a1dce78d83c09f10215e788d713dd23b658b49f8367e34db33363db"},
+    {file = "eagerx-0.1.17-py3-none-any.whl", hash = "sha256:10614b4fecdb5d06cea9fdcc2007dd9a77ff06f7b820d2e5f6d38c76e6dc3507"},
+    {file = "eagerx-0.1.17.tar.gz", hash = "sha256:38d9eaaf0079948ce1ed09f8628c1b3947c23f2926d8f7616c40f42e1364b5d9"},
 ]
 eagerx-ode = [
-    {file = "eagerx_ode-0.1.10-py3-none-any.whl", hash = "sha256:3f6c1ea18d38fe11a39f9e35ef48e89219a541628ab6ffbae12ea53dab866340"},
-    {file = "eagerx_ode-0.1.10.tar.gz", hash = "sha256:56674888896dd3957d2b3bd13b9c86b7610a683e8280740b5b4977ebe98726f5"},
+    {file = "eagerx_ode-0.1.11-py3-none-any.whl", hash = "sha256:a63eabe6f92ded4e7459c07a7abe726890d992d395039f48e7bd7fda1c14da86"},
+    {file = "eagerx_ode-0.1.11.tar.gz", hash = "sha256:0c2db0c1d6e4387bb7b4a73bc4ffd9a47a6afa7cbd039f3da01c636ea9bb9f47"},
 ]
 entrypoints = [
     {file = "entrypoints-0.4-py3-none-any.whl", hash = "sha256:f174b5ff827504fd3cd97cc3f8649f3693f51538c7e4bdf3ef002c8429d42f9f"},
@@ -2060,8 +2060,8 @@ flake8 = [
     {file = "flake8-3.9.2.tar.gz", hash = "sha256:07528381786f2a6237b061f6e96610a4167b226cb926e2aa2b6b1d78057c576b"},
 ]
 flake8-bugbear = [
-    {file = "flake8-bugbear-22.3.23.tar.gz", hash = "sha256:e0dc2a36474490d5b1a2d57f9e4ef570abc09f07cbb712b29802e28a2367ff19"},
-    {file = "flake8_bugbear-22.3.23-py3-none-any.whl", hash = "sha256:ec5ec92195720cee1589315416b844ffa5e82f73a78e65329e8055322df1e939"},
+    {file = "flake8-bugbear-22.4.25.tar.gz", hash = "sha256:f7c080563fca75ee6b205d06b181ecba22b802babb96b0b084cc7743d6908a55"},
+    {file = "flake8_bugbear-22.4.25-py3-none-any.whl", hash = "sha256:ec374101cddf65bd7a96d393847d74e58d3b98669dbf9768344c39b6290e8bd6"},
 ]
 fonttools = [
     {file = "fonttools-4.32.0-py3-none-any.whl", hash = "sha256:b038d1a0dee0079de7ade57071e2e2aced6e35bd697de244ac62938b2b1628c1"},
@@ -2574,8 +2574,8 @@ pyrsistent = [
     {file = "pyrsistent-0.18.1.tar.gz", hash = "sha256:d4d61f8b993a7255ba714df3aca52700f8125289f84f704cf80916517c46eb96"},
 ]
 pytest = [
-    {file = "pytest-7.1.1-py3-none-any.whl", hash = "sha256:92f723789a8fdd7180b6b06483874feca4c48a5c76968e03bb3e7f806a1869ea"},
-    {file = "pytest-7.1.1.tar.gz", hash = "sha256:841132caef6b1ad17a9afde46dc4f6cfa59a05f9555aae5151f73bdf2820ca63"},
+    {file = "pytest-7.1.2-py3-none-any.whl", hash = "sha256:13d0e3ccfc2b6e26be000cb6568c832ba67ba32e719443bfe725814d3c42433c"},
+    {file = "pytest-7.1.2.tar.gz", hash = "sha256:a06a0425453864a270bc45e71f783330a7428defb4230fb5e6a731fde06ecd45"},
 ]
 pytest-cov = [
     {file = "pytest-cov-3.0.0.tar.gz", hash = "sha256:e7f0f5b1617d2210a2cabc266dfe2f4c75a8d32fb89eafb7ad9d06f6d076d470"},
