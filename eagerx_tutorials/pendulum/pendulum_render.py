@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-from datetime import datetime
 
 
 def pendulum_render_fn(img, observation, action):

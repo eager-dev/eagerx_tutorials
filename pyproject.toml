@@ -11,8 +11,8 @@ include = ["scripts"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
-eagerx = "^0.1.16"
-eagerx-ode = "^0.1.8"
+eagerx = "^0.1.18"
+eagerx-ode = "^0.1.11"
 stable-baselines3 = "^1.2"
 jupyterlab = "^3.3.4"
 
