@@ -45,14 +45,10 @@ class Pendulum(Object):
 
         # Set observation properties: (space_converters, rate, etc...)
         spec.sensors.theta.rate = rate
-        spec.sensors.theta.space_converter = SpaceConverter.make(
-            "Space_Float32", low=-9999, high=9999, dtype="float32"
-        )
+        spec.sensors.theta.space_converter = SpaceConverter.make("Space_Float32", low=-9999, high=9999, dtype="float32")
 
         spec.sensors.dtheta.rate = rate
-        spec.sensors.dtheta.space_converter = SpaceConverter.make(
-            "Space_Float32", low=-9999, high=9999, dtype="float32"
-        )
+        spec.sensors.dtheta.space_converter = SpaceConverter.make("Space_Float32", low=-9999, high=9999, dtype="float32")
 
         spec.sensors.image.rate = 15
         spec.sensors.image.space_converter = SpaceConverter.make(
@@ -60,16 +56,12 @@ class Pendulum(Object):
         )
 
         spec.sensors.u.rate = rate
-        spec.sensors.u.space_converter = SpaceConverter.make(
-            "Space_Float32MultiArray", low=[-3], high=[3], dtype="float32"
-        )
+        spec.sensors.u.space_converter = SpaceConverter.make("Space_Float32MultiArray", low=[-3], high=[3], dtype="float32")
 
         # Set actuator properties: (space_converters, rate, etc...)
         spec.actuators.u.rate = rate
         spec.actuators.u.window = 1
-        spec.actuators.u.space_converter = SpaceConverter.make(
-            "Space_Float32MultiArray", low=[-3], high=[3], dtype="float32"
-        )
+        spec.actuators.u.space_converter = SpaceConverter.make("Space_Float32MultiArray", low=[-3], high=[3], dtype="float32")
 
         # Set model_state properties: (space_converters)
         spec.states.model_state.space_converter = SpaceConverter.make(
@@ -77,7 +69,7 @@ class Pendulum(Object):
         )
 
         # Set model_parameters properties: (space_converters)
-        mean = [0.0002, 0.05, 0.04, 0.0001, 0.05, 9.]
+        mean = [0.0002, 0.05, 0.04, 0.0001, 0.05, 9.0]
         diff = [0.05, 0, 0, 0.05, 0.05, 0.05]  # Percentual delta with respect to fixed value
         low = [val - diff * val for val, diff in zip(mean, diff)]
         high = [val + diff * val for val, diff in zip(mean, diff)]
@@ -121,14 +113,13 @@ class Pendulum(Object):
         spec.OdeBridge.ode = "eagerx_tutorials.pendulum.pendulum_ode/pendulum_ode"
         spec.OdeBridge.Dfun = "eagerx_tutorials.pendulum.pendulum_ode/pendulum_dfun"
         # Set default params of pendulum ode [J, m, l, b, K, R].
-        spec.OdeBridge.ode_params = [0.0002, 0.05, 0.04, 0.0001, 0.05, 9.]
+        spec.OdeBridge.ode_params = [0.0002, 0.05, 0.04, 0.0001, 0.05, 9.0]
 
         # Create engine_states (no agnostic states defined in this case)
         spec.OdeBridge.states.model_state = EngineState.make("OdeEngineState")
 
         # Create engine_states (no agnostic states defined in this case)
         spec.OdeBridge.states.model_parameters = EngineState.make("OdeParameters", list(range(5)))
-
 
         # Create sensor engine nodes
         x = EngineNode.make("OdeOutput", "x", rate=spec.sensors.theta.rate, process=2)
@@ -150,9 +141,7 @@ class Pendulum(Object):
         )
 
         # Create actuator engine nodes
-        action = EngineNode.make(
-            "OdeInput", "pendulum_actuator", rate=spec.actuators.u.rate, process=2, default_action=[0]
-        )
+        action = EngineNode.make("OdeInput", "pendulum_actuator", rate=spec.actuators.u.rate, process=2, default_action=[0])
 
         # Connect all engine nodes
         graph.add([x, theta, dtheta, image, action, u])
