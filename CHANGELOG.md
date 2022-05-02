@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.7 (2022-04-30)
+### Fix
+* Bump eagerx, typo, codestyle ([`6c3e951`](https://github.com/eager-dev/eagerx_tutorials/commit/6c3e95120a5ab419c10c47a2e6e9cfba8b0bacab))
+
+### Documentation
+* Add comments and truncation info ([`8eb9ec0`](https://github.com/eager-dev/eagerx_tutorials/commit/8eb9ec0a7e2791d20948dfe5f872abea7f29ee88))
+
 ## v0.1.6 (2022-04-20)
 ### Fix
 * Update pendulum tutorial 1 ([`ca44ae6`](https://github.com/eager-dev/eagerx_tutorials/commit/ca44ae6c64206af241b3ab0f57589178e26cb380))

@@ -62,6 +62,8 @@ else
   echo "- key added."
 
   {
+    apt-key del 7fa2af80 >> /tmp/ros_install.txt 2>&1
+    apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/3bf863cc.pub >> /tmp/ros_install.txt 2>&1
     apt update >> /tmp/ros_install.txt 2>&1
   } || {
     echo "ROS installation failed. Check the log in /tmp/ros_install.txt."
