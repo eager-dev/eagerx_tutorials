@@ -2,6 +2,17 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.9 (2022-05-03)
+### Fix
+* Typo ([`76c4a2c`](https://github.com/eager-dev/eagerx_tutorials/commit/76c4a2c96e9e5ded74657f1e816a93a5f7624f77))
+* Add Space_DecomposedAngle converter ([`2ded858`](https://github.com/eager-dev/eagerx_tutorials/commit/2ded8583b1ab62c1c4dabb28d8c200c5cd00622b))
+* Remove voltage applied from render ([`ccd4064`](https://github.com/eager-dev/eagerx_tutorials/commit/ccd4064449ba31b1807ec7c79331aa6592cfb27e))
+* Add Space_DecomposedAngle converter ([`14a20a8`](https://github.com/eager-dev/eagerx_tutorials/commit/14a20a81394c92388899ae8be98bbafd9510f059))
+
+### Documentation
+* Add info on how to run locally ([`3591241`](https://github.com/eager-dev/eagerx_tutorials/commit/35912419d5dc82a3de509ef7411c356251d55f7d))
+* Rename assignment to exercises ([`95bf4ff`](https://github.com/eager-dev/eagerx_tutorials/commit/95bf4ff19c0711eca10023b3c871da141702a97b))
+
 ## v0.1.8 (2022-05-03)
 ### Fix
 * Add assignment to pendulum tutorial 4 ([`3bbe354`](https://github.com/eager-dev/eagerx_tutorials/commit/3bbe354e58d0623d0f430840cac65079b022b351))
