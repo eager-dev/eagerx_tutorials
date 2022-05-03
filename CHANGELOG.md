@@ -2,6 +2,17 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.8 (2022-05-03)
+### Fix
+* Add assignment to pendulum tutorial 4 ([`3bbe354`](https://github.com/eager-dev/eagerx_tutorials/commit/3bbe354e58d0623d0f430840cac65079b022b351))
+* Bump eagerx and add rendering to tutorials ([`40c0efc`](https://github.com/eager-dev/eagerx_tutorials/commit/40c0efc819764124fda4bd353ce946ad9c80691e))
+* Create pendulum tutorial 3 and 4 ([`5d33c14`](https://github.com/eager-dev/eagerx_tutorials/commit/5d33c14a5a08bc2394284f0fc6b6135b81a20375))
+* Create assignments for second tutorial and update pendulum object ([`66203ab`](https://github.com/eager-dev/eagerx_tutorials/commit/66203ab819b0b7618a2dd839280af0dae44c108f))
+* Update eagerx-ode, create test and create tutorial 2 ([`29c7a84`](https://github.com/eager-dev/eagerx_tutorials/commit/29c7a84c4e0168d0a8a4bc414bec4869ce2e78a0))
+
+### Documentation
+* Add link to colabs in readme ([`66745c1`](https://github.com/eager-dev/eagerx_tutorials/commit/66745c118103a046d4022e0ec8b2b021757c526d))
+
 ## v0.1.7 (2022-04-30)
 ### Fix
 * Bump eagerx, typo, codestyle ([`6c3e951`](https://github.com/eager-dev/eagerx_tutorials/commit/6c3e95120a5ab419c10c47a2e6e9cfba8b0bacab))
