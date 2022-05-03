@@ -26,30 +26,43 @@ EAGERx (Engine Agnostic Gym Environments for Robotics) enables users to easily d
 
 `Full documentation and tutorials (including package creation and contributing) are available here <https://eagerx.readthedocs.io/en/master/>`_.
 
-Installation
-============
-
-You can install the package using pip:
-
-.. code:: shell
-
-    pip3 install eagerx-tutorials
-
-.. note::
-    EAGERx depends on a minimal ROS installation. Fortunately, you **can** use eagerx anywhere as you would any python package,
-    so it does **not** impose a ROS package structure on your project.
-
 Tutorials
 =========
 
 The following tutorials are currently available:
 
-Pendulum:
-
-- `Tutorial 1: EAGERx Environment Creation and Training <https://colab.research.google.com/github/eager-dev/eagerx_tutorials/blob/master/tutorials/pendulum/1_environment_creation.ipynb>`_
+- `Tutorial 1: Environment Creation and Training with EAGERx <https://colab.research.google.com/github/eager-dev/eagerx_tutorials/blob/master/tutorials/pendulum/1_environment_creation.ipynb>`_
 - `Tutorial 2: Reset and Step Function <https://colab.research.google.com/github/eager-dev/eagerx_tutorials/blob/master/tutorials/pendulum/2_reset_and_step.ipynb>`_
 - `Tutorial 3: Converters <https://colab.research.google.com/github/eager-dev/eagerx_tutorials/blob/master/tutorials/pendulum/3_converters.ipynb>`_
 - `Tutorial 4: Nodes and Graph Validity <https://colab.research.google.com/github/eager-dev/eagerx_tutorials/blob/master/tutorials/pendulum/4_nodes.ipynb>`_
+
+How to run the tutorials locally?
+=================================
+
+As an alternative to running the tutorials in Google Colab, they can also be run locally in order to speed up computations.
+
+*Prequisites*:  Install `ROS <http://wiki.ros.org/ROS/Installation>`_ and `Poetry <https://python-poetry.org/docs/#installation>`_.
+
+Clone this repository and go to its root:
+
+.. code-block:: bash
+
+    git clone git@github.com:eager-dev/eagerx_tutorials.git
+    cd eagerx_tutorials
+
+Install the *eagerx_tutorials* package:
+
+.. code-block:: bash
+
+    poetry install
+
+Start Jupyter Lab:
+
+.. code-block:: bash
+
+    poetry run jupyter lab
+
+You will find the tutorials in the *tutorials* directory.
 
 Cite EAGERx
 ===========
