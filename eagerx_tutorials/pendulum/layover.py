@@ -58,6 +58,7 @@ class Layover(eagerx.Node):
             text_size = cv2.getTextSize(text, font, 0.5, 2)[0]
             text_x = int((width - text_size[0]) / 2)
             text_y = int(text_size[1])
+            # print(f"text_size = {text_size} | text_x = {text_x} | text_y = {text_y}")
             img = cv2.putText(img, text, (text_x, text_y), font, 0.5, (0, 0, 0))
 
             # Draw grey bar
@@ -73,6 +74,10 @@ class Layover(eagerx.Node):
             p1 = (width // 2, height // 2 - side_length * 9 // 20)
             p2 = (width // 2 + int(side_length * u * 2 / 15), height // 2 - 4 * side_length // 10)
             img = cv2.rectangle(img, p1, p2, (0, 0, 0), -1)
+
+            # START EXERCISE 1.3
+            img = cv2.putText(img, f"t ={t_n: .2f} s", (text_x, height-text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
+            # START EXERCISE 1.3
 
             # Prepare image for transmission.
             data = img.tobytes("C")
