@@ -294,7 +294,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "eagerx"
-version = "0.1.18"
+version = "0.1.19"
 description = "Engine Angostic Gym Environments for Robotics"
 category = "main"
 optional = false
@@ -308,6 +308,7 @@ networkx = ">=2.5.1,<3.0.0"
 opencv-python = ">=4.3.0.36,<5.0.0.0"
 psutil = ">=5.9.0,<6.0.0"
 pyglet = ">=1.5.21,<2.0.0"
+PyVirtualDisplay = ">=3.0,<4.0"
 PyYAML = ">=6.0,<7.0"
 rospkg = ">=1.3.0,<2.0.0"
 Rx = ">=3.2.0,<4.0.0"
@@ -1295,7 +1296,7 @@ python-versions = "*"
 name = "pyvirtualdisplay"
 version = "3.0"
 description = "python wrapper for Xvfb, Xephyr and Xvnc"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -2060,8 +2061,8 @@ docutils = [
     {file = "docutils-0.17.1.tar.gz", hash = "sha256:686577d2e4c32380bb50cbb22f575ed742d58168cee37e99117a854bcd88f125"},
 ]
 eagerx = [
-    {file = "eagerx-0.1.18-py3-none-any.whl", hash = "sha256:d4834de580855b2e3bb29c261d0cc2ce5a320630c0e4f3325ec976755f40a6f2"},
-    {file = "eagerx-0.1.18.tar.gz", hash = "sha256:f4e094ef22d746c32ed9acde98141888e0e7ee047e432179dc6e59afdfd97045"},
+    {file = "eagerx-0.1.19-py3-none-any.whl", hash = "sha256:0bd5c5c17acba4aa02dc355f51e267fed115797383eeb74b81393097f37ac440"},
+    {file = "eagerx-0.1.19.tar.gz", hash = "sha256:dcfea776d43222b99f5126575793cc7b9914f3069d7fa4ed63ac4c0df95052e9"},
 ]
 eagerx-ode = [
     {file = "eagerx_ode-0.1.11-py3-none-any.whl", hash = "sha256:a63eabe6f92ded4e7459c07a7abe726890d992d395039f48e7bd7fda1c14da86"},
