@@ -33,7 +33,7 @@ def pendulum_render_fn(img, observation, action):
             width // 2 + int(length * (sin_theta + state[1] * cos_theta / 5)),
             height // 2 + int(length * (-cos_theta + state[1] * sin_theta / 5)),
         ),
-        (0, 0, 0),
+        (0, 0, 255),
         max(side_length // 240, 1),
     )
 

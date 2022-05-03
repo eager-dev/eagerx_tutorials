@@ -15,6 +15,7 @@ eagerx = "^0.1.18"
 eagerx-ode = "^0.1.11"
 stable-baselines3 = "^1.2"
 jupyterlab = "^3.3.4"
+nbconvert = "^6.5.0"
 
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"
@@ -22,6 +23,7 @@ pytest = "^7.1"
 pytest-cov = "^3.0.0"
 flake8 = ">=3"
 flake8-bugbear = "^22.4.25"
+pytest-xvfb = "^2.0.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

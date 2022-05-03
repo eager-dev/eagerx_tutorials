@@ -84,6 +84,24 @@ jobs:
           echo "source /opt/ros/noetic/setup.bash" >> .venv/bin/activate
           sudo apt-get install ros-noetic-cv-bridge
       #----------------------------------------------
+      #  -----  install virtual display  -----
+      #----------------------------------------------
+      - name: "Install Linux VirtualDisplay"
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install --no-install-recommends -y \
+            libxkbcommon-x11-0 \
+            x11-utils \
+            libyaml-dev \
+            libegl1-mesa \
+            libxcb-icccm4 \
+            libxcb-image0 \
+            libxcb-keysyms1 \
+            libxcb-randr0 \
+            libxcb-render-util0 \
+            libxcb-xinerama0 \
+            libopengl0
+      #----------------------------------------------
       #    add matrix specifics and run test suite
       #----------------------------------------------
       - name: Run tests
