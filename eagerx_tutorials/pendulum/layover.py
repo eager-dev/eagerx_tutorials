@@ -1,7 +1,7 @@
 import eagerx
 from eagerx import register
 from eagerx.utils.utils import Msg
-from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import Float32MultiArray, Float32
 from sensor_msgs.msg import Image
 import cv2
 import numpy as np
@@ -22,7 +22,9 @@ class Layover(eagerx.Node):
         spec.initialize(Layover)
 
         # Adjust default params
-        spec.config.update(name=name, rate=rate, process=process, color=color, inputs=["base_image", "u"], outputs=["image"])
+        spec.config.update(
+            name=name, rate=rate, process=process, color=color, inputs=["base_image", "u", "theta"], outputs=["image"]
+        )
 
     def initialize(self):
         pass
@@ -40,11 +42,12 @@ class Layover(eagerx.Node):
             cv_image = cv2.cvtColor(cv_image, cv2.COLOR_RGB2BGR)
         return cv_image
 
-    @register.inputs(base_image=Image, u=Float32MultiArray)
+    @register.inputs(base_image=Image, u=Float32MultiArray, theta=Float32)
     @register.outputs(image=Image)
-    def callback(self, t_n: float, base_image: Msg, u: Msg):
+    def callback(self, t_n: float, base_image: Msg, u: Msg, theta: Msg):
         if len(base_image.msgs[-1].data) > 0:
             u = u.msgs[-1].data[0] if u else 0
+            theta = theta.msgs[-1].data
 
             # Set background image from base_image
             img = self._convert_to_cv_image(base_image.msgs[-1])
@@ -76,8 +79,13 @@ class Layover(eagerx.Node):
             img = cv2.rectangle(img, p1, p2, (0, 0, 0), -1)
 
             # START EXERCISE 1.3
-            img = cv2.putText(img, f"t ={t_n: .2f} s", (text_x, height-text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
+            img = cv2.putText(img, f"t ={t_n: .2f} s", (text_x, height - text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
             # START EXERCISE 1.3
+
+            # Add theta info
+            img = cv2.putText(
+                img, f"theta ={theta: .2f} rad", (text_x, height - int(2.2 * text_y)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0)
+            )
 
             # Prepare image for transmission.
             data = img.tobytes("C")

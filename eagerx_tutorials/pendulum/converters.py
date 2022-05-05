@@ -20,7 +20,7 @@ class Space_DecomposedAngle(eagerx.SpaceConverter):
         spec.initialize(Space_DecomposedAngle)
         spec.config.update(low=low, high=high, dtype=dtype)
 
-    def initialize(self, low: float, high: float, dtype: str ="float32"):
+    def initialize(self, low: float, high: float, dtype: str = "float32"):
         self.low = np.array(low, dtype=dtype)
         self.high = np.array(high, dtype=dtype)
         self.dtype = dtype
@@ -47,16 +47,33 @@ class Angle_DecomposedAngle(eagerx.Processor):
         spec.config.update(convert_to=convert_to)
 
     def initialize(self, convert_to: str):
-        print("HELP")
         self.convert_to = convert_to
 
     def convert(self, msg: Float32MultiArray) -> Float32MultiArray:
         if not len(msg.data):  # No data
             return msg
         elif self.convert_to == "trig_dtheta":
-            data = [np.sin(msg.data[0]), np.cos(msg.data[0]), msg.data[1]]
+            data = [np.sin(msg.data[0]), np.cos(msg.data[0]), -msg.data[1]]
         elif self.convert_to == "theta_dtheta":
-            data = [np.arctan2(msg.data[1], msg.data[0]), msg.data[2]]
+            cos_th = msg.data[0]
+            sin_th = msg.data[1]
+            data = [-np.arctan2(sin_th, cos_th), -msg.data[2]]
         else:
             raise NotImplementedError(f"Convert_to '{self.convert_to}' not implemented.")
         return Float32MultiArray(data=data)
+
+
+class Negate_Float32MultiArray(eagerx.Processor):
+    MSG_TYPE = Float32MultiArray
+
+    @staticmethod
+    @eagerx.register.spec("Negate_Float32MultiArray", eagerx.Processor)
+    def spec(spec: eagerx.specs.ConverterSpec):
+        # Initialize spec with default arguments
+        spec.initialize(Negate_Float32MultiArray)
+
+    def initialize(self):
+        pass
+
+    def convert(self, msg: Float32MultiArray) -> Float32MultiArray:
+        return Float32MultiArray(data=[-i for i in msg.data])

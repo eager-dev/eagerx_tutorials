@@ -48,7 +48,7 @@ def gym_bridge(spec: eagerx.specs.ObjectSpec, graph: eagerx.EngineGraph):
     # END EXERCISE 1.1.b
 
     # theta
-    graph.connect(source=x.outputs.observation, target=theta.inputs.observation_array)#, converter=c)
+    graph.connect(source=x.outputs.observation, target=theta.inputs.observation_array)
     graph.connect(source=theta.outputs.observation, sensor="theta")
 
     # dtheta
@@ -62,4 +62,4 @@ def gym_bridge(spec: eagerx.specs.ObjectSpec, graph: eagerx.EngineGraph):
 
     # u
     # Note: not to be confused with sensor "u", for which we do not provide an implementation here.
-    graph.connect(actuator="u", target=action.inputs.action)
+    graph.connect(actuator="u", target=action.inputs.action, converter=eagerx.Processor.make("Negate_Float32MultiArray"))
