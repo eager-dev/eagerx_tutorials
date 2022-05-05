@@ -18,7 +18,6 @@ def test_gymbridge():
     # Make OdeBridge
     # bridge = eagerx.Bridge.make("OdeBridge", rate=rate)
     bridge = eagerx.Bridge.make("GymBridge", rate=rate, process=eagerx.process.ENVIRONMENT)
-    pendulum.config.states = []
 
     # Initialize empty graph
     graph = eagerx.Graph.create()

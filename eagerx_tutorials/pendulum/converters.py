@@ -1,9 +1,8 @@
 # ROS IMPORTS
-from std_msgs.msg import Float32
+from std_msgs.msg import Float32, Float32MultiArray
 
 # EAGERX IMPORTS
 import eagerx
-from eagerx.core.specs import ConverterSpec
 
 # OTHER
 import numpy as np
@@ -16,13 +15,12 @@ class Space_DecomposedAngle(eagerx.SpaceConverter):
 
     @staticmethod
     @eagerx.register.spec("Space_DecomposedAngle", eagerx.SpaceConverter)
-    def spec(spec: ConverterSpec, low=None, high=None, dtype="float32"):
+    def spec(spec: eagerx.specs.ConverterSpec, low: float, high: float, dtype: str = "float32"):
         # Initialize spec with default arguments
         spec.initialize(Space_DecomposedAngle)
-        params = dict(low=low, high=high, dtype=dtype)
-        spec.config.update(params)
+        spec.config.update(low=low, high=high, dtype=dtype)
 
-    def initialize(self, low=None, high=None, dtype="float32"):
+    def initialize(self, low: float, high: float, dtype: str ="float32"):
         self.low = np.array(low, dtype=dtype)
         self.high = np.array(high, dtype=dtype)
         self.dtype = dtype
@@ -36,3 +34,29 @@ class Space_DecomposedAngle(eagerx.SpaceConverter):
 
     def B_to_A(self, msg):
         return np.array([np.sin(msg.data), np.cos(msg.data)], dtype=self.dtype)
+
+
+class Angle_DecomposedAngle(eagerx.Processor):
+    MSG_TYPE = Float32MultiArray
+
+    @staticmethod
+    @eagerx.register.spec("Angle_DecomposedAngle", eagerx.Processor)
+    def spec(spec: eagerx.specs.ConverterSpec, convert_to: str = "theta_dtheta"):
+        # Initialize spec with default arguments
+        spec.initialize(Angle_DecomposedAngle)
+        spec.config.update(convert_to=convert_to)
+
+    def initialize(self, convert_to: str):
+        print("HELP")
+        self.convert_to = convert_to
+
+    def convert(self, msg: Float32MultiArray) -> Float32MultiArray:
+        if not len(msg.data):  # No data
+            return msg
+        elif self.convert_to == "trig_dtheta":
+            data = [np.sin(msg.data[0]), np.cos(msg.data[0]), msg.data[1]]
+        elif self.convert_to == "theta_dtheta":
+            data = [np.arctan2(msg.data[1], msg.data[0]), msg.data[2]]
+        else:
+            raise NotImplementedError(f"Convert_to '{self.convert_to}' not implemented.")
+        return Float32MultiArray(data=data)
