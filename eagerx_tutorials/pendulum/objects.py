@@ -109,7 +109,7 @@ class Pendulum(Object):
     @register.bridge(entity_id, OdeBridge)  # This decorator pre-initializes bridge implementation with default object_params
     def ode_bridge(spec: ObjectSpec, graph: EngineGraph):
         """Engine-specific implementation (OdeBridge) of the object."""
-        # Set object arguments (nothing to set here in this case)
+        # Set object arguments
         spec.OdeBridge.ode = "eagerx_tutorials.pendulum.pendulum_ode/pendulum_ode"
         spec.OdeBridge.Dfun = "eagerx_tutorials.pendulum.pendulum_ode/pendulum_dfun"
         # Set default params of pendulum ode [J, m, l, b, K, R].

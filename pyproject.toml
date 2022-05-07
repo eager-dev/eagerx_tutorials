@@ -11,11 +11,12 @@ include = ["scripts"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
-eagerx = "^0.1.18"
+eagerx = "^0.1.21"
 eagerx-ode = "^0.1.11"
 stable-baselines3 = "^1.2"
 jupyterlab = "^3.3.4"
 nbconvert = "^6.5.0"
+PyVirtualDisplay = "^3.0"
 
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"
