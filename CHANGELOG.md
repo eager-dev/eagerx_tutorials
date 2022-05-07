@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.10 (2022-05-07)
+### Fix
+* Add tutorial 5, 6, 7 ([#24](https://github.com/eager-dev/eagerx_tutorials/issues/24)) ([`32871a2`](https://github.com/eager-dev/eagerx_tutorials/commit/32871a2da53072764d642679fd0d750e7d064bc8))
+
+### Documentation
+* Remove multirobot example ([`0d6b0d2`](https://github.com/eager-dev/eagerx_tutorials/commit/0d6b0d2e98b408976bc53918fe339d210c880a90))
+
 ## v0.1.9 (2022-05-03)
 ### Fix
 * Typo ([`76c4a2c`](https://github.com/eager-dev/eagerx_tutorials/commit/76c4a2c96e9e5ded74657f1e816a93a5f7624f77))
