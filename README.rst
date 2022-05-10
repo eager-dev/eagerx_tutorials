@@ -44,7 +44,7 @@ How to run the tutorials locally?
 
 As an alternative to running the tutorials in Google Colab, they can also be run locally in order to speed up computations.
 
-*Prequisites*:  Install `ROS <http://wiki.ros.org/ROS/Installation>`_ and `Poetry <https://python-poetry.org/docs/#installation>`_.
+*Prequisites*:  Install `ROS1 <http://wiki.ros.org/ROS/Installation>`_ and `Poetry <https://python-poetry.org/docs/#installation>`_.
 
 Clone this repository and go to its root:
 
@@ -65,7 +65,7 @@ Install the *eagerx_tutorials* package:
 
     poetry run pip3 install eagerx-gui
 
-Start Jupyter Lab:
+Start Jupyter Lab (make sure ROS1 is sourced):
 
 .. code-block:: bash
 
