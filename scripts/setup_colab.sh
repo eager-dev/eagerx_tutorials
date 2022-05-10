@@ -84,4 +84,7 @@ else
   elapsed="$(($end_time-$start_time))"
 
   echo "ROS installation complete, took $elapsed seconds in total."
+  
+  echo 'Uninstalling paramiko with pip.' && pip2 uninstall -qy paramiko && pip2 install -q paramiko==2.10.4
 fi
+
