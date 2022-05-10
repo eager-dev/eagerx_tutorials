@@ -35,17 +35,17 @@ def test_gymbridge():
     graph.connect(source=pendulum.sensors.theta, observation="angle", window=1)
     graph.connect(source=pendulum.sensors.dtheta, observation="angular_velocity", window=1)
 
-    # Create layover node
-    import eagerx_tutorials.pendulum.layover  # noqa:
-    layover = eagerx.Node.make("Layover", "layover", rate)
-    layover.inputs.u.space_converter = pendulum.actuators.u.space_converter
-    graph.add(layover)
+    # Create overlay node
+    import eagerx_tutorials.pendulum.overlay  # noqa:
+    overlay = eagerx.Node.make("Overlay", "overlay", rate)
+    overlay.inputs.u.space_converter = pendulum.actuators.u.space_converter
+    graph.add(overlay)
 
     # Render image
-    graph.connect(source=pendulum.sensors.image, target=layover.inputs.base_image)
-    graph.connect(source=reset.outputs.u, target=layover.inputs.u)
-    graph.connect(source=pendulum.sensors.theta, target=layover.inputs.theta)
-    graph.render(source=layover.outputs.image, rate=rate)
+    graph.connect(source=pendulum.sensors.image, target=overlay.inputs.base_image)
+    graph.connect(source=reset.outputs.u, target=overlay.inputs.u)
+    graph.connect(source=pendulum.sensors.theta, target=overlay.inputs.theta)
+    graph.render(source=overlay.outputs.image, rate=rate)
 
     # Make OdeBridge
     bridge = eagerx.Bridge.make("OdeBridge", rate=rate)
