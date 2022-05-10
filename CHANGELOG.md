@@ -2,6 +2,15 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.11 (2022-05-10)
+### Fix
+* Add more info in tutorials where needed, rename overlay ([`323e647`](https://github.com/eager-dev/eagerx_tutorials/commit/323e64754f6271c940eb8eaa7ffcdb7a002a54d8))
+
+### Documentation
+* Minor typo ([`70f790d`](https://github.com/eager-dev/eagerx_tutorials/commit/70f790de521c44aa8fd29e2dcdaa031aa4753252))
+* Add link to exercises ([`e95b4f9`](https://github.com/eager-dev/eagerx_tutorials/commit/e95b4f9489d0ff5acad6ffd110a3940ccd6399c6))
+* Add ROS source ([`7c05262`](https://github.com/eager-dev/eagerx_tutorials/commit/7c05262d70d8d461dc89c9978d0a9cf033b2c057))
+
 ## v0.1.10 (2022-05-07)
 ### Fix
 * Add tutorial 5, 6, 7 ([#24](https://github.com/eager-dev/eagerx_tutorials/issues/24)) ([`32871a2`](https://github.com/eager-dev/eagerx_tutorials/commit/32871a2da53072764d642679fd0d750e7d064bc8))
