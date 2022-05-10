@@ -7,9 +7,9 @@ import cv2
 import numpy as np
 
 
-class Layover(eagerx.Node):
+class Overlay(eagerx.Node):
     @staticmethod
-    @register.spec("Layover", eagerx.Node)
+    @register.spec("Overlay", eagerx.Node)
     def spec(
         spec,
         name: str,
@@ -17,9 +17,9 @@ class Layover(eagerx.Node):
         process: int = eagerx.process.ENVIRONMENT,
         color: str = "cyan",
     ):
-        """Layover spec"""
+        """Overlay spec"""
         # Fills spec with defaults parameters
-        spec.initialize(Layover)
+        spec.initialize(Overlay)
 
         # Adjust default params
         spec.config.update(

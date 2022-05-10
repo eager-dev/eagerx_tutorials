@@ -116,7 +116,7 @@
 
 
                     <g fill="none" stroke="#323232" stroke-opacity="1" stroke-width="1" stroke-linecap="square" stroke-linejoin="bevel" transform="matrix(1.2502,0,0,1.2502,649.288,363.789)" font-family="Ubuntu" font-size="14.6667" font-weight="400" font-style="normal">
-                        <text fill="#323232" fill-opacity="1" stroke="none" xml:space="preserve" x="4" y="17.9844" font-family="Ubuntu" font-size="14.6667" font-weight="400" font-style="normal">layover</text>
+                        <text fill="#323232" fill-opacity="1" stroke="none" xml:space="preserve" x="4" y="17.9844" font-family="Ubuntu" font-size="14.6667" font-weight="400" font-style="normal">overlay</text>
                     </g>
                     
 
