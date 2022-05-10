@@ -91,5 +91,5 @@ If you are using EAGERx for your scientific publications, please cite:
     }
 
 Acknowledgements
-=================
+================
 EAGERx is funded by the `OpenDR <https://opendr.eu/>`_ Horizon 2020 project.
