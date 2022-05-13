@@ -17,7 +17,7 @@ class Pendulum(Object):
     entity_id = "Pendulum"
 
     @staticmethod
-    @register.sensors(theta=Float32, dtheta=Float32, image=Image, u=Float32MultiArray)
+    @register.sensors(theta=Float32, dtheta=Float32, image=Image, u_applied=Float32MultiArray)
     @register.actuators(u=Float32MultiArray)
     @register.engine_states(model_state=Float32MultiArray, model_parameters=Float32MultiArray)
     @register.config(render_shape=[480, 480])
@@ -28,7 +28,7 @@ class Pendulum(Object):
         theta: angle of the pendulum wrt upward position
         dtheta: angular velocity of the pendulum
         image: render of pendulum system
-        u: DC motor voltage
+        u_applied: Applied DC motor voltage
 
         Actuators
         u: DC motor voltage
@@ -55,8 +55,8 @@ class Pendulum(Object):
             "Space_Image", low=0, high=255, shape=spec.config.render_shape, dtype="uint8"
         )
 
-        spec.sensors.u.rate = rate
-        spec.sensors.u.space_converter = SpaceConverter.make("Space_Float32MultiArray", low=[-3], high=[3], dtype="float32")
+        spec.sensors.u_applied.rate = rate
+        spec.sensors.u_applied.space_converter = SpaceConverter.make("Space_Float32MultiArray", low=[-3], high=[3], dtype="float32")
 
         # Set actuator properties: (space_converters, rate, etc...)
         spec.actuators.u.rate = rate
@@ -130,7 +130,7 @@ class Pendulum(Object):
         theta = EngineNode.make("FloatOutput", "theta", rate=spec.sensors.theta.rate, idx=0)
         dtheta = EngineNode.make("FloatOutput", "dtheta", rate=spec.sensors.dtheta.rate, idx=1)
 
-        u = EngineNode.make("ActionApplied", "u", rate=spec.sensors.u.rate, process=2)
+        u_applied = EngineNode.make("ActionApplied", "u_applied", rate=spec.sensors.u_applied.rate, process=2)
 
         image = EngineNode.make(
             "OdeRender",
@@ -144,7 +144,7 @@ class Pendulum(Object):
         action = EngineNode.make("OdeInput", "pendulum_actuator", rate=spec.actuators.u.rate, process=2, default_action=[0])
 
         # Connect all engine nodes
-        graph.add([x, theta, dtheta, image, action, u])
+        graph.add([x, theta, dtheta, image, action, u_applied])
 
         # theta
         graph.connect(source=x.outputs.observation, target=theta.inputs.observation_array)
@@ -161,8 +161,8 @@ class Pendulum(Object):
 
         # u
         graph.connect(actuator="u", target=action.inputs.action)
-        graph.connect(source=action.outputs.action_applied, target=u.inputs.action_applied, skip=True)
-        graph.connect(source=u.outputs.action_applied, sensor="u")
+        graph.connect(source=action.outputs.action_applied, target=u_applied.inputs.action_applied, skip=True)
+        graph.connect(source=u_applied.outputs.action_applied, sensor="u_applied")
 
         # Check graph validity (commented out)
         # graph.is_valid(plot=True)
