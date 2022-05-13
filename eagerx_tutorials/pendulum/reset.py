@@ -33,10 +33,6 @@ class ResetAngle(eagerx.ResetNode):
         :param u_range: Min and max action.
         :return:
         """
-        # Performs all the steps to fill-in the params with registered info about all functions.
-        # Note: not to be confused with the initialize method of this node.
-        spec.initialize(ResetAngle)
-
         # Modify default node params
         spec.config.update(name=name, rate=rate, process=eagerx.process.ENVIRONMENT, color="grey")
         spec.config.update(inputs=["theta", "dtheta"], targets=["goal"], outputs=["u"])

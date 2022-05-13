@@ -51,6 +51,7 @@ def test_gymbridge():
     bridge = eagerx.Bridge.make("OdeBridge", rate=rate)
     # bridge = eagerx.Bridge.make("GymBridge", rate=rate, process=eagerx.process.ENVIRONMENT)
 
+    # Open GUI
     graph.gui()
 
     import numpy as np

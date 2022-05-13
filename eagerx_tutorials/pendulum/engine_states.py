@@ -7,7 +7,7 @@ class DummyState(eagerx.EngineState):
     @staticmethod
     @register.spec("DummyState", eagerx.EngineState)
     def spec(spec: eagerx.specs.EngineStateSpec):
-        spec.initialize(DummyState)
+        pass
 
     def initialize(self):
         pass

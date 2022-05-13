@@ -16,8 +16,6 @@ class Space_DecomposedAngle(eagerx.SpaceConverter):
     @staticmethod
     @eagerx.register.spec("Space_DecomposedAngle", eagerx.SpaceConverter)
     def spec(spec: eagerx.specs.ConverterSpec, low: float, high: float, dtype: str = "float32"):
-        # Initialize spec with default arguments
-        spec.initialize(Space_DecomposedAngle)
         spec.config.update(low=low, high=high, dtype=dtype)
 
     def initialize(self, low: float, high: float, dtype: str = "float32"):
@@ -42,8 +40,6 @@ class Angle_DecomposedAngle(eagerx.Processor):
     @staticmethod
     @eagerx.register.spec("Angle_DecomposedAngle", eagerx.Processor)
     def spec(spec: eagerx.specs.ConverterSpec, convert_to: str = "theta_dtheta"):
-        # Initialize spec with default arguments
-        spec.initialize(Angle_DecomposedAngle)
         spec.config.update(convert_to=convert_to)
 
     def initialize(self, convert_to: str):
@@ -69,8 +65,7 @@ class Negate_Float32MultiArray(eagerx.Processor):
     @staticmethod
     @eagerx.register.spec("Negate_Float32MultiArray", eagerx.Processor)
     def spec(spec: eagerx.specs.ConverterSpec):
-        # Initialize spec with default arguments
-        spec.initialize(Negate_Float32MultiArray)
+        pass
 
     def initialize(self):
         pass
