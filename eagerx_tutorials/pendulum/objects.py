@@ -56,7 +56,9 @@ class Pendulum(Object):
         )
 
         spec.sensors.u_applied.rate = rate
-        spec.sensors.u_applied.space_converter = SpaceConverter.make("Space_Float32MultiArray", low=[-3], high=[3], dtype="float32")
+        spec.sensors.u_applied.space_converter = SpaceConverter.make(
+            "Space_Float32MultiArray", low=[-3], high=[3], dtype="float32"
+        )
 
         # Set actuator properties: (space_converters, rate, etc...)
         spec.actuators.u.rate = rate
