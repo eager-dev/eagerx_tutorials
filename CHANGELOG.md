@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.12 (2022-05-14)
+### Fix
+* Rename sensor u to u_applied and add solution notebooks ([`fdb95ce`](https://github.com/eager-dev/eagerx_tutorials/commit/fdb95ce199dcf6d6cb9aa34286984936f35ef541))
+
+### Documentation
+* Add hint and alternative solution on how to estimate th_old ([`81aaeda`](https://github.com/eager-dev/eagerx_tutorials/commit/81aaeda86b313a14eed5aeee4dc40c1db49a37d1))
+
 ## v0.1.11 (2022-05-10)
 ### Fix
 * Add more info in tutorials where needed, rename overlay ([`323e647`](https://github.com/eager-dev/eagerx_tutorials/commit/323e64754f6271c940eb8eaa7ffcdb7a002a54d8))
