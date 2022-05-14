@@ -1,11 +1,11 @@
 
 import eagerx
 import eagerx_tutorials.pendulum  # Registers Pendulum
-import eagerx_ode  # Registers OdeBridge
-import eagerx.bridges.openai_gym  # Registers GymBridge
+import eagerx_ode  # Registers OdeEngine
+import eagerx.engines.openai_gym  # Registers GymEngine
 
 
-def test_gymbridge():
+def test_gymengine():
     # Initialize eagerx (starts roscore if not already started.)
     eagerx.initialize("eagerx_core")
 
@@ -47,9 +47,9 @@ def test_gymbridge():
     graph.connect(source=pendulum.sensors.theta, target=overlay.inputs.theta)
     graph.render(source=overlay.outputs.image, rate=rate)
 
-    # Make OdeBridge
-    bridge = eagerx.Bridge.make("OdeBridge", rate=rate)
-    # bridge = eagerx.Bridge.make("GymBridge", rate=rate, process=eagerx.process.ENVIRONMENT)
+    # Make OdeEngine
+    engine = eagerx.Engine.make("OdeEngine", rate=rate)
+    # engine = eagerx.Engine.make("GymEngine", rate=rate, process=eagerx.process.ENVIRONMENT)
 
     # Open GUI
     graph.gui()
@@ -96,7 +96,7 @@ def test_gymbridge():
 
     # Initialize Environment
     import eagerx_tutorials.pendulum.gym_implementation
-    env = eagerx.EagerxEnv(name="PendulumEnv", rate=rate, graph=graph, bridge=bridge, step_fn=step_fn, reset_fn=reset_fn)
+    env = eagerx.EagerxEnv(name="PendulumEnv", rate=rate, graph=graph, engine=engine, step_fn=step_fn, reset_fn=reset_fn)
 
     # Toggle render
     env.render("human")
@@ -115,4 +115,4 @@ def test_gymbridge():
 
 
 if __name__ == "__main__":
-    test_gymbridge()
+    test_gymengine()

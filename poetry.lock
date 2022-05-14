@@ -322,7 +322,7 @@ termcolor = ">=1.1.0,<2.0.0"
 [[package]]
 name = "eagerx-ode"
 version = "0.1.11"
-description = "Bridge (with corresponding nodes) that uses arbitrary ODEs to simulate objects in EAGERx."
+description = "Engine (with corresponding nodes) that uses arbitrary ODEs to simulate objects in EAGERx."
 category = "main"
 optional = false
 python-versions = ">=3.6.2,<4.0.0"

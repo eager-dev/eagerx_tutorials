@@ -6,7 +6,7 @@ from sensor_msgs.msg import Image
 from math import pi
 
 # EAGERx IMPORTS
-from eagerx_ode.bridge import OdeBridge
+from eagerx_ode.engine import OdeEngine
 from eagerx import Object, EngineNode, SpaceConverter, EngineState
 from eagerx.core.specs import ObjectSpec
 from eagerx.core.graph_engine import EngineGraph
@@ -99,24 +99,24 @@ class Pendulum(Object):
         # Add custom agnostic params
         spec.config.render_shape = render_shape if render_shape else [480, 480]
 
-        # Add bridge implementation
+        # Add engine implementation
         Pendulum.agnostic(spec, rate)
 
     @staticmethod
-    @register.bridge(entity_id, OdeBridge)  # This decorator pre-initializes bridge implementation with default object_params
-    def ode_bridge(spec: ObjectSpec, graph: EngineGraph):
-        """Engine-specific implementation (OdeBridge) of the object."""
+    @register.engine(entity_id, OdeEngine)  # This decorator pre-initializes engine implementation with default object_params
+    def ode_engine(spec: ObjectSpec, graph: EngineGraph):
+        """Engine-specific implementation (OdeEngine) of the object."""
         # Set object arguments
-        spec.OdeBridge.ode = "eagerx_tutorials.pendulum.pendulum_ode/pendulum_ode"
-        spec.OdeBridge.Dfun = "eagerx_tutorials.pendulum.pendulum_ode/pendulum_dfun"
+        spec.OdeEngine.ode = "eagerx_tutorials.pendulum.pendulum_ode/pendulum_ode"
+        spec.OdeEngine.Dfun = "eagerx_tutorials.pendulum.pendulum_ode/pendulum_dfun"
         # Set default params of pendulum ode [J, m, l, b, K, R].
-        spec.OdeBridge.ode_params = [0.0002, 0.05, 0.04, 0.0001, 0.05, 9.0]
+        spec.OdeEngine.ode_params = [0.0002, 0.05, 0.04, 0.0001, 0.05, 9.0]
 
         # Create engine_states (no agnostic states defined in this case)
-        spec.OdeBridge.states.model_state = EngineState.make("OdeEngineState")
+        spec.OdeEngine.states.model_state = EngineState.make("OdeEngineState")
 
         # Create engine_states (no agnostic states defined in this case)
-        spec.OdeBridge.states.model_parameters = EngineState.make("OdeParameters", list(range(5)))
+        spec.OdeEngine.states.model_parameters = EngineState.make("OdeParameters", list(range(5)))
 
         # Create sensor engine nodes
         x = EngineNode.make("OdeOutput", "x", rate=spec.sensors.theta.rate, process=2)
