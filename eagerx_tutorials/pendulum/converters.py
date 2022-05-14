@@ -53,7 +53,7 @@ class Angle_DecomposedAngle(eagerx.Processor):
         if not len(msg.data):  # No data
             return msg
         elif self.convert_to == "trig_dtheta":
-            data = [np.sin(msg.data[0]), np.cos(msg.data[0]), -msg.data[1]]
+            data = [np.sin(-msg.data[0]), np.cos(msg.data[0]), -msg.data[1]]
         elif self.convert_to == "theta_dtheta":
             cos_th = msg.data[0]
             sin_th = msg.data[1]
