@@ -1,6 +1,7 @@
 from typing import Optional, List
 import eagerx
 from eagerx.utils.utils import Msg
+from gym.spaces import Box
 from std_msgs.msg import Float32MultiArray, Float32, Bool
 import numpy as np
 
@@ -39,9 +40,8 @@ class ResetAngle(eagerx.ResetNode):
         spec.config.update(u_range=u_range, threshold=threshold, timeout=timeout)
         spec.config.gains = gains if isinstance(gains, list) else [1.0, 0.5, 0.0]
 
-        # Add space_converter
-        c = eagerx.SpaceConverter.make("Space_Float32MultiArray", [u_range[0]], [u_range[1]], dtype="float32")
-        spec.outputs.u.space_converter = c
+        # Add space
+        spec.outputs.u.space = Box(low=u_range[0], high=u_range[1], shape=(1,), dtype="float32")
 
     def initialize(self, threshold: float, timeout: float, gains: List[float], u_range: List[float]):
         self.threshold = threshold
@@ -59,17 +59,18 @@ class ResetAngle(eagerx.ResetNode):
         self.controller.reset()
         self.ts_start_routine = None
 
-    @eagerx.register.inputs(theta=Float32, dtheta=Float32)
-    @eagerx.register.targets(goal=Float32MultiArray)
-    @eagerx.register.outputs(u=Float32MultiArray)
+    @eagerx.register.inputs(theta=Box(low=-np.inf, high=np.inf, shape=(), dtype="float32"),
+                            dtheta=Box(low=-np.inf, high=np.inf, shape=(), dtype="float32"))
+    @eagerx.register.targets(goal=Box(low=-np.pi, high=np.pi, shape=(2,), dtype="float32"))
+    @eagerx.register.outputs(u=None)
     def callback(self, t_n: float, goal: Msg, theta: Msg = None, dtheta: Msg = None, x: Msg = None):
         if self.ts_start_routine is None:
             self.ts_start_routine = t_n
 
         # Convert messages to floats and numpy array
-        theta = theta.msgs[-1].data  # Take the last received message
-        dtheta = dtheta.msgs[-1].data  # Take the last received message
-        goal = np.array(goal.msgs[-1].data, dtype="float32")  # Take the last received message
+        theta = theta.msgs[-1]  # Take the last received message
+        dtheta = dtheta.msgs[-1]  # Take the last received message
+        goal = np.array(goal.msgs[-1], dtype="float32")  # Take the last received message
 
         # Define downward angle as theta=0 (resolve downward discontinuity)
         theta += np.pi
@@ -96,5 +97,5 @@ class ResetAngle(eagerx.ResetNode):
         # This must contain a message for every registered & selected output and target.
         # For targets, this message decides whether the goal state has been reached (or we, for example, timeout the reset).
         # The name for this target message is the registered target name + "/done".
-        output_msgs = {"u": Float32MultiArray(data=[u]), "goal/done": Bool(data=done)}
+        output_msgs = {"u": np.array([u], dtype="float32"), "goal/done": done}
         return output_msgs

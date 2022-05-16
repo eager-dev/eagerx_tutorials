@@ -1,7 +1,5 @@
+import numpy as np
 from typing import Optional
-
-# IMPORT ROS
-from std_msgs.msg import Float32MultiArray, Float32
 
 # IMPORT EAGERX
 from eagerx.core.constants import process
@@ -44,8 +42,8 @@ class FloatOutput(EngineNode):
     def reset(self):
         pass
 
-    @register.inputs(observation_array=Float32MultiArray)
-    @register.outputs(observation=Float32)
+    @register.inputs(observation_array=None)
+    @register.outputs(observation=None)
     def callback(self, t_n: float, observation_array: Optional[Msg] = None):
-        data = observation_array.msgs[-1].data[self.idx]
-        return dict(observation=Float32(data=data))
+        data = np.array(observation_array.msgs[-1][self.idx], dtype="float32")
+        return dict(observation=data)

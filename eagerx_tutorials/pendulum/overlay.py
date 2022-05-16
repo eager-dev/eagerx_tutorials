@@ -1,8 +1,7 @@
 import eagerx
 from eagerx import register
 from eagerx.utils.utils import Msg
-from std_msgs.msg import Float32MultiArray, Float32
-from sensor_msgs.msg import Image
+from gym.spaces import Box
 import cv2
 import numpy as np
 
@@ -18,13 +17,11 @@ class Overlay(eagerx.Node):
         color: str = "cyan",
     ):
         """Overlay spec"""
-        # Fills spec with defaults parameters
-        spec.initialize(Overlay)
-
         # Adjust default params
         spec.config.update(
             name=name, rate=rate, process=process, color=color, inputs=["base_image", "u", "theta"], outputs=["image"]
         )
+        spec.outputs.image.space = Box(low=0, high=255, shape=(480, 480, 3), dtype="uint8")
 
     def initialize(self):
         pass
@@ -33,26 +30,16 @@ class Overlay(eagerx.Node):
     def reset(self):
         pass
 
-    def _convert_to_cv_image(self, img):
-        if isinstance(img.data, bytes):
-            cv_image = np.frombuffer(img.data, dtype=np.uint8).reshape(img.height, img.width, -1)
-        else:
-            cv_image = np.array(img.data, dtype=np.uint8).reshape(img.height, img.width, -1)
-        if "rgb" in img.encoding:
-            cv_image = cv2.cvtColor(cv_image, cv2.COLOR_RGB2BGR)
-        return cv_image
-
-    @register.inputs(base_image=Image, u=Float32MultiArray, theta=Float32)
-    @register.outputs(image=Image)
+    @register.inputs(base_image=None, u=None, theta=None)
+    @register.outputs(image=None)
     def callback(self, t_n: float, base_image: Msg, u: Msg, theta: Msg):
-        if len(base_image.msgs[-1].data) > 0:
-            u = u.msgs[-1].data[0] if u else 0
-            theta = theta.msgs[-1].data
+        if len(base_image.msgs[-1]) > 0:
+            u = u.msgs[-1][0] if u else 0
+            theta = theta.msgs[-1]
 
             # Set background image from base_image
-            img = self._convert_to_cv_image(base_image.msgs[-1])
-            width = base_image.msgs[-1].width
-            height = base_image.msgs[-1].height
+            img = base_image.msgs[-1]
+            height, width, channels = img.shape
             side_length = min(width, height)
 
             # Put text
@@ -88,8 +75,6 @@ class Overlay(eagerx.Node):
             )
 
             # Prepare image for transmission.
-            data = img.tobytes("C")
-            msg = Image(data=data, height=height, width=width, encoding="bgr8", step=3 * width)
-            return dict(image=msg)
+            return dict(image=img)
         else:
-            return dict(image=Image())
+            return dict(image=np.array([], dtype="uint8"))

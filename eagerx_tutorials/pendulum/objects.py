@@ -1,13 +1,15 @@
 from typing import List
 
 # ROS IMPORTS
+from gym.spaces import Box
+import numpy as np
 from std_msgs.msg import Float32MultiArray, Float32
 from sensor_msgs.msg import Image
 from math import pi
 
 # EAGERx IMPORTS
 from eagerx_ode.engine import OdeEngine
-from eagerx import Object, EngineNode, SpaceConverter, EngineState
+from eagerx import Object, EngineNode, EngineState
 from eagerx.core.specs import ObjectSpec
 from eagerx.core.graph_engine import EngineGraph
 import eagerx.core.register as register
@@ -17,9 +19,13 @@ class Pendulum(Object):
     entity_id = "Pendulum"
 
     @staticmethod
-    @register.sensors(theta=Float32, dtheta=Float32, image=Image, u_applied=Float32MultiArray)
-    @register.actuators(u=Float32MultiArray)
-    @register.engine_states(model_state=Float32MultiArray, model_parameters=Float32MultiArray)
+    @register.sensors(theta=Box(low=-np.inf, high=np.inf, shape=(), dtype="float32"),
+                      dtheta=Box(low=-np.inf, high=np.inf, shape=(), dtype="float32"),
+                      image=None,
+                      u_applied=Box(low=-3, high=3, shape=(1,), dtype="float32"))
+    @register.actuators(u=Box(low=-3, high=3, shape=(1,), dtype="float32"))
+    @register.engine_states(model_state=None,
+                            model_parameters=None)
     @register.config(render_shape=[480, 480])
     def agnostic(spec: ObjectSpec, rate: float):
         """Agnostic definition of the Pendulum.
@@ -43,41 +49,22 @@ class Pendulum(Object):
         # Register standard converters, space_converters, and processors
         import eagerx.converters  # noqa # pylint: disable=unused-import
 
-        # Set observation properties: (space_converters, rate, etc...)
+        # Set rates
         spec.sensors.theta.rate = rate
-        spec.sensors.theta.space_converter = SpaceConverter.make("Space_Float32", low=-9999, high=9999, dtype="float32")
-
         spec.sensors.dtheta.rate = rate
-        spec.sensors.dtheta.space_converter = SpaceConverter.make("Space_Float32", low=-9999, high=9999, dtype="float32")
-
         spec.sensors.image.rate = 15
-        spec.sensors.image.space_converter = SpaceConverter.make(
-            "Space_Image", low=0, high=255, shape=spec.config.render_shape, dtype="uint8"
-        )
-
         spec.sensors.u_applied.rate = rate
-        spec.sensors.u_applied.space_converter = SpaceConverter.make(
-            "Space_Float32MultiArray", low=[-3], high=[3], dtype="float32"
-        )
-
-        # Set actuator properties: (space_converters, rate, etc...)
         spec.actuators.u.rate = rate
-        spec.actuators.u.window = 1
-        spec.actuators.u.space_converter = SpaceConverter.make("Space_Float32MultiArray", low=[-3], high=[3], dtype="float32")
 
-        # Set model_state properties: (space_converters)
-        spec.states.model_state.space_converter = SpaceConverter.make(
-            "Space_Float32MultiArray", low=[-pi, -9], high=[pi, 9], dtype="float32"
-        )
-
-        # Set model_parameters properties: (space_converters)
+        # Set not-yet defined spaces
+        shape = (spec.config.render_shape[0], spec.config.render_shape[1], 3)
+        spec.sensors.image.space = Box(low=0, high=255, shape=shape, dtype="uint8")
+        spec.states.model_state.space = Box(low=np.array([-pi, -9], dtype="float32"), high=np.array([pi, 9], dtype="float32"))
         mean = [0.0002, 0.05, 0.04, 0.0001, 0.05, 9.0]
         diff = [0.05, 0, 0, 0.05, 0.05, 0.05]  # Percentual delta with respect to fixed value
-        low = [val - diff * val for val, diff in zip(mean, diff)]
-        high = [val + diff * val for val, diff in zip(mean, diff)]
-        spec.states.model_parameters.space_converter = SpaceConverter.make(
-            "Space_Float32MultiArray", low=low, high=high, dtype="float32"
-        )
+        low = np.array([val - diff * val for val, diff in zip(mean, diff)], dtype="float32")
+        high = np.array([val + diff * val for val, diff in zip(mean, diff)], dtype="float32")
+        spec.states.model_parameters.space = Box(low=low, high=high)
 
     @staticmethod
     @register.spec(entity_id, Object)
