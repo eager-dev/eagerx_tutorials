@@ -294,7 +294,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "eagerx"
-version = "0.1.22"
+version = "0.1.23"
 description = "Engine Angostic Gym Environments for Robotics"
 category = "main"
 optional = false
@@ -2061,8 +2061,8 @@ docutils = [
     {file = "docutils-0.17.1.tar.gz", hash = "sha256:686577d2e4c32380bb50cbb22f575ed742d58168cee37e99117a854bcd88f125"},
 ]
 eagerx = [
-    {file = "eagerx-0.1.22-py3-none-any.whl", hash = "sha256:5acb38beaf383a8d3d35129183f6b27d321970fc4ff3e0a6c55d2f6bd0cb0605"},
-    {file = "eagerx-0.1.22.tar.gz", hash = "sha256:70333df071e1b201598755736a97ca6c0848eee3f41b5e5a97d596e8f2e5560e"},
+    {file = "eagerx-0.1.23-py3-none-any.whl", hash = "sha256:da9d0c5d786704dddc235ec28cecc2c98a78d6e939947276dbecc0181acc3b73"},
+    {file = "eagerx-0.1.23.tar.gz", hash = "sha256:3e32c65f99eb53abc80b40541a38834625df3cbb330f6000792f2d2436f7f893"},
 ]
 eagerx-ode = [
     {file = "eagerx_ode-0.1.11-py3-none-any.whl", hash = "sha256:a63eabe6f92ded4e7459c07a7abe726890d992d395039f48e7bd7fda1c14da86"},
