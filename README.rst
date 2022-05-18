@@ -42,8 +42,8 @@ The following tutorials are currently available:
 `A page with the exercises only is available here <https://araffin.github.io/tools-for-robotic-rl-icra2022/notebooks/eagerx_exercises.html>`_.
 `The solutions are available in here <https://github.com/eager-dev/eagerx_tutorials/tree/master/tutorials/pendulum/solutions/>`_.
 
-How to run the tutorials locally?
-=================================
+How to run the tutorials locally? (currently only Python 3.8 and 3.9 supported)
+===============================================================================
 
 As an alternative to running the tutorials in Google Colab, they can also be run locally in order to speed up computations.
 
