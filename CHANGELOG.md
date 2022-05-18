@@ -2,6 +2,15 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.13 (2022-05-18)
+### Fix
+* Refactor bridge to engine ([`eeabbb7`](https://github.com/eager-dev/eagerx_tutorials/commit/eeabbb726021f4fa4ab8b1912dae99bdbe98fe7f))
+* Add mass, length, max_speed engine_states and disc pendulum render and voltage to torque converter ([`2a3e469`](https://github.com/eager-dev/eagerx_tutorials/commit/2a3e469f9b1c88150e882fb7dcc04604b53c1aee))
+* Bridge refactor ([`aee617b`](https://github.com/eager-dev/eagerx_tutorials/commit/aee617b09c0d603c3795a8845b103dea692db2d9))
+* Typos ([`817b0ec`](https://github.com/eager-dev/eagerx_tutorials/commit/817b0eca28a044f1973ed1c8fd25f14fa354890e))
+* Bridge refactor ([`5a03e10`](https://github.com/eager-dev/eagerx_tutorials/commit/5a03e105591d10b9954eb5fbda188eac69420b9c))
+* Refactor initialize_spec ([`2140558`](https://github.com/eager-dev/eagerx_tutorials/commit/2140558d700a7188b17c8b6cf26e685b4ba9c135))
+
 ## v0.1.12 (2022-05-14)
 ### Fix
 * Rename sensor u to u_applied and add solution notebooks ([`fdb95ce`](https://github.com/eager-dev/eagerx_tutorials/commit/fdb95ce199dcf6d6cb9aa34286984936f35ef541))
