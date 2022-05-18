@@ -1,11 +1,10 @@
-
 import eagerx
 import eagerx_tutorials.pendulum  # Registers Pendulum
-import eagerx_ode  # Registers OdeBridge
-import eagerx.bridges.openai_gym  # Registers GymBridge
+import eagerx_ode  # Registers OdeEngine
+import eagerx.engines.openai_gym  # Registers GymEngine
 
 
-def test_gymbridge():
+def test_gymengine():
     # Initialize eagerx (starts roscore if not already started.)
     eagerx.initialize("eagerx_core")
 
@@ -16,11 +15,14 @@ def test_gymbridge():
     rate = 30.0
 
     # Object
-    pendulum = eagerx.Object.make("Pendulum", "pendulum", actuators=["u"], sensors=["theta", "dtheta", "image"], states=["model_state"])
+    pendulum = eagerx.Object.make(
+        "Pendulum", "pendulum", actuators=["u"], sensors=["theta", "dtheta", "image"], states=["model_state"]
+    )
     graph.add(pendulum)
 
     # Create reset node
     import eagerx_tutorials.pendulum.reset  # noqa: Registers reset node
+
     u_min = pendulum.actuators.u.space_converter.low[0]
     u_max = pendulum.actuators.u.space_converter.high[0]
     reset = eagerx.ResetNode.make("ResetAngle", "angle_reset", rate=rate, gains=[2.0, 0.2, 1.0], u_range=[u_min, u_max])
@@ -37,6 +39,7 @@ def test_gymbridge():
 
     # Create overlay node
     import eagerx_tutorials.pendulum.overlay  # noqa:
+
     overlay = eagerx.Node.make("Overlay", "overlay", rate)
     overlay.inputs.u.space_converter = pendulum.actuators.u.space_converter
     graph.add(overlay)
@@ -47,10 +50,11 @@ def test_gymbridge():
     graph.connect(source=pendulum.sensors.theta, target=overlay.inputs.theta)
     graph.render(source=overlay.outputs.image, rate=rate)
 
-    # Make OdeBridge
-    bridge = eagerx.Bridge.make("OdeBridge", rate=rate)
-    # bridge = eagerx.Bridge.make("GymBridge", rate=rate, process=eagerx.process.ENVIRONMENT)
+    # Make OdeEngine
+    engine = eagerx.Engine.make("OdeEngine", rate=rate)
+    # engine = eagerx.Engine.make("GymEngine", rate=rate, process=eagerx.process.ENVIRONMENT)
 
+    # Open GUI
     graph.gui()
 
     import numpy as np
@@ -74,7 +78,7 @@ def test_gymbridge():
 
         # Calculate cost
         # Penalize angle error, angular velocity and input voltage
-        cost = th ** 2 + 0.1 * thdot ** 2 + 0.001 * u ** 2
+        cost = th**2 + 0.1 * thdot**2 + 0.001 * u**2
 
         # Determine when is the episode over
         # currently just a timeout after 100 steps
@@ -88,14 +92,15 @@ def test_gymbridge():
 
     def reset_fn(environment):
         states = environment.state_space.sample()
-        offset = np.random.rand()-0.5
+        offset = np.random.rand() - 0.5
         theta = np.pi - offset if offset > 0 else -np.pi - offset
         states["pendulum/model_state"] = np.array([theta, 0], dtype="float32")
         return states
 
     # Initialize Environment
     import eagerx_tutorials.pendulum.gym_implementation
-    env = eagerx.EagerxEnv(name="PendulumEnv", rate=rate, graph=graph, bridge=bridge, step_fn=step_fn, reset_fn=reset_fn)
+
+    env = eagerx.EagerxEnv(name="PendulumEnv", rate=rate, graph=graph, engine=engine, step_fn=step_fn, reset_fn=reset_fn)
 
     # Toggle render
     env.render("human")
@@ -114,4 +119,4 @@ def test_gymbridge():
 
 
 if __name__ == "__main__":
-    test_gymbridge()
+    test_gymengine()

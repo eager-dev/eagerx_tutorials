@@ -26,9 +26,6 @@ class FloatOutput(EngineNode):
 
         :param idx: index of the value of interest from the array.
         """
-        # Performs all the steps to fill-in the params with registered info about all functions.
-        spec.initialize(FloatOutput)
-
         # Modify default node params
         spec.config.name = name
         spec.config.rate = rate

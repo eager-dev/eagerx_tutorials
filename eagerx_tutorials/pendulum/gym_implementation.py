@@ -1,27 +1,30 @@
 import eagerx
 from eagerx import register
-from eagerx.bridges.openai_gym.bridge import GymBridge
+from eagerx.engines.openai_gym.engine import GymEngine
 
 
 # This decorator registers the engine-specific implementation for the entity_id="Pendulum".
-@register.bridge("Pendulum", GymBridge)
-def gym_bridge(spec: eagerx.specs.ObjectSpec, graph: eagerx.EngineGraph):
-    """Engine-specific implementation (GymBridge) of the Pendulum object."""
+@register.engine("Pendulum", GymEngine)
+def gym_engine(spec: eagerx.specs.ObjectSpec, graph: eagerx.EngineGraph):
+    """Engine-specific implementation (GymEngine) of the Pendulum object."""
     # Register openai engine-specific nodes (ObservationSensor, ActionActuator, GymImage)
-    import eagerx.bridges.openai_gym  # noqa # pylint: disable=unused-import
+    import eagerx.engines.openai_gym  # noqa # pylint: disable=unused-import
 
     # Register tutorial engine-specific nodes (FloatOutput)
     import eagerx_tutorials.pendulum  # noqa # pylint: disable=unused-import
 
     # Set engine-specific parameters
-    spec.GymBridge.env_id = "Pendulum-v1"
+    spec.GymEngine.env_id = "Pendulum-v1"
 
     # Create engine states that implement the registered states
-    # Note: The GymBridge implementation unfortunately does not support setting the OpenAI environment state,
+    # Note: The GymEngine implementation unfortunately does not support setting the OpenAI environment state,
     #       nor does it support changing the dynamic parameters.
-    #       However, you could create a Bridge specifically for the Pendulum-v1 environment.
-    spec.GymBridge.states.model_state = eagerx.EngineState.make("DummyState")  # Use dummy state, so it can still be selected.
-    spec.GymBridge.states.model_parameters = eagerx.EngineState.make("DummyState")  # Use dummy state (same reason as above).
+    #       However, you could create a Engine specifically for the Pendulum-v1 environment.
+    spec.GymEngine.states.model_state = eagerx.EngineState.make("DummyState")  # Use dummy state, so it can still be selected.
+    spec.GymEngine.states.model_parameters = eagerx.EngineState.make("DummyState")  # Use dummy state (same reason as above).
+    spec.GymEngine.states.mass = eagerx.EngineState.make("SetGymAttribute", attribute="m")
+    spec.GymEngine.states.length = eagerx.EngineState.make("SetGymAttribute", attribute="l")
+    spec.GymEngine.states.max_speed = eagerx.EngineState.make("SetGymAttribute", attribute="max_speed")
 
     # Create sensor engine nodes.
     image = eagerx.EngineNode.make(
@@ -62,4 +65,5 @@ def gym_bridge(spec: eagerx.specs.ObjectSpec, graph: eagerx.EngineGraph):
 
     # u
     # Note: not to be confused with sensor "u", for which we do not provide an implementation here.
-    graph.connect(actuator="u", target=action.inputs.action, converter=eagerx.Processor.make("Negate_Float32MultiArray"))
+    voltage_to_torque_converter = eagerx.Processor.make("Voltage_MotorTorque", K=0.03333, R=7.731)
+    graph.connect(actuator="u", target=action.inputs.action, converter=voltage_to_torque_converter)
