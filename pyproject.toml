@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "eagerx_tutorials"
-version = "0.1.11"
+version = "0.1.12"
 license = "Apache2.0"
 description = "Tutorials on how to use EAGERx."
 authors = ["Jelle Luijkx <j.d.luijkx@tudelft.nl>", "Bas van der Heijden <d.s.vanderheijden@tudelft.nl>"]
@@ -11,8 +11,8 @@ include = ["scripts"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
-eagerx = "^0.1.21"
-eagerx-ode = "^0.1.11"
+eagerx = "^0.1.24"
+eagerx-ode = "^0.1.12"
 stable-baselines3 = "^1.2"
 jupyterlab = "^3.3.4"
 nbconvert = "^6.5.0"

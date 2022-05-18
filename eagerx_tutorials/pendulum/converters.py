@@ -31,7 +31,7 @@ class Space_DecomposedAngle(eagerx.SpaceConverter):
         raise NotImplementedError()
 
     def B_to_A(self, msg):
-        return np.array([np.sin(msg.data), np.cos(msg.data)], dtype=self.dtype)
+        return np.array([np.cos(msg.data), np.sin(msg.data)], dtype=self.dtype)
 
 
 class Angle_DecomposedAngle(eagerx.Processor):
@@ -72,3 +72,23 @@ class Negate_Float32MultiArray(eagerx.Processor):
 
     def convert(self, msg: Float32MultiArray) -> Float32MultiArray:
         return Float32MultiArray(data=[-i for i in msg.data])
+
+
+class Voltage_MotorTorque(eagerx.Processor):
+    MSG_TYPE = Float32MultiArray
+
+    @staticmethod
+    @eagerx.register.spec("Voltage_MotorTorque", eagerx.Processor)
+    def spec(spec: eagerx.specs.ConverterSpec, K: float, R: float):
+        # Initialize spec with default arguments
+        spec.initialize(Voltage_MotorTorque)
+
+        spec.config.K = K
+        spec.config.R = R
+
+    def initialize(self, K: float, R: float):
+        self.K = K
+        self.R = R
+
+    def convert(self, msg: Float32MultiArray) -> Float32MultiArray:
+        return Float32MultiArray(data=[-msg.data[0] * self.K / self.R])

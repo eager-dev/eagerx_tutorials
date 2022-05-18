@@ -19,8 +19,10 @@ class Pendulum(Object):
     @staticmethod
     @register.sensors(theta=Float32, dtheta=Float32, image=Image, u_applied=Float32MultiArray)
     @register.actuators(u=Float32MultiArray)
-    @register.engine_states(model_state=Float32MultiArray, model_parameters=Float32MultiArray)
-    @register.config(render_shape=[480, 480])
+    @register.engine_states(
+        model_state=Float32MultiArray, model_parameters=Float32MultiArray, mass=Float32, length=Float32, max_speed=Float32
+    )
+    @register.config(render_shape=[480, 480], render_fn="pendulum_render_fn")
     def agnostic(spec: ObjectSpec, rate: float):
         """Agnostic definition of the Pendulum.
 
@@ -32,10 +34,13 @@ class Pendulum(Object):
 
         Actuators
         u: DC motor voltage
+        motor_torque: DC motor torque
 
         States
         model_state: allows resetting the angle and angular velocity
-        model_parameters: allows resetting ODE parameters [J, m, l, b, K, R]
+        model_parameters: allows resetting all ODE parameters [J, m, l, b, K, R, c, d].
+        mass: allows resetting the mass of the pendulum m
+        length: allows resetting the length of the pendulum l
 
         Config
         render_shape: shape of render window [height, width]
@@ -57,13 +62,13 @@ class Pendulum(Object):
 
         spec.sensors.u_applied.rate = rate
         spec.sensors.u_applied.space_converter = SpaceConverter.make(
-            "Space_Float32MultiArray", low=[-3], high=[3], dtype="float32"
+            "Space_Float32MultiArray", low=[-2], high=[2], dtype="float32"
         )
 
         # Set actuator properties: (space_converters, rate, etc...)
         spec.actuators.u.rate = rate
         spec.actuators.u.window = 1
-        spec.actuators.u.space_converter = SpaceConverter.make("Space_Float32MultiArray", low=[-3], high=[3], dtype="float32")
+        spec.actuators.u.space_converter = SpaceConverter.make("Space_Float32MultiArray", low=[-2], high=[2], dtype="float32")
 
         # Set model_state properties: (space_converters)
         spec.states.model_state.space_converter = SpaceConverter.make(
@@ -71,12 +76,37 @@ class Pendulum(Object):
         )
 
         # Set model_parameters properties: (space_converters)
-        mean = [0.0002, 0.05, 0.04, 0.0001, 0.05, 9.0]
-        diff = [0.05, 0, 0, 0.05, 0.05, 0.05]  # Percentual delta with respect to fixed value
+        # Set default params of pendulum ode [J, m, l, b, K, R, c, d].
+        mean = [
+            0.000159931461600856,
+            0.0508581731919534,
+            0.0415233722862552,
+            1.43298488358436e-05,
+            0.0333391179016334,
+            7.73125142447252,
+            0.000975041213361349,
+            165.417960777425,
+        ]
+        diff = [0, 0, 0, 0, 0, 0, 0, 0]  # Percentual delta with respect to fixed value
         low = [val - diff * val for val, diff in zip(mean, diff)]
         high = [val + diff * val for val, diff in zip(mean, diff)]
         spec.states.model_parameters.space_converter = SpaceConverter.make(
             "Space_Float32MultiArray", low=low, high=high, dtype="float32"
+        )
+
+        mass_low = 0.02
+        mass_high = 0.025
+        spec.states.mass.space_converter = SpaceConverter.make("Space_Float32", low=mass_low, high=mass_high, dtype="float32")
+
+        length_low = 0.15
+        length_high = 0.2
+        spec.states.length.space_converter = SpaceConverter.make(
+            "Space_Float32", low=length_low, high=length_high, dtype="float32"
+        )
+
+        max_speed = 18
+        spec.states.max_speed.space_converter = SpaceConverter.make(
+            "Space_Float32", low=max_speed, high=max_speed, dtype="float32"
         )
 
     @staticmethod
@@ -89,6 +119,7 @@ class Pendulum(Object):
         states: List[str] = None,
         rate: float = 30.0,
         render_shape: List[int] = None,
+        render_fn: str = None,
     ):
         """Object spec of Pendulum"""
         # Modify default agnostic params
@@ -100,6 +131,7 @@ class Pendulum(Object):
 
         # Add custom agnostic params
         spec.config.render_shape = render_shape if render_shape else [480, 480]
+        spec.config.render_fn = render_fn if render_fn else "pendulum_render_fn"
 
         # Add engine implementation
         Pendulum.agnostic(spec, rate)
@@ -111,14 +143,24 @@ class Pendulum(Object):
         # Set object arguments
         spec.OdeEngine.ode = "eagerx_tutorials.pendulum.pendulum_ode/pendulum_ode"
         spec.OdeEngine.Dfun = "eagerx_tutorials.pendulum.pendulum_ode/pendulum_dfun"
-        # Set default params of pendulum ode [J, m, l, b, K, R].
-        spec.OdeEngine.ode_params = [0.0002, 0.05, 0.04, 0.0001, 0.05, 9.0]
+        # Set default params of pendulum ode [J, m, l, b, K, R, c, d].
+        spec.OdeEngine.ode_params = [
+            0.000159931461600856,
+            0.0508581731919534,
+            0.0415233722862552,
+            1.43298488358436e-05,
+            0.0333391179016334,
+            7.73125142447252,
+            0.000975041213361349,
+            165.417960777425,
+        ]
 
         # Create engine_states (no agnostic states defined in this case)
         spec.OdeEngine.states.model_state = EngineState.make("OdeEngineState")
-
-        # Create engine_states (no agnostic states defined in this case)
-        spec.OdeEngine.states.model_parameters = EngineState.make("OdeParameters", list(range(5)))
+        spec.OdeEngine.states.model_parameters = EngineState.make("OdeParameters", list(range(8)))
+        spec.OdeEngine.states.mass = EngineState.make("DummyState")
+        spec.OdeEngine.states.length = EngineState.make("DummyState")
+        spec.OdeEngine.states.max_speed = EngineState.make("DummyState")
 
         # Create sensor engine nodes
         x = EngineNode.make("OdeOutput", "x", rate=spec.sensors.theta.rate, process=2)
@@ -131,19 +173,20 @@ class Pendulum(Object):
 
         u_applied = EngineNode.make("ActionApplied", "u_applied", rate=spec.sensors.u_applied.rate, process=2)
 
+        render_fn = f"eagerx_tutorials.pendulum.pendulum_render/{spec.config.render_fn}"
         image = EngineNode.make(
             "OdeRender",
             "image",
-            render_fn="eagerx_tutorials.pendulum.pendulum_render/pendulum_render_fn",
+            render_fn=render_fn,
             rate=spec.sensors.image.rate,
             process=2,
         )
 
         # Create actuator engine nodes
-        action = EngineNode.make("OdeInput", "pendulum_actuator", rate=spec.actuators.u.rate, process=2, default_action=[0])
+        u = EngineNode.make("OdeInput", "u", rate=spec.actuators.u.rate, process=2, default_action=[0])
 
         # Connect all engine nodes
-        graph.add([x, theta, dtheta, image, action, u_applied])
+        graph.add([x, theta, dtheta, image, u, u_applied])
 
         # theta
         graph.connect(source=x.outputs.observation, target=theta.inputs.observation_array)
@@ -156,11 +199,12 @@ class Pendulum(Object):
         # image
         graph.connect(source=x.outputs.observation, target=image.inputs.observation)
         graph.connect(source=image.outputs.image, sensor="image")
-        graph.connect(source=action.outputs.action_applied, target=image.inputs.action_applied, skip=True)
 
         # u
-        graph.connect(actuator="u", target=action.inputs.action)
-        graph.connect(source=action.outputs.action_applied, target=u_applied.inputs.action_applied, skip=True)
+        graph.connect(actuator="u", target=u.inputs.action)
+
+        graph.connect(source=u.outputs.action_applied, target=image.inputs.action_applied, skip=True)
+        graph.connect(source=u.outputs.action_applied, target=u_applied.inputs.action_applied, skip=True)
         graph.connect(source=u_applied.outputs.action_applied, sensor="u_applied")
 
         # Check graph validity (commented out)
