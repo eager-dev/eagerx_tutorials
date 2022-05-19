@@ -34,13 +34,13 @@ class Pendulum(Object):
 
         Actuators
         u: DC motor voltage
-        motor_torque: DC motor torque
 
         States
         model_state: allows resetting the angle and angular velocity
         model_parameters: allows resetting all ODE parameters [J, m, l, b, K, R, c, d].
-        mass: allows resetting the mass of the pendulum m
-        length: allows resetting the length of the pendulum l
+        mass: allows resetting the mass of the Gym pendulum m
+        length: allows resetting the length of the Gym pendulum l
+        max_speed: allows resetting the max speed of the Gym pendulum
 
         Config
         render_shape: shape of render window [height, width]
