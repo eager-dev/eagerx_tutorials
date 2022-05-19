@@ -2,6 +2,10 @@ import os
 import site
 from datetime import datetime
 import subprocess
+from stable_baselines3.common.vec_env import VecVideoRecorder, DummyVecEnv
+from pathlib import Path
+import base64
+from IPython import display as ipythondisplay
 
 
 def setup_notebook():
@@ -44,3 +48,60 @@ def setup_notebook():
 
         # Start the roscore node
         roscore = subprocess.Popen(["bash", "/root/roscore"])  # noqa:
+
+
+def record_video(env, model, video_length=500, prefix="", video_folder="videos/"):
+    """
+    Adapted from https://colab.research.google.com/github/Stable-Baselines-Team/rl-colab-notebooks/blob/sb3/stable_baselines_getting_started.ipynb
+
+    :param env_id: (str)
+    :param model: (RL model)
+    :param video_length: (int)
+    :param prefix: (str)
+    :param video_folder: (str)
+    """
+    # Set up fake display; otherwise rendering will fail
+    os.system("Xvfb :1 -screen 0 1024x768x24 &")
+    os.environ["DISPLAY"] = ":1"
+
+    eval_env = DummyVecEnv([lambda: env])
+
+    # Start the video at step=0 and record for video length
+    eval_env = VecVideoRecorder(
+        eval_env,
+        video_folder=video_folder,
+        record_video_trigger=lambda step: step == 0,
+        video_length=video_length,
+        name_prefix=prefix,
+    )
+
+    obs = eval_env.reset()
+    for _ in range(video_length):
+        action, _ = model.predict(obs)
+        obs, _, _, _ = eval_env.step(action)
+
+    # Close the video recorder
+    eval_env.close()
+
+
+def show_video(video_folder="videos/", prefix=""):
+    """
+    Adapted from https://colab.research.google.com/github/Stable-Baselines-Team/rl-colab-notebooks/blob/sb3/stable_baselines_getting_started.ipynb
+
+    which was taken from https://github.com/eleurent/highway-env
+
+    :param video_path: (str) Path to the folder containing videos
+    :param prefix: (str) Filter the video, showing only the only starting with this prefix
+    """
+    html = []
+    for mp4 in Path(video_folder).glob("{}*.mp4".format(prefix)):
+        video_b64 = base64.b64encode(mp4.read_bytes())
+        html.append(
+            """<video alt="{}" autoplay 
+                    loop controls style="height: 400px;">
+                    <source src="data:video/mp4;base64,{}" type="video/mp4" />
+                </video>""".format(
+                mp4, video_b64.decode("ascii")
+            )
+        )
+    ipythondisplay.display(ipythondisplay.HTML(data="<br>".join(html)))
