@@ -332,6 +332,18 @@ eagerx = ">=0.1.23,<0.2.0"
 scipy = ">=1.5.4,<2.0.0"
 
 [[package]]
+name = "eagerx-pybullet"
+version = "0.1.8"
+description = "This repository contains the eagerx_pybllet package, which allows to simulate systems with EAGERx using pybullet."
+category = "main"
+optional = false
+python-versions = ">=3.6.2,<4.0.0"
+
+[package.dependencies]
+eagerx = ">=0.1.23,<0.2.0"
+pybullet = ">=3.2.1,<4.0.0"
+
+[[package]]
 name = "entrypoints"
 version = "0.4"
 description = "Discover and load entry points from installed packages."
@@ -1230,6 +1242,14 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
+name = "pybullet"
+version = "3.2.4"
+description = "Official Python Interface for the Bullet Physics SDK specialized for Robotics Simulation and Reinforcement Learning"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "pycodestyle"
 version = "2.7.0"
 description = "Python style guide checker"
@@ -1449,6 +1469,17 @@ description = "Reactive Extensions (Rx) for Python"
 category = "main"
 optional = false
 python-versions = ">=3.6.0"
+
+[[package]]
+name = "sb3-contrib"
+version = "1.5.0"
+description = "Contrib package of Stable Baselines3, experimental code."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+stable-baselines3 = ">=1.5.0"
 
 [[package]]
 name = "scikit-image"
@@ -1899,7 +1930,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "f20bf9359e620317e82112bafb49dcad01a0e1be96b63e0f0e998657ba6dc2af"
+content-hash = "b14d23d19aec800c8d4aa56cdafe247866d459b4aeb802b49ac51801a6deedc7"
 
 [metadata.files]
 alabaster = [
@@ -2156,6 +2187,10 @@ eagerx = [
 eagerx-ode = [
     {file = "eagerx_ode-0.1.12-py3-none-any.whl", hash = "sha256:278a9a1c3a9bc0953fc39948009afcac830053344bd9d9ecc41a865bca181fa4"},
     {file = "eagerx_ode-0.1.12.tar.gz", hash = "sha256:ee1cc851885074864c52f06629e1c6822c25e011a2edf390f5f2ff7d8a0d0fce"},
+]
+eagerx-pybullet = [
+    {file = "eagerx_pybullet-0.1.8-py3-none-any.whl", hash = "sha256:46205149d24716a2159e10543a3ba50f661980db18a730baaf14a195376fc3e9"},
+    {file = "eagerx_pybullet-0.1.8.tar.gz", hash = "sha256:fb242458d41e1e8d1ee1e0c641574a33e282e74a59d6e84fc166ae59bdd3991f"},
 ]
 entrypoints = [
     {file = "entrypoints-0.4-py3-none-any.whl", hash = "sha256:f174b5ff827504fd3cd97cc3f8649f3693f51538c7e4bdf3ef002c8429d42f9f"},
@@ -2651,6 +2686,16 @@ py = [
     {file = "py-1.11.0-py2.py3-none-any.whl", hash = "sha256:607c53218732647dff4acdfcd50cb62615cedf612e72d1724fb1a0cc6405b378"},
     {file = "py-1.11.0.tar.gz", hash = "sha256:51c75c4126074b472f746a24399ad32f6053d1b34b68d2fa41e558e6f4a98719"},
 ]
+pybullet = [
+    {file = "pybullet-3.2.4-cp27-cp27m-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:064d269dda3a5112c0baa4e9d620ffa430155b0df4b32a7741489eb77ca8b503"},
+    {file = "pybullet-3.2.4-cp27-cp27mu-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:cc29d139c0129baf76f2149f9028b68b31e260bdb37ec8a61345cac41e632dfe"},
+    {file = "pybullet-3.2.4-cp35-cp35m-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:f2778af6dde98639f001803215bfcd7775de901d78450b0a1ea9d2637aa2896e"},
+    {file = "pybullet-3.2.4-cp36-cp36m-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:967391d79f3d9369e265df7b17c880e265d95259ca42c061a6e20f5441d7f23d"},
+    {file = "pybullet-3.2.4-cp37-cp37m-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:d49b7daaf1747400b82877274dc3cb867d960575b16508510e7099b18af4dbe7"},
+    {file = "pybullet-3.2.4-cp38-cp38-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:7700006d0add2be0eed4a1b26eb39ac3d1bfe69e6ddf009d0eacf7997e1cf7c2"},
+    {file = "pybullet-3.2.4-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:30aa324bc26c981b1e42d2143e75912a35436646c8d1bb4f9b3ee1a98a61bfdf"},
+    {file = "pybullet-3.2.4.tar.gz", hash = "sha256:959e85bc0051324b9c4aba23d79365b77de216f9ceebc392f9d551fe63a0ebc6"},
+]
 pycodestyle = [
     {file = "pycodestyle-2.7.0-py2.py3-none-any.whl", hash = "sha256:514f76d918fcc0b55c6680472f0a37970994e07bbb80725808c17089be302068"},
     {file = "pycodestyle-2.7.0.tar.gz", hash = "sha256:c389c1d06bf7904078ca03399a4816f974a1d590090fecea0c63ec26ebaf1cef"},
@@ -2870,6 +2915,10 @@ rospkg = [
 rx = [
     {file = "Rx-3.2.0-py3-none-any.whl", hash = "sha256:922c5f4edb3aa1beaa47bf61d65d5380011ff6adcd527f26377d05cb73ed8ec8"},
     {file = "Rx-3.2.0.tar.gz", hash = "sha256:b657ca2b45aa485da2f7dcfd09fac2e554f7ac51ff3c2f8f2ff962ecd963d91c"},
+]
+sb3-contrib = [
+    {file = "sb3_contrib-1.5.0-py3-none-any.whl", hash = "sha256:dc5c64b8eda4c85d4e5b5b07a8f2fa16449745b4e6a64031457dd207c3c71291"},
+    {file = "sb3_contrib-1.5.0.tar.gz", hash = "sha256:73c1bf19667f90ff8f76542935ec429a4c634eefca228b4974b53f6fc2e4a445"},
 ]
 scikit-image = [
     {file = "scikit-image-0.17.2.tar.gz", hash = "sha256:bd954c0588f0f7e81d9763dc95e06950e68247d540476e06cb77bcbcd8c2d8b3"},
