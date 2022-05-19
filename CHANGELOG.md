@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.14 (2022-05-19)
+### Fix
+* Initial quadruped notebook and ICRA tutorial 1 ([#34](https://github.com/eager-dev/eagerx_tutorials/issues/34)) ([`ce18d45`](https://github.com/eager-dev/eagerx_tutorials/commit/ce18d457b86353ded874f55ba0e1f28af8a16d65))
+
 ## v0.1.13 (2022-05-18)
 ### Fix
 * Refactor bridge to engine ([`eeabbb7`](https://github.com/eager-dev/eagerx_tutorials/commit/eeabbb726021f4fa4ab8b1912dae99bdbe98fe7f))
