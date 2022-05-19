@@ -6,7 +6,7 @@ from eagerx import register
 from eagerx.utils.utils import Msg
 from std_msgs.msg import Float32MultiArray
 
-from eagerx_quadruped.hopf_network import HopfNetwork
+from eagerx_tutorials.quadruped.hopf_network import HopfNetwork
 
 
 class CpgGait(eagerx.Node):

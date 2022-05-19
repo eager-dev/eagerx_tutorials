@@ -1,8 +1,5 @@
 from functools import partial
-
 import numpy as np
-
-# from numba import jit
 
 
 # Runge Kutta taking the EOM as an argument

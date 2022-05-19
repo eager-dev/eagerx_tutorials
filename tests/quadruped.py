@@ -29,7 +29,7 @@ import eagerx_quadruped.cpg_gait  # noqa: F401
 
 # Registers PybulletEngine
 import eagerx_quadruped.object  # noqa: F401
-import eagerx_quadruped.robots.go1.configs_go1 as go1_config  # noqa: F401
+import eagerx_quadruped.robots.go1.configs_go1 as go1_config
 
 # from stable_baselines3.common.env_checker import check_env
 
@@ -229,11 +229,12 @@ if __name__ == "__main__":
     import gym
 
     class QuadrupedEnv(eagerx.BaseEnv):
-        def __init__(self, name, rate, graph, engine, episode_timeout, force_start=True, debug=False):
+        def __init__(self, name, rate, graph, engine, desired_velocity, episode_timeout, force_start=True, debug=False):
             super(QuadrupedEnv, self).__init__(name, rate, graph, engine, force_start=force_start)
             self.steps = None
             self.debug = debug
             self.timeout_steps = int(episode_timeout * rate)
+            self.desired_yaw_rate = np.deg2rad(desired_velocity)
 
         @property
         def observation_space(self) -> gym.spaces.Dict:
@@ -267,10 +268,9 @@ if __name__ == "__main__":
 
             # Current angular velocity
             yaw_rate = (yaw - prev_yaw) * env_rate
-            desired_yaw_rate = np.deg2rad(desired_velocity)
 
             # yaw_cost = np.linalg.norm(yaw_rate - desired_yaw_rate)
-            yaw_cost = (yaw_rate - desired_yaw_rate) ** 2
+            yaw_cost = (yaw_rate - self.desired_yaw_rate) ** 2
             reward = alive_bonus - yaw_cost
 
             if self.debug:
@@ -295,6 +295,7 @@ if __name__ == "__main__":
         rate=env_rate,
         graph=graph,
         engine=engine,
+        desired_velocity=desired_velocity,
         episode_timeout=episode_timeout,
         debug=args.debug,
     )

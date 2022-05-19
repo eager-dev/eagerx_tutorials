@@ -10,8 +10,8 @@ from eagerx.core.specs import ObjectSpec
 from eagerx_pybullet.engine import PybulletEngine
 from std_msgs.msg import Float32MultiArray
 
-import eagerx_quadruped.cartesian_control  # noqa: F401
-import eagerx_quadruped.robots.go1.configs_go1 as go1_config
+import eagerx_tutorials.quadruped.cartesian_control  # noqa: F401
+import eagerx_tutorials.quadruped.go1.configs_go1 as go1_config
 
 
 class Quadruped(Object):

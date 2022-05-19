@@ -9,7 +9,7 @@ from eagerx.core.specs import NodeSpec
 from eagerx.utils.utils import Msg
 from std_msgs.msg import Float32MultiArray, UInt64
 
-import eagerx_quadruped.robots.go1.configs_go1 as go1_config
+import eagerx_tutorials.quadruped.go1.configs_go1 as go1_config
 
 
 class CartesiandPDController(EngineNode):
