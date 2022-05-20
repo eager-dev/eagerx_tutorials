@@ -18,7 +18,7 @@ stable-baselines3 = "^1.2"
 jupyterlab = "^3.3.4"
 nbconvert = "^6.5.0"
 PyVirtualDisplay = "^3.0"
-huggingface-sb3 = "^2.0.0"
+#huggingface-sb3 = "^2.0.0"
 sb3-contrib = "^1.5.0"
 
 [tool.poetry.dev-dependencies]

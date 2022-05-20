@@ -24,12 +24,11 @@ from sb3_contrib import TQC
 from stable_baselines3.common.callbacks import CheckpointCallback
 from stable_baselines3.common.evaluation import evaluate_policy
 
-import eagerx_quadruped.cartesian_control  # noqa: F401
-import eagerx_quadruped.cpg_gait  # noqa: F401
+import eagerx_tutorials.quadruped.cartesian_control  # noqa: F401
+import eagerx_tutorials.quadruped.cpg_gait  # noqa: F401
 
 # Registers PybulletEngine
-import eagerx_quadruped.object  # noqa: F401
-import eagerx_quadruped.robots.go1.configs_go1 as go1_config
+import eagerx_tutorials.quadruped.object  # noqa: F401
 
 # from stable_baselines3.common.env_checker import check_env
 
