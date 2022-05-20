@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.15 (2022-05-20)
+### Fix
+* No egl ([`5c0bf56`](https://github.com/eager-dev/eagerx_tutorials/commit/5c0bf567f7fe05b0a21294e5d937db7abdde01e0))
+* First notebook to test on colab ([`129d404`](https://github.com/eager-dev/eagerx_tutorials/commit/129d404fbe923427ebdb81c0b75243fab7f836f9))
+
 ## v0.1.14 (2022-05-19)
 ### Fix
 * Initial quadruped notebook and ICRA tutorial 1 ([#34](https://github.com/eager-dev/eagerx_tutorials/issues/34)) ([`ce18d45`](https://github.com/eager-dev/eagerx_tutorials/commit/ce18d457b86353ded874f55ba0e1f28af8a16d65))
