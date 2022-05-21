@@ -124,10 +124,9 @@ if __name__ == "__main__":
     cartesian_rate = 200
     quad_rate = 200
     sim_rate = 200
-    # sensors = ["pos", "vel", "base_orientation", "base_pos", "base_vel", "force_torque"]  # Todo: works
-    # sensors = ["pos", "vel", "base_orientation", "base_pos", "base_vel"]
-    sensors = ["base_orientation", "force_torque"]
-    # set_random_seed(1)
+    # sensors = ["joint_position", "joint_velocity", "orientation", "position", "velocity", "force_torque"]  # Todo: works
+    # sensors = ["joint_position", "joint_velocity", "orientation", "position", "velocity"]
+    sensors = ["orientation", "force_torque"]
 
     env_id = "Quadruped"
     desired_velocity = args.desired_vel
@@ -143,19 +142,20 @@ if __name__ == "__main__":
         "Quadruped",
         "quadruped",
         actuators=["joint_control"],
-        sensors=sensors if 'base_pos' in sensors else sensors + ["base_pos"],
+        sensors=sensors if 'position' in sensors else sensors + ["position"],
         rate=quad_rate,
         control_mode="position_control",
         self_collision=False,
         fixed_base=False,
     )
     # TODO: tune sensor rates to the lowest possible.
-    robot.sensors.pos.rate = env_rate
-    robot.sensors.vel.rate = env_rate
+    robot.sensors.joint_position.rate = env_rate
+    robot.sensors.joint_velocity.rate = env_rate
     robot.sensors.force_torque.rate = env_rate
-    robot.sensors.base_orientation.rate = env_rate
-    robot.sensors.base_pos.rate = env_rate
-    robot.sensors.base_vel.rate = env_rate
+    robot.sensors.orientation.rate = env_rate
+    robot.sensors.position.rate = env_rate
+    robot.sensors.velocity.rate = env_rate
+    robot.sensors.image.rate = overlay_rate
     graph.add(robot)
 
     # Create cartesian control node
@@ -163,21 +163,13 @@ if __name__ == "__main__":
     graph.add(cartesian_control)
 
     # Create cpg node
-    gait = "TROT"
-    omega_swing, omega_stance = {
-        "JUMP": [4 * np.pi, 40 * np.pi],
-        "TROT": [16 * np.pi, 4 * np.pi],
-        "WALK": [16 * np.pi, 4 * np.pi],
-        "PACE": [20 * np.pi, 20 * np.pi],
-        "BOUND": [10 * np.pi, 20 * np.pi],
-    }[gait]
     cpg = eagerx.Node.make(
         "CpgGait",
         "cpg",
         rate=cpg_rate,
-        gait=gait,
-        omega_swing=omega_swing,
-        omega_stance=omega_stance,
+        gait="TROT",
+        omega_swing=16 * np.pi,
+        omega_stance=4 * np.pi,
         process=eagerx.process.ENVIRONMENT,
     )
     graph.add(cpg)
@@ -187,34 +179,38 @@ if __name__ == "__main__":
     graph.connect(action="offset", target=cpg.inputs.offset)
     graph.connect(source=cpg.outputs.cartesian_pos, target=cartesian_control.inputs.cartesian_pos)
     graph.connect(source=cartesian_control.outputs.joint_pos, target=robot.actuators.joint_control)
+    if "joint_position" in sensors:
+        graph.connect(observation="joint_position", source=robot.sensors.joint_position)
+    if "joint_velocity" in sensors:
+        graph.connect(observation="joint_velocity", source=robot.sensors.joint_velocity)
     if "position" in sensors:
-        graph.connect(observation="position", source=robot.sensors.pos)
-    if "velocity" in sensors:
-        graph.connect(observation="velocity", source=robot.sensors.vel)
-    if "base_pos" in sensors:
-        graph.connect(observation="base_pos", source=robot.sensors.base_pos)
+        graph.connect(observation="position", source=robot.sensors.position)
     if "force_torque" in sensors:
         graph.connect(observation="force_torque", source=robot.sensors.force_torque)
-    if "base_vel" in sensors:
-        graph.connect(observation="base_vel", source=robot.sensors.base_vel)
-    assert "base_orientation" in sensors, "The base_orientation must always be included in the sensors, " \
+    if "velocity" in sensors:
+        graph.connect(observation="velocity", source=robot.sensors.velocity)
+    assert "orientation" in sensors, "The orientation must always be included in the sensors, " \
                                           "because it is used to calculate the reward."
-    # assert "base_pos" in sensors, "Base_position must be selected to plot the xy-plane"
-    graph.connect(observation="base_orientation", source=robot.sensors.base_orientation, window=2)  # window=2
-    if "xs_zs" in sensors:
-        graph.connect(
-            observation="xs_zs",
-            source=cpg.outputs.xs_zs,
-            skip=True,
-            initial_obs=[-0.01354526, -0.26941818, 0.0552178, -0.25434446],
-        )
+    graph.connect(observation="orientation", source=robot.sensors.orientation, window=2)  # window=2
+    # if "xs_zs" in sensors:
+    graph.connect(
+        observation="xs_zs",
+        source=cpg.outputs.xs_zs,
+        skip=True,
+        initial_obs=[-0.01354526, -0.26941818, 0.0552178, -0.25434446],
+    )
 
     # Connect layover
-    import eagerx_tutorials.quadruped.overlay # noqa Registers the overlay node
-    overlay = eagerx.Node.make("XyPlane", "overlay", rate=overlay_rate, top_left=[-3, -3], lower_right=[6, 6])
-    graph.add(overlay)
-    graph.connect(source=robot.sensors.base_pos, target=overlay.inputs.position)
-    graph.render(overlay.outputs.image, rate=overlay_rate)
+    use_image = False
+    if use_image:
+        graph.add_component(robot.sensors.image)
+        graph.render(robot.sensors.image, rate=overlay_rate)
+    else:
+        import eagerx_tutorials.quadruped.overlay # noqa Registers the overlay node
+        xy_plane = eagerx.Node.make("XyPlane", "xy_plane", rate=overlay_rate, top_left=[-3, -3], lower_right=[6, 6])
+        graph.add(xy_plane)
+        graph.connect(source=robot.sensors.position, target=xy_plane.inputs.position)
+        graph.render(xy_plane.outputs.image, rate=overlay_rate)
 
     # Show in the gui
     graph.gui()
@@ -242,6 +238,7 @@ if __name__ == "__main__":
             self.steps = None
             self.debug = debug
             self.timeout_steps = int(episode_timeout * rate)
+            self.rate = rate
             self.desired_yaw_rate = np.deg2rad(desired_velocity)
 
         @property
@@ -259,6 +256,14 @@ if __name__ == "__main__":
             # Sample desired states
             states = self.state_space.sample()
 
+            # set image location
+            # states["quadruped/image/pos"] = np.array([0, -3, 1.5])  # todo: works side view
+            # tmp = list(pybullet.getQuaternionFromEuler(np.deg2rad([180, 0, 0])))
+
+            states["quadruped/image/pos"] = np.array([-1, -1, 0.5])
+            tmp = list(pybullet.getQuaternionFromEuler(np.deg2rad([-90, 0, 0])))
+            states["quadruped/image/orientation"] = np.array(tmp)
+
             # Perform reset
             obs = self._reset(states)
             return obs
@@ -271,11 +276,11 @@ if __name__ == "__main__":
             alive_bonus = 0.25
 
             # Convert Quaternion to Euler
-            _, _, prev_yaw = pybullet.getEulerFromQuaternion(obs["base_orientation"][-2])
-            roll, pitch, yaw = pybullet.getEulerFromQuaternion(obs["base_orientation"][-1])
+            _, _, prev_yaw = pybullet.getEulerFromQuaternion(obs["orientation"][-2])
+            roll, pitch, yaw = pybullet.getEulerFromQuaternion(obs["orientation"][-1])
 
             # Current angular velocity
-            yaw_rate = (yaw - prev_yaw) * env_rate
+            yaw_rate = (yaw - prev_yaw) * self.rate
 
             # yaw_cost = np.linalg.norm(yaw_rate - desired_yaw_rate)
             yaw_cost = (yaw_rate - self.desired_yaw_rate) ** 2
@@ -376,11 +381,14 @@ if __name__ == "__main__":
         yaml.dump(config, f)
 
     # Save a checkpoint every 10000 steps
-    checkpoint_callback = CheckpointCallback(save_freq=5000, save_path=log_path, name_prefix="rl_model")
+    checkpoint_callback = CheckpointCallback(save_freq=2000, save_path=log_path, name_prefix="rl_model")
 
     env.render(mode="human")
     try:
-        model.learn(1_000_000, callback=checkpoint_callback)
+        # env.reset()
+        # while True:
+        #     env.step(env.action_space.sample())
+        model.learn(6000, callback=checkpoint_callback)
     except KeyboardInterrupt:
         model.save("tqc_cpg")
 

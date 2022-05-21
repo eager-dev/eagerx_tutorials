@@ -26,7 +26,7 @@ class CpgGait(eagerx.Node):
         coupling_strength: float = 1.0,
         robot_height: float = 0.25,
         des_step_len: float = 0.04,
-        process: Optional[int] = eagerx.process.NEW_PROCESS,
+        process: Optional[int] = eagerx.process.ENVIRONMENT,
     ):
         """A spec to create a CpgGait node that produces a quadruped gait.
 

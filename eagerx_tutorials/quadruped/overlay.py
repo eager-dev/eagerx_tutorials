@@ -31,8 +31,8 @@ class XyPlane(eagerx.Node):
         spec.config.update(name=name, rate=rate, process=process, color=color, inputs=["position"], outputs=["image"])
         spec.config.px_pm = px_pm
         spec.config.colormap = colormap
-        spec.config.top_left = top_left if isinstance(top_left, list) else [-1, -1]  # x,y in [m]
-        spec.config.lower_right = lower_right if isinstance(lower_right, list) else [10, 10]  # x,y in [m]
+        spec.config.top_left = top_left if isinstance(top_left, list) else [-3, -3]  # x,y in [m]
+        spec.config.lower_right = lower_right if isinstance(lower_right, list) else [6, 8]  # x,y in [m]
         spec.config.num_eps = num_eps
         spec.inputs.position.window = 0  # Receive all new position messages since last callback
 
@@ -97,13 +97,13 @@ class XyPlane(eagerx.Node):
     def _plot_overlay(img, color, thickness, width, px_pm, tl_x, tl_y, lr_x, lr_y):
         # Put text
         font = cv2.FONT_HERSHEY_SIMPLEX
-        text = "xy-plane"
+        text = "Top-view (i.e. xy-plane)"
         text_size = cv2.getTextSize(text, font, 0.75, 2)[0]
         text_x = int((width - text_size[0]) / 2)
         text_y = int(text_size[1])
         img = cv2.putText(img, text, (text_x, text_y), font, 0.75, thickness=2, color=(0, 0, 0))
 
-        center = [int(-tl_y*px_pm), int(-tl_x*px_pm)]
+        center = (int(-tl_y*px_pm), int(-tl_x*px_pm))
 
         # x-axis
         x = center[0] + int(lr_y * px_pm*0.75)
