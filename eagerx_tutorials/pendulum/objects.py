@@ -20,7 +20,7 @@ class Pendulum(Object):
     @register.sensors(theta=Float32, dtheta=Float32, image=Image, u_applied=Float32MultiArray)
     @register.actuators(u=Float32MultiArray)
     @register.engine_states(
-        model_state=Float32MultiArray, model_parameters=Float32MultiArray, mass=Float32, length=Float32, max_speed=Float32
+        model_state=Float32MultiArray, model_parameters=Float32MultiArray, mass=Float32, length=Float32, max_speed=Float32,
     )
     @register.config(render_shape=[480, 480], render_fn="pendulum_render_fn")
     def agnostic(spec: ObjectSpec, rate: float):
@@ -55,7 +55,7 @@ class Pendulum(Object):
         spec.sensors.dtheta.rate = rate
         spec.sensors.dtheta.space_converter = SpaceConverter.make("Space_Float32", low=-9999, high=9999, dtype="float32")
 
-        spec.sensors.image.rate = 15
+        spec.sensors.image.rate = rate / 2
         spec.sensors.image.space_converter = SpaceConverter.make(
             "Space_Image", low=0, high=255, shape=spec.config.render_shape, dtype="uint8"
         )
@@ -94,17 +94,17 @@ class Pendulum(Object):
             "Space_Float32MultiArray", low=low, high=high, dtype="float32"
         )
 
-        mass_low = 0.022
-        mass_high = 0.025
+        mass_low = 0.045
+        mass_high = 0.055
         spec.states.mass.space_converter = SpaceConverter.make("Space_Float32", low=mass_low, high=mass_high, dtype="float32")
 
-        length_low = 0.16
-        length_high = 0.19
+        length_low = 0.04
+        length_high = 0.07
         spec.states.length.space_converter = SpaceConverter.make(
             "Space_Float32", low=length_low, high=length_high, dtype="float32"
         )
 
-        max_speed = 18
+        max_speed = 22
         spec.states.max_speed.space_converter = SpaceConverter.make(
             "Space_Float32", low=max_speed, high=max_speed, dtype="float32"
         )
