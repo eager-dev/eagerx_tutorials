@@ -94,12 +94,12 @@ class Pendulum(Object):
             "Space_Float32MultiArray", low=low, high=high, dtype="float32"
         )
 
-        mass_low = 0.02
+        mass_low = 0.022
         mass_high = 0.025
         spec.states.mass.space_converter = SpaceConverter.make("Space_Float32", low=mass_low, high=mass_high, dtype="float32")
 
-        length_low = 0.15
-        length_high = 0.2
+        length_low = 0.16
+        length_high = 0.19
         spec.states.length.space_converter = SpaceConverter.make(
             "Space_Float32", low=length_low, high=length_high, dtype="float32"
         )

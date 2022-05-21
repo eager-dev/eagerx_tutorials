@@ -60,10 +60,6 @@ def record_video(env, model, video_length=500, prefix="", video_folder="videos/"
     :param prefix: (str)
     :param video_folder: (str)
     """
-    # Set up fake display; otherwise rendering will fail
-    os.system("Xvfb :1 -screen 0 1024x768x24 &")
-    os.environ["DISPLAY"] = ":1"
-
     eval_env = DummyVecEnv([lambda: env])
 
     # Start the video at step=0 and record for video length
@@ -77,7 +73,7 @@ def record_video(env, model, video_length=500, prefix="", video_folder="videos/"
 
     obs = eval_env.reset()
     for _ in range(video_length):
-        action, _ = model.predict(obs)
+        action, _ = model.predict(obs, deterministic=True)
         obs, _, _, _ = eval_env.step(action)
 
     # Close the video recorder
