@@ -16,7 +16,7 @@ class CartesiandPDController(eagerx.Node):
         spec: eagerx.specs.NodeSpec,
         name: str,
         rate: float,
-        process: Optional[int] = eagerx.process.NEW_PROCESS,
+        process: Optional[int] = eagerx.process.ENVIRONMENT,
     ):
         """A spec to create a CartesiandPDController node that controls a set of joints.
 
