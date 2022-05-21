@@ -118,7 +118,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     episode_timeout = args.timeout  # in s
-    env_rate = 50
+    overlay_rate = 10
+    env_rate = 20
     cpg_rate = 200
     cartesian_rate = 200
     quad_rate = 200
@@ -142,7 +143,7 @@ if __name__ == "__main__":
         "Quadruped",
         "quadruped",
         actuators=["joint_control"],
-        sensors=sensors,
+        sensors=sensors if 'base_pos' in sensors else sensors + ["base_pos"],
         rate=quad_rate,
         control_mode="position_control",
         self_collision=False,
@@ -190,7 +191,7 @@ if __name__ == "__main__":
         graph.connect(observation="position", source=robot.sensors.pos)
     if "velocity" in sensors:
         graph.connect(observation="velocity", source=robot.sensors.vel)
-    if "position" in sensors:
+    if "base_pos" in sensors:
         graph.connect(observation="base_pos", source=robot.sensors.base_pos)
     if "force_torque" in sensors:
         graph.connect(observation="force_torque", source=robot.sensors.force_torque)
@@ -198,6 +199,7 @@ if __name__ == "__main__":
         graph.connect(observation="base_vel", source=robot.sensors.base_vel)
     assert "base_orientation" in sensors, "The base_orientation must always be included in the sensors, " \
                                           "because it is used to calculate the reward."
+    # assert "base_pos" in sensors, "Base_position must be selected to plot the xy-plane"
     graph.connect(observation="base_orientation", source=robot.sensors.base_orientation, window=2)  # window=2
     if "xs_zs" in sensors:
         graph.connect(
@@ -207,8 +209,15 @@ if __name__ == "__main__":
             initial_obs=[-0.01354526, -0.26941818, 0.0552178, -0.25434446],
         )
 
+    # Connect layover
+    import eagerx_tutorials.quadruped.overlay # noqa Registers the overlay node
+    overlay = eagerx.Node.make("XyPlane", "overlay", rate=overlay_rate, top_left=[-3, -3], lower_right=[6, 6])
+    graph.add(overlay)
+    graph.connect(source=robot.sensors.base_pos, target=overlay.inputs.position)
+    graph.render(overlay.outputs.image, rate=overlay_rate)
+
     # Show in the gui
-    # graph.gui()
+    graph.gui()
 
     show_gui = args.render or args.load_checkpoint is not None
 
@@ -369,6 +378,7 @@ if __name__ == "__main__":
     # Save a checkpoint every 10000 steps
     checkpoint_callback = CheckpointCallback(save_freq=5000, save_path=log_path, name_prefix="rl_model")
 
+    env.render(mode="human")
     try:
         model.learn(1_000_000, callback=checkpoint_callback)
     except KeyboardInterrupt:
