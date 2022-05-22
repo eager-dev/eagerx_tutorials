@@ -142,6 +142,8 @@ def evaluate(model, env, n_eval_episodes=3, episode_length=100, video_rate=None,
 
             print(f"Showing episode {i} with episodic reward: {episodic_reward}")
             show_video(video_file=video_file, video_folder=video_folder)
+            
+            os.remove(f"{video_folder}/temp.mp4")
 
         episodic_rewards.append(episodic_reward)
     mean_episodic_reward = np.mean(episodic_rewards)
