@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.17 (2022-05-22)
+### Fix
+* Update helper ([`2d436af`](https://github.com/eager-dev/eagerx_tutorials/commit/2d436af65e8667c5a7ba8db6d573173c93764a58))
+
 ## v0.1.16 (2022-05-22)
 ### Fix
 * Update codestyle ([`7f829be`](https://github.com/eager-dev/eagerx_tutorials/commit/7f829be2a8a8e10ae8e7d9bf8e4dfa6c8a2f7d4a))
