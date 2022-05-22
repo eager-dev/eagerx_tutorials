@@ -108,6 +108,8 @@ def show_video(video_file, video_folder="videos/"):
 
 def evaluate(model, env, n_eval_episodes=3, episode_length=100, video_rate=None, video_prefix=""):
     video_folder = "videos/"
+    # Create output folder if needed
+    os.makedirs(video_folder, exist_ok=True)
 
     episodic_rewards = []
     for i in range(n_eval_episodes):
