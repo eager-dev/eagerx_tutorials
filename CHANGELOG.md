@@ -2,6 +2,21 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.16 (2022-05-22)
+### Fix
+* Update codestyle ([`7f829be`](https://github.com/eager-dev/eagerx_tutorials/commit/7f829be2a8a8e10ae8e7d9bf8e4dfa6c8a2f7d4a))
+* Create ffmpegs ([`f6184ae`](https://github.com/eager-dev/eagerx_tutorials/commit/f6184ae2a0f6642edae9ee192c58ea2a07936b15))
+* Update advanced usage tutorial ([`ab8cc4a`](https://github.com/eager-dev/eagerx_tutorials/commit/ab8cc4adfee53bbe5cd1fe390844bf98f85f55ad))
+* Update eagerx advanced usage ([`3f11531`](https://github.com/eager-dev/eagerx_tutorials/commit/3f115310e8d0592ece75f9c19537a546f555a23e))
+* Add overlay ([`519e35c`](https://github.com/eager-dev/eagerx_tutorials/commit/519e35c715485a61280bebf63cfb3c871d4689f3))
+* Create ffmpegs ([`dfab205`](https://github.com/eager-dev/eagerx_tutorials/commit/dfab2053f0e3ac6379fdef8291ff633aad6f1414))
+* Delete temporary mp4 files in evaluate helper ([`0d61c60`](https://github.com/eager-dev/eagerx_tutorials/commit/0d61c60faab11739ea017be1a9630b574686e5e2))
+* Update advanced usage tutorial ([`1778a0d`](https://github.com/eager-dev/eagerx_tutorials/commit/1778a0d09a6df02b1234947b26bacc7e6764974c))
+* Update eagerx advanced usage ([`db5cc5e`](https://github.com/eager-dev/eagerx_tutorials/commit/db5cc5e581f53b3acb81acdab3cb0fe32fc70f2b))
+* Create helper for evaluation with rendering to mp4 ([`79e1805`](https://github.com/eager-dev/eagerx_tutorials/commit/79e18056ead9e5e21ce63e1582301de7e2be191a))
+* Add overlay ([`8bc8bf8`](https://github.com/eager-dev/eagerx_tutorials/commit/8bc8bf8b452071851091e2ce7b11318da9bce517))
+* Update icra tutorial pendulum ([`2d7c45f`](https://github.com/eager-dev/eagerx_tutorials/commit/2d7c45ff662ff7e0ebd88068ab07197afd1f3e05))
+
 ## v0.1.15 (2022-05-20)
 ### Fix
 * No egl ([`5c0bf56`](https://github.com/eager-dev/eagerx_tutorials/commit/5c0bf567f7fe05b0a21294e5d937db7abdde01e0))
