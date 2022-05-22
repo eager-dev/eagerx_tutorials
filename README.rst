@@ -39,7 +39,6 @@ The following tutorials are currently available:
 - `Tutorial 6: More Informative Rendering <https://colab.research.google.com/github/eager-dev/eagerx_tutorials/blob/master/tutorials/pendulum/6_rendering.ipynb>`_
 - `Tutorial 7: Reset Routines <https://colab.research.google.com/github/eager-dev/eagerx_tutorials/blob/master/tutorials/pendulum/7_reset_routine.ipynb>`_
 
-`A page with the exercises only is available here <https://araffin.github.io/tools-for-robotic-rl-icra2022/notebooks/eagerx_exercises.html>`_.
 `The solutions are available in here <https://github.com/eager-dev/eagerx_tutorials/tree/master/tutorials/pendulum/solutions/>`_.
 
 How to run the tutorials locally? (currently only Python 3.8 and 3.9 supported)
