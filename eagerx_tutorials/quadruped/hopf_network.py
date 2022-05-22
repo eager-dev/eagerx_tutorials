@@ -135,7 +135,7 @@ class HopfNetwork:
             "JUMP": self.PHI_jump,
         }[gait]
 
-        print(gait)
+        # print(gait)
 
     def reset(self):
         # reset current time
