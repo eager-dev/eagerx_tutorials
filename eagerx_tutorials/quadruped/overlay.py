@@ -57,7 +57,7 @@ class XyPlane(eagerx.Node):
         # Prepare colormap
         self.cmap = get_cmap(colormap)
         interp = np.linspace(0, 1, num=num_eps + 1, dtype="float32")
-        self.colormap = [self.cmap(i, bytes=True) for i in interp]
+        self.colormap = [self.cmap(i, bytes=True) for i in reversed(interp)]
         self.colormap = [(int(i[2]), int(i[1]), int(i[0])) for i in self.colormap]
 
         # Plot points
@@ -88,6 +88,8 @@ class XyPlane(eagerx.Node):
         self._plot_overlay(self.base_img, (0, 0, 0), 3, self.width, self.px_pm, tl_x, tl_y, lr_x, lr_y)
         for idx, xy_list in enumerate(self.last_xy):
             color = self.colormap[self.colors[idx]]
+            # p = (self.num_eps - len(self.last_xy) + idx) / self.num_eps
+            # opaque = tuple([int(255 - p * (255 - x)) for x in color])
             for xy in xy_list:
                 self.plot_px(self.base_img, xy, color)
 
