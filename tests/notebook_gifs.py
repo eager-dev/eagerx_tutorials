@@ -163,6 +163,21 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         model.save("last_policy")
 
+    # todo: TEMPORARY!
+    from eagerx_tutorials.animate import save_frames_as_gif
+    fl_env = Flatten(env)
+    for i in range(5):
+        frames = []
+        obs, done = fl_env.reset(), False
+        while not done:
+            action, _ = model.predict(obs, deterministic=True)
+            obs, reward, done, info = fl_env.step(action)
+            rgb = fl_env.render("rgb_array")
+            frames.append(rgb)
+            if done:
+                save_frames_as_gif(1/rate, frames, filename=f"train_eps_{i}.gif", dpi=72)
+                break
+
     # Evaluate
     from eagerx_tutorials.quadruped.evaluate import EvaluateEnv
     from stable_baselines3.common.evaluation import evaluate_policy
@@ -170,6 +185,22 @@ if __name__ == "__main__":
     engine = eagerx.Engine.make("PybulletEngine", rate=200, gui=False, egl=False, process=eagerx.process.ENVIRONMENT)
     eval_env = EvaluateEnv(env, engine, episode_timeout=40, render="pybullet")
     eval_env.render("human")
+
+    # todo: TEMPORARY
+    from eagerx_tutorials.animate import save_frames_as_gif
+    fl_env = Flatten(eval_env)
+    for i in range(5):
+        frames = []
+        obs, done = fl_env.reset(), False
+        while not done:
+            action, _ = model.predict(obs, deterministic=True)
+            obs, reward, done, info = fl_env.step(action)
+            rgb = fl_env.render("rgb_array")
+            frames.append(rgb)
+            if done:
+                save_frames_as_gif(1/rate, frames, filename=f"eval_eps_{i}.gif", dpi=72)
+                break
+
     path = "last_policy"
     # path = "logs/Quadruped_1/rl_model_6000_steps"
     model = TQC.load(path)
