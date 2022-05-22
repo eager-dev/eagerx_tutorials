@@ -36,9 +36,7 @@ class XyPlane(eagerx.Node):
         spec.config.num_eps = num_eps
         spec.inputs.position.window = 0  # Receive all new position messages since last callback
 
-    def initialize(
-        self, px_pm: int, colormap: str, top_left: List[int], lower_right: List[int], num_eps: int
-    ):
+    def initialize(self, px_pm: int, colormap: str, top_left: List[int], lower_right: List[int], num_eps: int):
         # Calculate width, height, and shape
         self.px_pm = px_pm
         self.thickness = max(int(px_pm * 0.10), 1)
@@ -58,7 +56,7 @@ class XyPlane(eagerx.Node):
 
         # Prepare colormap
         self.cmap = get_cmap(colormap)
-        interp = np.linspace(0, 1, num=num_eps+1, dtype="float32")
+        interp = np.linspace(0, 1, num=num_eps + 1, dtype="float32")
         self.colormap = [self.cmap(i, bytes=True) for i in interp]
         self.colormap = [(int(i[2]), int(i[1]), int(i[0])) for i in self.colormap]
 
@@ -74,8 +72,8 @@ class XyPlane(eagerx.Node):
             self.xy = []
         if len(self.xy) > 1:
             if len(self.last_xy) == self.num_eps:
-                self.colors = deque([i-1 for i in self.colors], maxlen=self.num_eps)
-                self.colors.append(len(self.last_xy)-1)
+                self.colors = deque([i - 1 for i in self.colors], maxlen=self.num_eps)
+                self.colors.append(len(self.last_xy) - 1)
             else:
                 self.colors.append(len(self.last_xy))
             self.last_xy.append(self.xy)
@@ -84,7 +82,7 @@ class XyPlane(eagerx.Node):
         self.xy = []  # [m]
 
         # Construct base image with xy-coordinates from previous episodes
-        self.base_img = 255*np.ones((self.height, self.width, 3), dtype="uint8")
+        self.base_img = 255 * np.ones((self.height, self.width, 3), dtype="uint8")
         tl_x, tl_y = self.top_left
         lr_x, lr_y = self.lower_right
         self._plot_overlay(self.base_img, (0, 0, 0), 3, self.width, self.px_pm, tl_x, tl_y, lr_x, lr_y)
@@ -103,21 +101,17 @@ class XyPlane(eagerx.Node):
         text_y = int(text_size[1])
         img = cv2.putText(img, text, (text_x, text_y), font, 0.75, thickness=2, color=(0, 0, 0))
 
-        center = (int(-tl_y*px_pm), int(-tl_x*px_pm))
+        center = (int(-tl_y * px_pm), int(-tl_x * px_pm))
 
         # x-axis
-        x = center[0] + int(lr_y * px_pm*0.75)
-        cv2.arrowedLine(
-            img, center, (x, center[1]), color, thickness, tipLength=0.1
-        )
-        text_x = (x+text_size[1], center[1] + text_size[1]//2)
+        x = center[0] + int(lr_y * px_pm * 0.75)
+        cv2.arrowedLine(img, center, (x, center[1]), color, thickness, tipLength=0.1)
+        text_x = (x + text_size[1], center[1] + text_size[1] // 2)
         cv2.putText(img, "x", text_x, font, 0.75, thickness=2, color=(0, 0, 0))
         # y-axis
-        y = center[1] + int(lr_x * px_pm*0.75)
-        cv2.arrowedLine(
-            img, center, (center[0], y), color, thickness, tipLength=0.1
-        )
-        text_y = (center[0]-text_size[1]//2, y + text_size[1])
+        y = center[1] + int(lr_x * px_pm * 0.75)
+        cv2.arrowedLine(img, center, (center[0], y), color, thickness, tipLength=0.1)
+        text_y = (center[0] - text_size[1] // 2, y + text_size[1])
         cv2.putText(img, "y", text_y, font, 0.75, thickness=2, color=(0, 0, 0))
 
     @staticmethod

@@ -57,4 +57,4 @@ class EvaluateEnv(eagerx.BaseEnv):
         # Determine done flag
         # Set info about episode truncation
         info = {"TimeLimit.truncated": done}
-        return obs, 0., done, info
+        return obs, 0.0, done, info

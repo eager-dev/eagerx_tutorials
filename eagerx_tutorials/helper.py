@@ -105,6 +105,7 @@ def show_video(video_file, video_folder="videos/"):
     )
     ipythondisplay.display(ipythondisplay.HTML(data="<br>".join(html)))
 
+
 def evaluate(model, env, n_eval_episodes=3, episode_length=100, video_rate=None, video_prefix=""):
     video_folder = "videos/"
 
@@ -130,7 +131,7 @@ def evaluate(model, env, n_eval_episodes=3, episode_length=100, video_rate=None,
             print(f"Start video writer")
             height, width, _ = img_array[-1].shape
             size = (width, height)
-            fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+            fourcc = cv2.VideoWriter_fourcc(*"mp4v")
             out = cv2.VideoWriter(f"{video_folder}/temp.mp4", fourcc, video_rate, size)
 
             for img in img_array:
@@ -138,11 +139,13 @@ def evaluate(model, env, n_eval_episodes=3, episode_length=100, video_rate=None,
                 out.write(img)
             out.release()
 
-            os.system(f"ffmpeg -y -i {video_folder}/temp.mp4 -vcodec libx264 -f mp4 {path}.mp4 >> /tmp/ffmpeg_{video_prefix}_{i}.txt 2>&1")
+            os.system(
+                f"ffmpeg -y -i {video_folder}/temp.mp4 -vcodec libx264 -f mp4 {path}.mp4 >> /tmp/ffmpeg_{video_prefix}_{i}.txt 2>&1"
+            )
 
             print(f"Showing episode {i} with episodic reward: {episodic_reward}")
             show_video(video_file=video_file, video_folder=video_folder)
-            
+
             os.remove(f"{video_folder}/temp.mp4")
 
         episodic_rewards.append(episodic_reward)

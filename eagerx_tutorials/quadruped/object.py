@@ -245,7 +245,9 @@ class Quadruped(Object):
         spec.PybulletEngine.self_collision = spec.config.self_collision
 
         # Create engine_states (no agnostic states defined in this case)
-        spec.PybulletEngine.states.joint_position = EngineState.make("JointState", joints=spec.config.joint_names, mode="position")
+        spec.PybulletEngine.states.joint_position = EngineState.make(
+            "JointState", joints=spec.config.joint_names, mode="position"
+        )
 
         spec.PybulletEngine.states.position = EngineState.make("LinkState", mode="position")
         spec.PybulletEngine.states.orientation = EngineState.make("LinkState", mode="orientation")
@@ -307,7 +309,12 @@ class Quadruped(Object):
             mode="velocity",
         )
         image = EngineNode.make(
-            "CameraSensor", "image", rate=spec.sensors.image.rate, process=eagerx.process.ENGINE, mode="rgb", render_shape=spec.config.render_shape
+            "CameraSensor",
+            "image",
+            rate=spec.sensors.image.rate,
+            process=eagerx.process.ENGINE,
+            mode="rgb",
+            render_shape=spec.config.render_shape,
         )
         image.config.fov = 80.0  # todo: tune
 

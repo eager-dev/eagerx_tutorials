@@ -20,7 +20,11 @@ class Pendulum(Object):
     @register.sensors(theta=Float32, dtheta=Float32, image=Image, u_applied=Float32MultiArray)
     @register.actuators(u=Float32MultiArray)
     @register.engine_states(
-        model_state=Float32MultiArray, model_parameters=Float32MultiArray, mass=Float32, length=Float32, max_speed=Float32,
+        model_state=Float32MultiArray,
+        model_parameters=Float32MultiArray,
+        mass=Float32,
+        length=Float32,
+        max_speed=Float32,
     )
     @register.config(render_shape=[480, 480], render_fn="pendulum_render_fn")
     def agnostic(spec: ObjectSpec, rate: float):
