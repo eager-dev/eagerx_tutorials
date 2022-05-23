@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.18 (2022-05-22)
+### Fix
+* Update quadruped notebook ([`526b8cc`](https://github.com/eager-dev/eagerx_tutorials/commit/526b8ccecd3f061710e57a608a6287eeab56bbc6))
+
 ## v0.1.17 (2022-05-22)
 ### Fix
 * Update helper ([`2d436af`](https://github.com/eager-dev/eagerx_tutorials/commit/2d436af65e8667c5a7ba8db6d573173c93764a58))

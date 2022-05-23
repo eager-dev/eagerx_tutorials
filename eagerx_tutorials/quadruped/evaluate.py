@@ -3,20 +3,25 @@ from typing import Dict, Tuple
 import eagerx
 import pybullet
 import gym
+import copy
 
 
 class EvaluateEnv(eagerx.BaseEnv):
     def __init__(self, env, engine, episode_timeout, render="pybullet"):
-        name = f"{env.name}_eval"
         self.rate = env.rate
-        graph = env.graph
+        graph = copy.deepcopy(env.graph)
         self._wrapped = env
         if render == "pybullet":
+            name = f"{env.name}_pybullet_eval"
             robot = graph.get_spec("quadruped")
             graph.set(5, robot.sensors.image, parameter="rate")
             graph.add_component(robot.sensors.image)
             graph.render(robot.sensors.image, rate=5)
             graph.remove("xy_plane")
+        else:
+            name = f"{env.name}_xyplane_eval"
+            xy_plane = graph.get_spec("xy_plane")
+            graph.render(xy_plane.outputs.image, rate=5)
 
         super(EvaluateEnv, self).__init__(name, self.rate, graph, engine, force_start=True)
         self.timeout_steps = int(episode_timeout * self.rate)
