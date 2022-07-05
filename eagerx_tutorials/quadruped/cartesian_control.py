@@ -1,52 +1,51 @@
 from typing import Optional
-
-import eagerx
+from gym.spaces import Box
 import numpy as np
+import eagerx
 from eagerx import register
 from eagerx.utils.utils import Msg
-from std_msgs.msg import Float32MultiArray
 
 import eagerx_tutorials.quadruped.go1.configs_go1 as go1_config
 
 
 class CartesiandPDController(eagerx.Node):
-    @staticmethod
-    @register.spec("CartesiandPDController", eagerx.Node)
-    def spec(
-        spec: eagerx.specs.NodeSpec,
+    @classmethod
+    def make(
+        cls,
         name: str,
         rate: float,
         process: Optional[int] = eagerx.process.ENVIRONMENT,
-    ):
-        """A spec to create a CartesiandPDController node that controls a set of joints.
+    ) -> eagerx.specs.NodeSpec:
+        """Make a spec to create a CartesiandPDController node that controls a set of joints.
 
-        :param spec: Holds the desired configuration in a Spec object.
         :param name: User specified node name.
         :param rate: Rate (Hz) at which the callback is called.
         :param process: Process in which this node is launched. See :class:`~eagerx.core.constants.process` for all options.
         :return: NodeSpec
         """
+        spec = cls.get_specification()
+
         # Modify default node params
         spec.config.update(name=name, rate=rate, process=process)
         spec.config.update(inputs=["cartesian_pos"], outputs=["joint_pos"], joints=list(go1_config.JOINT_NAMES))
+        return spec
 
-        # TODO: fix correct limits
-        spec.inputs.cartesian_pos.space_converter = eagerx.SpaceConverter.make(
-            "Space_Float32MultiArray",
-            dtype="float32",
-            low=go1_config.NOMINAL_FOOT_POS_LEG_FRAME.tolist(),
-            high=go1_config.NOMINAL_FOOT_POS_LEG_FRAME.tolist(),
-        )
-
-    def initialize(self, joints):
-        self.joints = joints
+    def initialize(self, spec):
+        self.joints = spec.config.joints
 
     @register.states()
     def reset(self):
         pass
 
-    @register.inputs(cartesian_pos=Float32MultiArray)
-    @register.outputs(joint_pos=Float32MultiArray)
+    # TODO: fix correct limits
+    @register.inputs(cartesian_pos=Box(
+            low=np.array(go1_config.NOMINAL_FOOT_POS_LEG_FRAME, dtype="float32"),
+            high=np.array(go1_config.NOMINAL_FOOT_POS_LEG_FRAME, dtype="float32"),
+        ))
+    @register.outputs(joint_pos=Box(
+            low=go1_config.RL_LOWER_ANGLE_JOINT.astype("float32"),
+            high=go1_config.RL_UPPER_ANGLE_JOINT.astype("float32"),
+        ))
     def callback(self, t_n: float, cartesian_pos: Msg):
         # desired [x, y, z] for each joint
         action = np.array(cartesian_pos.msgs[-1].data)
@@ -58,7 +57,7 @@ class CartesiandPDController(eagerx.Node):
             desired_joint_angles[3 * leg_idx : 3 * (leg_idx + 1)] = leg_q
 
         # Send desired joint positions.
-        return dict(joint_pos=Float32MultiArray(data=desired_joint_angles))
+        return dict(joint_pos=desired_joint_angles.astype("float32"))
 
     @staticmethod
     def compute_inverse_kinematics(leg_id: int, xyz_coord: np.ndarray):

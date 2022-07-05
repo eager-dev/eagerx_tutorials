@@ -7,7 +7,7 @@ import copy
 
 
 class EvaluateEnv(eagerx.BaseEnv):
-    def __init__(self, env, engine, episode_timeout, render="pybullet"):
+    def __init__(self, env, engine, backend, episode_timeout, render="pybullet"):
         self.rate = env.rate
         graph = copy.deepcopy(env.graph)
         self._wrapped = env
@@ -23,7 +23,7 @@ class EvaluateEnv(eagerx.BaseEnv):
             xy_plane = graph.get_spec("xy_plane")
             graph.render(xy_plane.outputs.image, rate=5)
 
-        super(EvaluateEnv, self).__init__(name, self.rate, graph, engine, force_start=True)
+        super(EvaluateEnv, self).__init__(name, self.rate, graph, engine, backend, force_start=True)
         self.timeout_steps = int(episode_timeout * self.rate)
         self.steps = None
 
@@ -51,6 +51,8 @@ class EvaluateEnv(eagerx.BaseEnv):
 
         # Perform reset
         obs = self._reset(states)
+        if "xs_zs" in obs and self.steps == 0:
+            obs["xs_zs"][0][:] = [-0.01354526, -0.26941818, 0.0552178, -0.25434446]
         return obs
 
     def step(self, action: Dict) -> Tuple[Dict, float, bool, Dict]:

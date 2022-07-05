@@ -16,19 +16,12 @@ from copy import deepcopy
 
 import eagerx
 import eagerx_pybullet  # noqa: F401
-import numpy as np
 import pybullet
 import yaml
 from eagerx.wrappers import Flatten
 from sb3_contrib import TQC
 from stable_baselines3.common.callbacks import CheckpointCallback
 from stable_baselines3.common.evaluation import evaluate_policy
-
-import eagerx_tutorials.quadruped.cartesian_control  # noqa: F401
-import eagerx_tutorials.quadruped.cpg_gait  # noqa: F401
-
-# Registers PybulletEngine
-import eagerx_tutorials.quadruped.object  # noqa: F401
 
 # from stable_baselines3.common.env_checker import check_env
 
@@ -132,14 +125,15 @@ if __name__ == "__main__":
     desired_velocity = args.desired_vel
     print(f"Desired angular velocity: {desired_velocity} deg/s")
 
-    roscore = eagerx.initialize("eagerx_core", anonymous=True, log_level=eagerx.log.INFO)
+    # Set log level
+    eagerx.set_log_level(eagerx.INFO)
 
     # Initialize empty graph
     graph = eagerx.Graph.create()
 
     # Create robot
-    robot = eagerx.Object.make(
-        "Quadruped",
+    from eagerx_tutorials.quadruped.object import Quadruped
+    robot = Quadruped.make(
         "quadruped",
         actuators=["joint_control"],
         sensors=sensors if 'position' in sensors else sensors + ["position"],
@@ -159,17 +153,18 @@ if __name__ == "__main__":
     graph.add(robot)
 
     # Create cartesian control node
-    cartesian_control = eagerx.Node.make("CartesiandPDController", "cartesian_control", rate=cartesian_rate, process=eagerx.process.ENVIRONMENT)
+    from eagerx_tutorials.quadruped.cartesian_control import CartesiandPDController
+    cartesian_control = CartesiandPDController.make("cartesian_control", rate=cartesian_rate, process=eagerx.process.ENVIRONMENT)
     graph.add(cartesian_control)
 
     # Create cpg node
-    cpg = eagerx.Node.make(
-        "CpgGait",
+    from eagerx_tutorials.quadruped.cpg_gait import CpgGait
+    cpg = CpgGait.make(
         "cpg",
         rate=cpg_rate,
         gait="TROT",
-        omega_swing=16 * np.pi,
-        omega_stance=4 * np.pi,
+        omega_swing=16 * 3.14,
+        omega_stance=4 * 3.14,
         process=eagerx.process.ENVIRONMENT,
     )
     graph.add(cpg)
@@ -197,7 +192,6 @@ if __name__ == "__main__":
         observation="xs_zs",
         source=cpg.outputs.xs_zs,
         skip=True,
-        initial_obs=[-0.01354526, -0.26941818, 0.0552178, -0.25434446],
     )
 
     # Connect layover
@@ -206,8 +200,8 @@ if __name__ == "__main__":
         graph.add_component(robot.sensors.image)
         graph.render(robot.sensors.image, rate=overlay_rate)
     else:
-        import eagerx_tutorials.quadruped.overlay # noqa Registers the overlay node
-        xy_plane = eagerx.Node.make("XyPlane", "xy_plane", rate=overlay_rate, top_left=[-3, -3], lower_right=[6, 6])
+        from eagerx_tutorials.quadruped.overlay import XyPlane
+        xy_plane = XyPlane.make("xy_plane", rate=overlay_rate, top_left=[-3, -3], lower_right=[6, 6])
         graph.add(xy_plane)
         graph.connect(source=robot.sensors.position, target=xy_plane.inputs.position)
         graph.render(xy_plane.outputs.image, rate=overlay_rate)
@@ -218,8 +212,8 @@ if __name__ == "__main__":
     show_gui = args.render or args.load_checkpoint is not None
 
     # Define engine
-    engine = eagerx.Engine.make(
-        "PybulletEngine",
+    from eagerx_pybullet.engine import PybulletEngine
+    engine = PybulletEngine.make(
         rate=sim_rate,
         gui=show_gui,
         egl=True,
@@ -228,13 +222,20 @@ if __name__ == "__main__":
         process=eagerx.process.ENVIRONMENT,
     )
 
+    # Make backend
+    # from eagerx.backends.ros1 import Ros1
+    # backend = Ros1.make()
+    from eagerx.backends.single_process import SingleProcess
+    backend = SingleProcess.make()
+
+    # Define environment
     import numpy as np
     from typing import Dict, Tuple
     import gym
 
     class QuadrupedEnv(eagerx.BaseEnv):
-        def __init__(self, name, rate, graph, engine, desired_velocity, episode_timeout, force_start=True, debug=False):
-            super(QuadrupedEnv, self).__init__(name, rate, graph, engine, force_start=force_start)
+        def __init__(self, name, rate, graph, engine, backend, desired_velocity, episode_timeout, force_start=True, debug=False):
+            super(QuadrupedEnv, self).__init__(name, rate, graph, engine, backend, force_start=force_start)
             self.steps = None
             self.debug = debug
             self.timeout_steps = int(episode_timeout * rate)
@@ -266,6 +267,10 @@ if __name__ == "__main__":
 
             # Perform reset
             obs = self._reset(states)
+
+            # Add first observation (because skip=True && window > 0)
+            if "xs_zs" in obs and self.steps == 0:
+                obs["xs_zs"][0][:] = [-0.01354526, -0.26941818, 0.0552178, -0.25434446]
             return obs
 
         def step(self, action: Dict) -> Tuple[Dict, float, bool, Dict]:
@@ -308,6 +313,7 @@ if __name__ == "__main__":
         rate=env_rate,
         graph=graph,
         engine=engine,
+        backend=backend,
         desired_velocity=desired_velocity,
         episode_timeout=episode_timeout,
         debug=args.debug,
@@ -394,6 +400,4 @@ if __name__ == "__main__":
 
     print("Shutting down")
     env.shutdown()
-    if roscore:
-        roscore.shutdown()
     print("Shutdown")

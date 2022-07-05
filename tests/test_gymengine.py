@@ -1,7 +1,15 @@
 import eagerx
+import pytest
 
+GYM = 0
+ODE = 1
+ROS1 = 0
+SP = 1
 
-def test_gymengine():
+@pytest.mark.timeout(60)
+@pytest.mark.parametrize("eng", [ODE, GYM])
+@pytest.mark.parametrize("bnd", [SP])
+def test_gymengine(eng, bnd):
     # Initialize empty graph
     graph = eagerx.Graph.create()
 
@@ -35,6 +43,8 @@ def test_gymengine():
 
     overlay = Overlay.make("overlay", rate)
     overlay.inputs.u.space = pendulum.actuators.u.space
+    overlay.inputs.base_image.space = pendulum.sensors.image.space
+    overlay.outputs.image.space = pendulum.sensors.image.space
     graph.add(overlay)
 
     # Render image
@@ -44,16 +54,24 @@ def test_gymengine():
     graph.render(source=overlay.outputs.image, rate=rate)
 
     # Make OdeEngine
-    # from eagerx_ode.engine import OdeEngine
-    # engine = OdeEngine.make(rate=rate)
-    from eagerx.engines.openai_gym.engine import GymEngine
-    engine = GymEngine.make(rate=rate, process=eagerx.process.ENVIRONMENT)
+    if eng == ODE:
+        from eagerx_ode.engine import OdeEngine
+        engine = OdeEngine.make(rate=rate)
+    elif eng == GYM:
+        from eagerx.engines.openai_gym.engine import GymEngine
+        engine = GymEngine.make(rate=rate, process=eagerx.process.ENVIRONMENT)
+    else:
+        raise NotImplementedError("Select valid engine.")
 
     # Make backend
-    # from eagerx.backends.ros1 import Ros1
-    # backend = Ros1.make()
-    from eagerx.backends.single_process import SingleProcess
-    backend = SingleProcess.make()
+    if bnd == ROS1:
+        from eagerx.backends.ros1 import Ros1
+        backend = Ros1.make()
+    elif bnd == SP:
+        from eagerx.backends.single_process import SingleProcess
+        backend = SingleProcess.make()
+    else:
+        raise NotImplementedError("Select valid backend.")
 
     # Open GUI
     graph.gui()
@@ -127,10 +145,12 @@ def test_gymengine():
     model = sb.SAC("MlpPolicy", env, verbose=1, device="auto")
 
     # Train for 1 minute (sim time)
-    model.learn(total_timesteps=int(10000 * rate))
+    model.learn(total_timesteps=int(10 * rate))
 
     env.shutdown()
 
 
 if __name__ == "__main__":
-    test_gymengine()
+    for e in [GYM, ODE]:
+        for b in [ROS1, SP]:
+            test_gymengine(eng=e, bnd=b)

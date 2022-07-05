@@ -1,21 +1,19 @@
 import eagerx
 from eagerx import register
 from eagerx.utils.utils import Msg
-from std_msgs.msg import Float32MultiArray
-from sensor_msgs.msg import Image
 from typing import List
 import cv2
 from matplotlib.cm import get_cmap
+from gym.spaces import Box
 import numpy as np
 from collections import deque
 from functools import partial
 
 
 class XyPlane(eagerx.Node):
-    @staticmethod
-    @register.spec("XyPlane", eagerx.Node)
-    def spec(
-        spec,
+    @classmethod
+    def make(
+        cls,
         name: str,
         rate: float,
         process: int = eagerx.process.ENVIRONMENT,
@@ -25,8 +23,10 @@ class XyPlane(eagerx.Node):
         lower_right: List[int] = None,
         num_eps: int = 20,
         colormap: str = "plasma",
-    ):
+    ) -> eagerx.specs.NodeSpec:
         """XyPlane spec"""
+        spec = cls.get_specification()
+
         # Adjust default params
         spec.config.update(name=name, rate=rate, process=process, color=color, inputs=["position"], outputs=["image"])
         spec.config.px_pm = px_pm
@@ -36,33 +36,41 @@ class XyPlane(eagerx.Node):
         spec.config.num_eps = num_eps
         spec.inputs.position.window = 0  # Receive all new position messages since last callback
 
-    def initialize(self, px_pm: int, colormap: str, top_left: List[int], lower_right: List[int], num_eps: int):
+        # Calculate shape
+        tl_x, tl_y = spec.config.top_left
+        lr_x, lr_y = spec.config.lower_right
+        width = int((lr_y - tl_y) * spec.config.px_pm)  # px
+        height = int((lr_x - tl_x) * spec.config.px_pm)
+        spec.outputs.image.space = Box(low=0, high=255, shape=(height, width, 3), dtype="uint8")
+        return spec
+
+    def initialize(self, spec):
         # Calculate width, height, and shape
-        self.px_pm = px_pm
-        self.thickness = max(int(px_pm * 0.10), 1)
-        self.top_left = top_left
-        self.lower_right = lower_right
-        tl_x, tl_y = top_left
-        lr_x, lr_y = lower_right
-        self.width = int((lr_y - tl_y) * px_pm)  # px
-        self.height = int((lr_x - tl_x) * px_pm)
+        self.px_pm = spec.config.px_pm
+        self.thickness = max(int(spec.config.px_pm * 0.10), 1)
+        self.top_left = spec.config.top_left
+        self.lower_right = spec.config.lower_right
+        tl_x, tl_y = spec.config.top_left
+        lr_x, lr_y = spec.config.lower_right
+        self.width = int((lr_y - tl_y) * spec.config.px_pm)  # px
+        self.height = int((lr_x - tl_x) * spec.config.px_pm)
         self.shape = (self.height, self.width)
 
         # Prepare history
-        self.num_eps = num_eps
-        self.last_xy = deque(maxlen=num_eps)
-        self.colors = deque(maxlen=num_eps)
+        self.num_eps = spec.config.num_eps
+        self.last_xy = deque(maxlen=spec.config.num_eps)
+        self.colors = deque(maxlen=spec.config.num_eps)
         self.xy = None  # [m]
 
         # Prepare colormap
-        self.cmap = get_cmap(colormap)
-        interp = np.linspace(0, 1, num=num_eps + 1, dtype="float32")
+        self.cmap = get_cmap(spec.config.colormap)
+        interp = np.linspace(0, 1, num=spec.config.num_eps + 1, dtype="float32")
         self.colormap = [self.cmap(i, bytes=True) for i in reversed(interp)]
         self.colormap = [(int(i[2]), int(i[1]), int(i[0])) for i in self.colormap]
 
         # Plot points
         self.plot_px = partial(
-            self._plot_px, thickness=self.thickness, height=self.height, width=self.width, px_pm=px_pm, tl_x=tl_x, tl_y=tl_y
+            self._plot_px, thickness=self.thickness, height=self.height, width=self.width, px_pm=spec.config.px_pm, tl_x=tl_x, tl_y=tl_y
         )
 
     @register.states()
@@ -128,8 +136,11 @@ class XyPlane(eagerx.Node):
         # Plot pixel
         cv2.circle(img, (px_y, px_x), thickness, color, -1)
 
-    @register.inputs(position=Float32MultiArray)
-    @register.outputs(image=Image)
+    @register.inputs(position=Box(
+        low=np.array([-10, -10, 0], dtype="float32"),
+        high=np.array([10, 10, 2], dtype="float32"),
+    ))
+    @register.outputs(image=None)
     def callback(self, t_n: float, position: Msg):
         # Select newest color
         idx = len(self.last_xy)
@@ -142,6 +153,4 @@ class XyPlane(eagerx.Node):
             self.xy.append(xy)
 
         # Prepare image for transmission.
-        data = self.base_img.tobytes("C")
-        msg = Image(data=data, height=self.height, width=self.width, encoding="bgr8", step=3 * self.width)
-        return dict(image=msg)
+        return dict(image=self.base_img)
