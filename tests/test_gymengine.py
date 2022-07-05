@@ -1,13 +1,7 @@
 import eagerx
-import eagerx_tutorials.pendulum  # Registers Pendulum
-import eagerx_ode  # Registers OdeEngine
-import eagerx.engines.openai_gym  # Registers GymEngine
 
 
 def test_gymengine():
-    # Initialize eagerx (starts roscore if not already started.)
-    eagerx.initialize("eagerx_core")
-
     # Initialize empty graph
     graph = eagerx.Graph.create()
 
@@ -15,17 +9,16 @@ def test_gymengine():
     rate = 30.0
 
     # Object
-    pendulum = eagerx.Object.make(
-        "Pendulum", "pendulum", actuators=["u"], sensors=["theta", "dtheta", "image"], states=["model_state"]
-    )
+    from eagerx_tutorials.pendulum.objects import Pendulum
+    pendulum = Pendulum.make("pendulum", actuators=["u"], sensors=["theta", "dtheta", "image"], states=["model_state"])
     graph.add(pendulum)
 
     # Create reset node
-    import eagerx_tutorials.pendulum.reset  # noqa: Registers reset node
+    from eagerx_tutorials.pendulum.reset import ResetAngle
 
-    u_min = pendulum.actuators.u.space_converter.low[0]
-    u_max = pendulum.actuators.u.space_converter.high[0]
-    reset = eagerx.ResetNode.make("ResetAngle", "angle_reset", rate=rate, gains=[2.0, 0.2, 1.0], u_range=[u_min, u_max])
+    u_min = pendulum.actuators.u.space.low
+    u_max = pendulum.actuators.u.space.high
+    reset = ResetAngle.make("angle_reset", rate=rate, gains=[2.0, 0.2, 1.0], u_range=[u_min, u_max])
     graph.add(reset)
 
     # Connect reset node
@@ -38,10 +31,10 @@ def test_gymengine():
     graph.connect(source=pendulum.sensors.dtheta, observation="angular_velocity", window=1)
 
     # Create overlay node
-    import eagerx_tutorials.pendulum.overlay  # noqa:
+    from eagerx_tutorials.pendulum.overlay import Overlay
 
-    overlay = eagerx.Node.make("Overlay", "overlay", rate)
-    overlay.inputs.u.space_converter = pendulum.actuators.u.space_converter
+    overlay = Overlay.make("overlay", rate)
+    overlay.inputs.u.space = pendulum.actuators.u.space
     graph.add(overlay)
 
     # Render image
@@ -51,56 +44,77 @@ def test_gymengine():
     graph.render(source=overlay.outputs.image, rate=rate)
 
     # Make OdeEngine
-    engine = eagerx.Engine.make("OdeEngine", rate=rate)
-    # engine = eagerx.Engine.make("GymEngine", rate=rate, process=eagerx.process.ENVIRONMENT)
+    # from eagerx_ode.engine import OdeEngine
+    # engine = OdeEngine.make(rate=rate)
+    from eagerx.engines.openai_gym.engine import GymEngine
+    engine = GymEngine.make(rate=rate, process=eagerx.process.ENVIRONMENT)
+
+    # Make backend
+    # from eagerx.backends.ros1 import Ros1
+    # backend = Ros1.make()
+    from eagerx.backends.single_process import SingleProcess
+    backend = SingleProcess.make()
 
     # Open GUI
     graph.gui()
 
-    import numpy as np
-    from typing import Dict
-    import stable_baselines3 as sb
-    from eagerx.wrappers import Flatten
+    # Define environment
+    class PendulumEnv(eagerx.BaseEnv):
+        def __init__(self, name, rate, graph, engine, backend, force_start):
+            self.steps = 0
+            super().__init__(name, rate, graph, engine, backend=backend, force_start=force_start)
 
-    # Define step function
-    def step_fn(prev_obs: Dict[str, np.ndarray], obs: Dict[str, np.ndarray], action: Dict[str, np.ndarray], steps: int):
-        # Get angle and angular velocity
-        # Take first element because of window size (covered in other tutorial)
+        def step(self, action):
+            obs = self._step(action)
+            # Get angle and angular velocity
+            # Take first element because of window size (covered in other tutorial)
 
-        # START ASSIGNMENT 1.3
-        th = obs["angle"][0]
-        # END ASSIGNMENT 1.3
+            # START ASSIGNMENT 1.3
+            th = obs["angle"][0]
+            # END ASSIGNMENT 1.3
 
-        thdot = obs["angular_velocity"][0]
+            thdot = obs["angular_velocity"][0]
 
-        # Convert from numpy array to float
-        u = float(action["voltage"])
+            # Convert from numpy array to float
+            u = float(action["voltage"])
 
-        # Calculate cost
-        # Penalize angle error, angular velocity and input voltage
-        cost = th**2 + 0.1 * thdot**2 + 0.001 * u**2
+            # Calculate cost
+            # Penalize angle error, angular velocity and input voltage
+            cost = th ** 2 + 0.1 * thdot ** 2 + 0.001 * u ** 2
 
-        # Determine when is the episode over
-        # currently just a timeout after 100 steps
-        done = steps > 100
+            # Determine when is the episode over
+            # currently just a timeout after 100 steps
+            self.steps += 1
+            done = self.steps > 100
 
-        # Set info, tell the algorithm the termination was due to a timeout
-        # (the episode was truncated)
-        info = {"TimeLimit.truncated": steps > 100}
+            # Set info, tell the algorithm the termination was due to a timeout
+            # (the episode was truncated)
+            info = {"TimeLimit.truncated": self.steps > 100}
 
-        return obs, -cost, done, info
+            return obs, -cost, done, info
 
-    def reset_fn(environment):
-        states = environment.state_space.sample()
-        offset = np.random.rand() - 0.5
-        theta = np.pi - offset if offset > 0 else -np.pi - offset
-        states["pendulum/model_state"] = np.array([theta, 0], dtype="float32")
-        return states
+        def reset(self):
+            # Reset steps counter
+            self.steps = 0
+
+            # Sample states
+            states = self.state_space.sample()
+            offset = np.random.rand() - 0.5
+            theta = np.pi - offset if offset > 0 else -np.pi - offset
+            states["pendulum/model_state"] = np.array([theta, 0], dtype="float32")
+
+            # Perform reset
+            obs = self._reset(states)
+            return obs
 
     # Initialize Environment
-    import eagerx_tutorials.pendulum.gym_implementation
+    import eagerx_tutorials.pendulum.gym_implementation  # noqa: registers gym implementation
 
-    env = eagerx.EagerxEnv(name="PendulumEnv", rate=rate, graph=graph, engine=engine, step_fn=step_fn, reset_fn=reset_fn)
+    env = PendulumEnv("PendulumEnv", rate, graph, engine, backend, force_start=True)
+
+    import numpy as np
+    import stable_baselines3 as sb
+    from eagerx.wrappers import Flatten
 
     # Toggle render
     env.render("human")
@@ -110,10 +124,10 @@ def test_gymengine():
     env = Flatten(env)
 
     # Initialize learner
-    model = sb.SAC("MlpPolicy", env, verbose=1, device="cpu")
+    model = sb.SAC("MlpPolicy", env, verbose=1, device="auto")
 
     # Train for 1 minute (sim time)
-    model.learn(total_timesteps=int(10 * rate))
+    model.learn(total_timesteps=int(10000 * rate))
 
     env.shutdown()
 

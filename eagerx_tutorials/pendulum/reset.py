@@ -1,8 +1,8 @@
 from typing import Optional, List
+import numpy as np
+from gym.spaces import Box
 import eagerx
 from eagerx.utils.utils import Msg
-from std_msgs.msg import Float32MultiArray, Float32, Bool
-import numpy as np
 
 
 def wrap_angle(angle):
@@ -10,10 +10,9 @@ def wrap_angle(angle):
 
 
 class ResetAngle(eagerx.ResetNode):
-    @staticmethod
-    @eagerx.register.spec("ResetAngle", eagerx.ResetNode)
-    def spec(
-        spec,
+    @classmethod
+    def make(
+        cls,
         name: str,
         rate: float,
         threshold: float = 0.1,
@@ -24,7 +23,6 @@ class ResetAngle(eagerx.ResetNode):
         """This AngleReset node resets the pendulum to a desired angle with zero angular velocity. NOte that this controller
         only works properly when resetting the pendulum near the downward facing equilibrium.
 
-        :param spec: Not provided by the user. Contains the configuration of this node to initialize it at run-time.
         :param name: Node name
         :param rate: Rate at which callback is called.
         :param threshold: Absolute difference between the desired and goal state, before considering the reset complete.
@@ -33,6 +31,8 @@ class ResetAngle(eagerx.ResetNode):
         :param u_range: Min and max action.
         :return:
         """
+        spec = cls.get_specification()
+
         # Modify default node params
         spec.config.update(name=name, rate=rate, process=eagerx.process.ENVIRONMENT, color="grey")
         spec.config.update(inputs=["theta", "dtheta"], targets=["goal"], outputs=["u"])
@@ -40,17 +40,20 @@ class ResetAngle(eagerx.ResetNode):
         spec.config.gains = gains if isinstance(gains, list) else [1.0, 0.5, 0.0]
 
         # Add space_converter
-        c = eagerx.SpaceConverter.make("Space_Float32MultiArray", [u_range[0]], [u_range[1]], dtype="float32")
-        spec.outputs.u.space_converter = c
+        spec.outputs.u.space = Box(
+            low=np.array([u_range[0]], dtype="float32"), high=np.array([u_range[1]], dtype="float32"), dtype="float32"
+        )
+        return spec
 
-    def initialize(self, threshold: float, timeout: float, gains: List[float], u_range: List[float]):
-        self.threshold = threshold
-        self.timeout = timeout
-        self.u_min, self.u_max = u_range
+    def initialize(self, spec):
+        self.threshold = spec.config.threshold
+        self.timeout = spec.config.timeout
+        self.u_min, self.u_max = spec.config.u_range
 
         # Creat a simple PID controller
         from eagerx_tutorials.pendulum.pid import PID
 
+        gains = spec.config.gains
         self.controller = PID(u0=0.0, kp=gains[0], kd=gains[1], ki=gains[2], dt=1 / self.rate)
 
     @eagerx.register.states()
@@ -59,17 +62,20 @@ class ResetAngle(eagerx.ResetNode):
         self.controller.reset()
         self.ts_start_routine = None
 
-    @eagerx.register.inputs(theta=Float32, dtheta=Float32)
-    @eagerx.register.targets(goal=Float32MultiArray)
-    @eagerx.register.outputs(u=Float32MultiArray)
+    @eagerx.register.inputs(
+        theta=Box(low=-999.0, high=999.0, shape=(), dtype="float32"),
+        dtheta=Box(low=-999.0, high=999.0, shape=(), dtype="float32"),
+    )
+    @eagerx.register.targets(goal=Box(low=np.array([-3.14, -9], dtype="float32"), high=np.array([3.14, 9], dtype="float32")))
+    @eagerx.register.outputs(u=Box(low=np.array([-2], dtype="float32"), high=np.array([2], dtype="float32")))
     def callback(self, t_n: float, goal: Msg, theta: Msg = None, dtheta: Msg = None, x: Msg = None):
         if self.ts_start_routine is None:
             self.ts_start_routine = t_n
 
         # Convert messages to floats and numpy array
-        theta = theta.msgs[-1].data  # Take the last received message
-        dtheta = dtheta.msgs[-1].data  # Take the last received message
-        goal = np.array(goal.msgs[-1].data, dtype="float32")  # Take the last received message
+        theta = theta.msgs[-1]  # Take the last received message
+        dtheta = dtheta.msgs[-1]  # Take the last received message
+        goal = np.array(goal.msgs[-1], dtype="float32")  # Take the last received message
 
         # Define downward angle as theta=0 (resolve downward discontinuity)
         theta += np.pi
@@ -90,11 +96,11 @@ class ResetAngle(eagerx.ResetNode):
         done = np.isclose(np.array([theta, dtheta]), goal, atol=self.threshold).all()
 
         # If the reset routine takes too long, we timeout the routine and simply assume that we are done.
-        done = done or (t_n - self.ts_start_routine) > self.timeout
+        done = done.item() or (t_n - self.ts_start_routine) > self.timeout
 
         # Prepare output message for transmission.
         # This must contain a message for every registered & selected output and target.
         # For targets, this message decides whether the goal state has been reached (or we, for example, timeout the reset).
         # The name for this target message is the registered target name + "/done".
-        output_msgs = {"u": Float32MultiArray(data=[u]), "goal/done": Bool(data=done)}
+        output_msgs = {"u": np.array([u], dtype="float32"), "goal/done": done}
         return output_msgs
