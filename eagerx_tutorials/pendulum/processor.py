@@ -1,18 +1,18 @@
-# EAGERX IMPORTS
 import eagerx
 import numpy as np
+from eagerx.core.specs import ProcessorSpec
 
 
 class DecomposedAngle(eagerx.Processor):
     DTYPE = "float32"
 
     @classmethod
-    def make(cls, convert_to: str = "theta_dtheta"):
+    def make(cls, convert_to: str = "theta_dtheta") -> ProcessorSpec:
         spec = cls.get_specification()
         spec.config.convert_to = convert_to
         return spec
 
-    def initialize(self, spec):
+    def initialize(self, spec: ProcessorSpec):
         self.convert_to = spec.config.convert_to
 
     def convert(self, msg: np.ndarray) -> np.ndarray:
@@ -32,11 +32,11 @@ class DecomposedAngle(eagerx.Processor):
 class Negate(eagerx.Processor):
     DTYPE = "float32"
 
-    @staticmethod
-    def make(cls):
+    @classmethod
+    def make(cls) -> ProcessorSpec:
         return cls.get_specification()
 
-    def initialize(self, spec):
+    def initialize(self, spec: ProcessorSpec):
         pass
 
     def convert(self, msg: np.ndarray) -> np.ndarray:
@@ -47,14 +47,14 @@ class VoltageToMotorTorque(eagerx.Processor):
     DTYPE = "float32"
 
     @classmethod
-    def make(cls, K: float, R: float):
+    def make(cls, K: float, R: float) -> ProcessorSpec:
         # Initialize spec with default arguments
         spec = cls.get_specification()
         spec.config.K = K
         spec.config.R = R
         return spec
 
-    def initialize(self, spec):
+    def initialize(self, spec: ProcessorSpec):
         self.K = spec.config.K
         self.R = spec.config.R
 

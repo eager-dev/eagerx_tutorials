@@ -10,6 +10,8 @@ SP = 1
 @pytest.mark.parametrize("eng", [ODE, GYM])
 @pytest.mark.parametrize("bnd", [SP])
 def test_gymengine(eng, bnd):
+    eagerx.set_log_level(eagerx.WARN)
+
     # Initialize empty graph
     graph = eagerx.Graph.create()
 
@@ -145,12 +147,12 @@ def test_gymengine(eng, bnd):
     model = sb.SAC("MlpPolicy", env, verbose=1, device="auto")
 
     # Train for 1 minute (sim time)
-    model.learn(total_timesteps=int(10 * rate))
+    model.learn(total_timesteps=int(3 * rate))
 
     env.shutdown()
 
 
 if __name__ == "__main__":
-    for e in [GYM, ODE]:
+    for e in [ODE, GYM]:
         for b in [ROS1, SP]:
             test_gymengine(eng=e, bnd=b)
