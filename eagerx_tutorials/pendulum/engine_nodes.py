@@ -1,8 +1,8 @@
 from typing import Optional
 import numpy as np
-from gym.spaces import Box
 
 # IMPORT EAGERX
+from eagerx.core.space import Space
 from eagerx.core.constants import process
 from eagerx.utils.utils import Msg
 from eagerx.core.entities import EngineNode
@@ -45,8 +45,8 @@ class FloatOutput(EngineNode):
     def reset(self):
         pass
 
-    @register.inputs(observation_array=None)
-    @register.outputs(observation=Box(low=-9999, high=9999, shape=(), dtype="float32"))
+    @register.inputs(observation_array=Space(dtype="float32"))
+    @register.outputs(observation=Space(dtype="float32"))
     def callback(self, t_n: float, observation_array: Optional[Msg] = None):
         data = observation_array.msgs[-1].data
         return dict(observation=np.array(data[self.idx], dtype="float32"))

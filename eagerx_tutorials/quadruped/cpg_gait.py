@@ -1,7 +1,15 @@
-from typing import Dict, List, Optional
-from gym.spaces import Box
-import eagerx
+"""
+CPG in polar coordinates based on:
+Pattern generators with sensory feedback for the control of quadruped
+authors: L. Righetti, A. Ijspeert
+https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=4543306
+Original author: Guillaume Bellegarda
+"""
+
+from typing import Optional
 import numpy as np
+import eagerx
+from eagerx import Node, Space
 from eagerx import register
 from eagerx.utils.utils import Msg
 
@@ -9,7 +17,7 @@ from eagerx_tutorials.quadruped.hopf_network import HopfNetwork
 import eagerx_tutorials.quadruped.go1.configs_go1 as go1_config
 
 
-class CpgGait(eagerx.Node):
+class CpgGait(Node):
     @classmethod
     def make(
         cls,
@@ -25,7 +33,7 @@ class CpgGait(eagerx.Node):
         coupling_strength: float = 1.0,
         robot_height: float = 0.25,
         des_step_len: float = 0.04,
-        process: Optional[int] = eagerx.process.ENVIRONMENT,
+        process: Optional[int] = eagerx.ENVIRONMENT,
     ) -> eagerx.specs.NodeSpec:
         """Make a spec to create a CpgGait node that produces a quadruped gait.
 
@@ -79,22 +87,13 @@ class CpgGait(eagerx.Node):
     def reset(self):
         self.cpg.reset()
 
-
-    @register.inputs(
-        offset=Box(
-            low=np.array([-0.01] * 4, dtype="float32"),
-            high=np.array([0.01] * 4, dtype="float32"),
-        ))
-    # TODO: fix correct limits
+    @register.inputs(offset=Space(low=[-0.01] * 4, high=[0.01] * 4))
     @register.outputs(
-        cartesian_pos=Box(
-            low=np.array(go1_config.NOMINAL_FOOT_POS_LEG_FRAME, dtype="float32"),
-            high=np.array(go1_config.NOMINAL_FOOT_POS_LEG_FRAME, dtype="float32"),
+        cartesian_pos=Space(shape=(len(go1_config.NOMINAL_FOOT_POS_LEG_FRAME),), dtype="float32"),  # TODO: Set correct bounds
+        xs_zs=Space(
+            low=[-0.05656145, -0.26999995, -0.05656852, -0.2699973], high=[0.05636625, -0.21000053, 0.05642071, -0.21001561]
         ),
-        xs_zs=Box(
-            low=np.array([-0.05656145, -0.26999995, -0.05656852, -0.2699973], dtype="float32"),
-            high=np.array([0.05636625, -0.21000053, 0.05642071, -0.21001561], dtype="float32"),
-        ))
+    )
     def callback(self, t_n: float, offset: Msg):
         # update CPG
         while self.cpg.t <= t_n:
@@ -110,5 +109,5 @@ class CpgGait(eagerx.Node):
         offset = offset.msgs[-1].data
         for i in range(self.n_legs):
             xyz_desired = np.array([xs[i], self.side_sign[i] * self.foot_y + offset[i], zs[i]])
-            action[3 * i: 3 * i + 3] = xyz_desired
+            action[3 * i : 3 * i + 3] = xyz_desired
         return dict(cartesian_pos=action, xs_zs=unique_xs_zs)

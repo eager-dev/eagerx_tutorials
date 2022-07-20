@@ -129,7 +129,6 @@ def test_gymengine(eng, bnd):
 
     # Initialize Environment
     import eagerx_tutorials.pendulum.gym_implementation  # noqa: registers gym implementation
-
     env = PendulumEnv("PendulumEnv", rate, graph, engine, backend, force_start=True)
 
     import numpy as np

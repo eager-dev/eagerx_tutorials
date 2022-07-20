@@ -1,10 +1,8 @@
 from typing import List
-from gym.spaces import Box
-import numpy as np
 
 # EAGERx IMPORTS
 from eagerx_ode.engine import OdeEngine
-from eagerx import Object
+from eagerx import Object, Space
 from eagerx.core.specs import ObjectSpec
 from eagerx.core.graph_engine import EngineGraph
 import eagerx.core.register as register
@@ -13,18 +11,18 @@ import eagerx.core.register as register
 class Pendulum(Object):
     @classmethod
     @register.sensors(
-        theta=Box(low=-999.0, high=999.0, shape=(), dtype="float32"),
-        dtheta=Box(low=-999.0, high=999.0, shape=(), dtype="float32"),
-        image=None,
-        u_applied=Box(low=np.array([-3], dtype="float32"), high=np.array([3], dtype="float32")),
+        theta=Space(low=-999.0, high=999.0, shape=(), dtype="float32"),
+        dtheta=Space(low=-999.0, high=999.0, shape=(), dtype="float32"),
+        image=Space(dtype="uint8"),  # shape, low & high determined at run-time
+        u_applied=Space(low=[-2.0], high=[2.0], dtype="float32"),
     )
-    @register.actuators(u=Box(low=np.array([-2], dtype="float32"), high=np.array([2], dtype="float32")))
+    @register.actuators(u=Space(low=[-2], high=[2], dtype="float32"))
     @register.engine_states(
-        model_state=Box(low=np.array([-3.14, -9], dtype="float32"), high=np.array([3.14, 9], dtype="float32")),
-        model_parameters=None,
-        mass=Box(low=0.045, high=0.055, shape=(), dtype="float32"),
-        length=Box(low=0.04, high=0.07, shape=(), dtype="float32"),
-        max_speed=Box(low=22, high=22, shape=(), dtype="float32"),
+        model_state=Space(low=[-3.14, -9], high=[3.14, 9], dtype="float32"),
+        model_parameters=Space(dtype="float32"),  # shape, low & high determined at run-time
+        mass=Space(low=0.045, high=0.055, shape=(), dtype="float32"),
+        length=Space(low=0.04, high=0.07, shape=(), dtype="float32"),
+        max_speed=Space(low=22, high=22, shape=(), dtype="float32"),
     )
     def make(
         cls,
@@ -79,7 +77,7 @@ class Pendulum(Object):
 
         # Set image space
         shape = (spec.config.render_shape[0], spec.config.render_shape[1], 3)
-        spec.sensors.image.space = Box(low=0, high=255, shape=shape, dtype="uint8")
+        spec.sensors.image.space = Space(low=0, high=255, shape=shape, dtype="uint8")
 
         # Set model_parameters properties: (space_converters)
         # Set default params of pendulum ode [J, m, l, b, K, R, c, d].
@@ -96,9 +94,7 @@ class Pendulum(Object):
         diff = [0, 0, 0, 0, 0, 0, 0, 0]  # Percentual delta with respect to fixed value
         low = [val - diff * val for val, diff in zip(mean, diff)]
         high = [val + diff * val for val, diff in zip(mean, diff)]
-        spec.states.model_parameters.space = Box(
-            low=np.array(low, dtype="float32"), high=np.array(high, dtype="float32"), dtype="float32"
-        )
+        spec.states.model_parameters.space = Space(low=low, high=high, dtype="float32")
 
         return spec
 
@@ -146,7 +142,8 @@ class Pendulum(Object):
         u_applied = ActionApplied.make("u_applied", rate=spec.sensors.u_applied.rate, process=2)
 
         render_fn = f"eagerx_tutorials.pendulum.pendulum_render/{spec.config.render_fn}"
-        image = OdeRender.make("image", render_fn=render_fn, rate=spec.sensors.image.rate, process=2)
+        shape = spec.sensors.image.space.shape[:2]
+        image = OdeRender.make("image", render_fn=render_fn, rate=spec.sensors.image.rate, process=2, shape=shape)
 
         # Create actuator engine nodes
         u = OdeInput.make("u", rate=spec.actuators.u.rate, process=2, default_action=[0])

@@ -1,9 +1,8 @@
 import os
-from gym.spaces import Box
 from typing import List, Optional
-import numpy as np
 
 import eagerx
+from eagerx import Space
 import eagerx.core.register as register
 from eagerx.core.graph_engine import EngineGraph
 from eagerx.core.specs import ObjectSpec
@@ -13,60 +12,29 @@ import eagerx_tutorials.quadruped.go1.configs_go1 as go1_config
 
 
 class Quadruped(eagerx.Object):
-    # TODO: specify realistic limits for sensors/actuators/states.
     @classmethod
     @register.sensors(
-        joint_position=Box(
-            low=go1_config.RL_LOWER_ANGLE_JOINT.astype("float32"),
-            high=go1_config.RL_UPPER_ANGLE_JOINT.astype("float32")),
-        joint_velocity=Box(
-            low=-go1_config.VELOCITY_LIMITS.astype("float32"),
-            high=go1_config.VELOCITY_LIMITS.astype("float32")),
-        force_torque=Box(
-            low=np.array([0] * 6 * len(go1_config.RL_LOWER_ANGLE_JOINT), dtype="float32"),
-            high=np.array([0] * 6 * len(go1_config.RL_LOWER_ANGLE_JOINT), dtype="float32"),
+        joint_position=Space(low=go1_config.RL_LOWER_ANGLE_JOINT, high=go1_config.RL_UPPER_ANGLE_JOINT, dtype="float32"),
+        joint_velocity=Space(low=-go1_config.VELOCITY_LIMITS, high=go1_config.VELOCITY_LIMITS, dtype="float32"),
+        force_torque=Space(  # todo: set realistic bounds for forces and moments.
+            low=[-200.0] * 6 * len(go1_config.RL_LOWER_ANGLE_JOINT),
+            high=[200.0] * 6 * len(go1_config.RL_LOWER_ANGLE_JOINT),
+            dtype="float32",
         ),
-        orientation=Box(
-            low=np.array(go1_config.INIT_ORIENTATION, dtype="float32"),
-            high=np.array(go1_config.INIT_ORIENTATION, dtype="float32"),
-        ),
-        position=Box(
-            low=np.array([-10.0, -10.0, 0.0], dtype="float32"),
-            high=np.array([10.0, 10.0, 0.5], dtype="float32"),
-        ),
-        velocity=Box(
-            low=np.array([-1.0, -1.0, -0.2], dtype="float32"),
-            high=np.array([1.0, 1.0, 0.2], dtype="float32"),
-        ),
-        image=None,
+        orientation=Space(low=go1_config.INIT_ORIENTATION, high=go1_config.INIT_ORIENTATION, dtype="float32"),
+        position=Space(low=[-10.0, -10.0, 0.0], high=[10.0, 10.0, 0.5], dtype="float32"),
+        velocity=Space(low=[-1.0, -1.0, -0.2], high=[1.0, 1.0, 0.2], dtype="float32"),
+        image=Space(dtype="uint8"),
     )
     @register.actuators(
-        joint_control=Box(
-            low=go1_config.RL_LOWER_ANGLE_JOINT.astype("float32"),
-            high=go1_config.RL_UPPER_ANGLE_JOINT.astype("float32"),
-        ),
+        joint_control=Space(low=go1_config.RL_LOWER_ANGLE_JOINT, high=go1_config.RL_UPPER_ANGLE_JOINT),
     )
     @register.engine_states(
-        joint_position=Box(
-            low=go1_config.INIT_JOINT_ANGLES.astype("float32"),
-            high=go1_config.INIT_JOINT_ANGLES.astype("float32"),
-        ),
-        position=Box(
-            low=np.array(go1_config.INIT_POSITION, dtype="float32"),
-            high=np.array(go1_config.INIT_POSITION, dtype="float32"),
-        ),
-        orientation=Box(
-            low=np.array(go1_config.INIT_ORIENTATION, dtype="float32"),
-            high=np.array(go1_config.INIT_ORIENTATION, dtype="float32"),
-        ),
-        velocity=Box(
-            low=np.array([0, 0, 0], dtype="float32"),
-            high=np.array([0, 0, 0], dtype="float32"),
-        ),
-        angular_velocity=Box(
-            low=np.array([0, 0, 0], dtype="float32"),
-            high=np.array([0, 0, 0], dtype="float32"),
-        ),
+        joint_position=Space(low=go1_config.INIT_JOINT_ANGLES, high=go1_config.INIT_JOINT_ANGLES, dtype="float32"),
+        position=Space(low=go1_config.INIT_POSITION, high=go1_config.INIT_POSITION, dtype="float32"),
+        orientation=Space(low=go1_config.INIT_ORIENTATION, high=go1_config.INIT_ORIENTATION, dtype="float32"),
+        velocity=Space(low=[0.0, 0.0, 0.0], high=[0.0, 0.0, 0.0], dtype="float32"),
+        angular_velocity=Space(low=[0.0, 0.0, 0.0], high=[0.0, 0.0, 0.0], dtype="float32"),
     )
     def make(
         cls,
@@ -128,7 +96,7 @@ class Quadruped(eagerx.Object):
         spec.actuators.joint_control.rate = rate
 
         # Set variable space limits
-        spec.sensors.image.space = Box(
+        spec.sensors.image.space = Space(
             dtype="uint8",
             low=0,
             high=255,
@@ -151,6 +119,7 @@ class Quadruped(eagerx.Object):
 
         # Create engine_states (no agnostic states defined in this case)
         from eagerx_pybullet.enginestates import JointState, LinkState
+
         spec.engine.states.joint_position = JointState.make(joints=spec.config.joint_names, mode="position")
 
         spec.engine.states.position = LinkState.make(mode="position")
@@ -161,6 +130,7 @@ class Quadruped(eagerx.Object):
         # Create sensor engine nodes
         # Rate=None, but we will connect them to sensors (thus will use the rate set in the agnostic specification)
         from eagerx_pybullet.enginenodes import JointSensor, LinkSensor, CameraSensor, JointController
+
         rate = spec.sensors.joint_position.rate
         joint_position = JointSensor.make(
             "joint_position",

@@ -1,7 +1,7 @@
 from typing import Optional, List
 import numpy as np
-from gym.spaces import Box
 import eagerx
+from eagerx import Space
 from eagerx.utils.utils import Msg
 
 
@@ -34,15 +34,13 @@ class ResetAngle(eagerx.ResetNode):
         spec = cls.get_specification()
 
         # Modify default node params
-        spec.config.update(name=name, rate=rate, process=eagerx.process.ENVIRONMENT, color="grey")
+        spec.config.update(name=name, rate=rate, process=eagerx.ENVIRONMENT, color="grey")
         spec.config.update(inputs=["theta", "dtheta"], targets=["goal"], outputs=["u"])
         spec.config.update(u_range=u_range, threshold=threshold, timeout=timeout)
         spec.config.gains = gains if isinstance(gains, list) else [1.0, 0.5, 0.0]
 
         # Add space_converter
-        spec.outputs.u.space = Box(
-            low=np.array([u_range[0]], dtype="float32"), high=np.array([u_range[1]], dtype="float32"), dtype="float32"
-        )
+        spec.outputs.u.space = Space(low=[u_range[0]], high=[u_range[1]], dtype="float32")
         return spec
 
     def initialize(self, spec):
@@ -63,11 +61,11 @@ class ResetAngle(eagerx.ResetNode):
         self.ts_start_routine = None
 
     @eagerx.register.inputs(
-        theta=Box(low=-999.0, high=999.0, shape=(), dtype="float32"),
-        dtheta=Box(low=-999.0, high=999.0, shape=(), dtype="float32"),
+        theta=Space(shape=(), dtype="float32"),
+        dtheta=Space(shape=(), dtype="float32"),
     )
-    @eagerx.register.targets(goal=Box(low=np.array([-3.14, -9], dtype="float32"), high=np.array([3.14, 9], dtype="float32")))
-    @eagerx.register.outputs(u=Box(low=np.array([-2], dtype="float32"), high=np.array([2], dtype="float32")))
+    @eagerx.register.targets(goal=Space(low=[-3.14, -9.0], high=[3.14, 9.0]))
+    @eagerx.register.outputs(u=Space(low=[-2.0], high=[2.0]))
     def callback(self, t_n: float, goal: Msg, theta: Msg = None, dtheta: Msg = None, x: Msg = None):
         if self.ts_start_routine is None:
             self.ts_start_routine = t_n

@@ -1,6 +1,5 @@
 import eagerx
-from gym.spaces import Box
-from eagerx import register
+from eagerx import register, Space
 from eagerx.utils.utils import Msg
 import cv2
 import numpy as np
@@ -32,11 +31,11 @@ class Overlay(eagerx.Node):
         pass
 
     @register.inputs(
-        base_image=Box(low=0, high=255, shape=(), dtype="uint8"),
-        u=Box(low=np.array([-3], dtype="float32"), high=np.array([3], dtype="float32")),
-        theta=Box(low=-999.0, high=999.0, shape=(), dtype="float32"),
+        base_image=Space(dtype="uint8"),
+        u=Space(low=[-3], high=[3]),
+        theta=Space(shape=(), dtype="float32"),
     )
-    @register.outputs(image=Box(low=0, high=255, shape=(), dtype="uint8"))
+    @register.outputs(image=Space(dtype="uint8"))
     def callback(self, t_n: float, base_image: Msg, u: Msg, theta: Msg):
         if len(base_image.msgs[-1].data) > 0:
             u = u.msgs[-1].data[0] if u else 0

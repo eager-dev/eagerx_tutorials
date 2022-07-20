@@ -3,8 +3,9 @@ CPG in polar coordinates based on:
 Pattern generators with sensory feedback for the control of quadruped
 authors: L. Righetti, A. Ijspeert
 https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=4543306
-
+Original author: Guillaume Bellegarda
 """
+
 
 # Registers PybulletEngine
 import argparse
@@ -261,9 +262,9 @@ if __name__ == "__main__":
             # states["quadruped/image/pos"] = np.array([0, -3, 1.5])  # todo: works side view
             # tmp = list(pybullet.getQuaternionFromEuler(np.deg2rad([180, 0, 0])))
 
-            states["quadruped/image/pos"] = np.array([-1, -1, 0.5])
+            states["quadruped/image/pos"] = np.array([-1, -1, 0.5], dtype="float32")
             tmp = list(pybullet.getQuaternionFromEuler(np.deg2rad([-90, 0, 0])))
-            states["quadruped/image/orientation"] = np.array(tmp)
+            states["quadruped/image/orientation"] = np.array(tmp, dtype="float32")
 
             # Perform reset
             obs = self._reset(states)

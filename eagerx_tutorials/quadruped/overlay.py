@@ -1,10 +1,9 @@
 import eagerx
-from eagerx import register
+from eagerx import register, Space
 from eagerx.utils.utils import Msg
 from typing import List
 import cv2
 from matplotlib.cm import get_cmap
-from gym.spaces import Box
 import numpy as np
 from collections import deque
 from functools import partial
@@ -16,7 +15,7 @@ class XyPlane(eagerx.Node):
         cls,
         name: str,
         rate: float,
-        process: int = eagerx.process.ENVIRONMENT,
+        process: int = eagerx.ENVIRONMENT,
         color: str = "cyan",
         px_pm: int = 45,
         top_left: List[int] = None,
@@ -41,7 +40,7 @@ class XyPlane(eagerx.Node):
         lr_x, lr_y = spec.config.lower_right
         width = int((lr_y - tl_y) * spec.config.px_pm)  # px
         height = int((lr_x - tl_x) * spec.config.px_pm)
-        spec.outputs.image.space = Box(low=0, high=255, shape=(height, width, 3), dtype="uint8")
+        spec.outputs.image.space = Space(low=0, high=255, shape=(height, width, 3), dtype="uint8")
         return spec
 
     def initialize(self, spec):
@@ -70,7 +69,13 @@ class XyPlane(eagerx.Node):
 
         # Plot points
         self.plot_px = partial(
-            self._plot_px, thickness=self.thickness, height=self.height, width=self.width, px_pm=spec.config.px_pm, tl_x=tl_x, tl_y=tl_y
+            self._plot_px,
+            thickness=self.thickness,
+            height=self.height,
+            width=self.width,
+            px_pm=spec.config.px_pm,
+            tl_x=tl_x,
+            tl_y=tl_y,
         )
 
     @register.states()
@@ -136,11 +141,8 @@ class XyPlane(eagerx.Node):
         # Plot pixel
         cv2.circle(img, (px_y, px_x), thickness, color, -1)
 
-    @register.inputs(position=Box(
-        low=np.array([-10, -10, 0], dtype="float32"),
-        high=np.array([10, 10, 2], dtype="float32"),
-    ))
-    @register.outputs(image=None)
+    @register.inputs(position=Space(low=[-10.0, -10.0, 0.0], high=[10.0, 10.0, 2.0]))
+    @register.outputs(image=Space(dtype="uint8"))
     def callback(self, t_n: float, position: Msg):
         # Select newest color
         idx = len(self.last_xy)

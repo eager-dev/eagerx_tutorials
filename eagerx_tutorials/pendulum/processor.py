@@ -4,8 +4,6 @@ from eagerx.core.specs import ProcessorSpec
 
 
 class DecomposedAngle(eagerx.Processor):
-    DTYPE = "float32"
-
     @classmethod
     def make(cls, convert_to: str = "theta_dtheta") -> ProcessorSpec:
         spec = cls.get_specification()
@@ -30,8 +28,6 @@ class DecomposedAngle(eagerx.Processor):
 
 
 class Negate(eagerx.Processor):
-    DTYPE = "float32"
-
     @classmethod
     def make(cls) -> ProcessorSpec:
         return cls.get_specification()
@@ -44,8 +40,6 @@ class Negate(eagerx.Processor):
 
 
 class VoltageToMotorTorque(eagerx.Processor):
-    DTYPE = "float32"
-
     @classmethod
     def make(cls, K: float, R: float) -> ProcessorSpec:
         # Initialize spec with default arguments

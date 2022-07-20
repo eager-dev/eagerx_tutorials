@@ -8,10 +8,10 @@ from eagerx_tutorials.pendulum.objects import Pendulum
 @register.engine(GymEngine, entity=Pendulum)
 def gym_engine(spec: eagerx.specs.ObjectSpec, graph: eagerx.EngineGraph):
     """Engine-specific implementation (GymEngine) of the Pendulum object."""
-    # Register openai engine-specific nodes (ObservationSensor, ActionActuator, GymImage)
+    # Import the openai engine-specific nodes (ObservationSensor, ActionActuator, GymImage)
     from eagerx.engines.openai_gym.enginenodes import ObservationSensor, ActionActuator, GymImage
 
-    # Register tutorial engine-specific nodes (FloatOutput)
+    # Import the tutorial engine-specific nodes (FloatOutput)
     from eagerx_tutorials.pendulum.engine_nodes import FloatOutput
 
     # Set engine-specific parameters
@@ -68,7 +68,8 @@ def gym_engine(spec: eagerx.specs.ObjectSpec, graph: eagerx.EngineGraph):
 
     # u
     # Note: not to be confused with sensor "u", for which we do not provide an implementation here.
+    # Note: We add a processor that negates the action, as the torque in OpenAI gym is defined counter-clockwise.
     from eagerx_tutorials.pendulum.processor import VoltageToMotorTorque
 
-    voltage_to_torque_converter = VoltageToMotorTorque.make(K=0.03333, R=7.731)
-    graph.connect(actuator="u", target=action.inputs.action, processor=voltage_to_torque_converter)
+    action.inputs.action.processor = VoltageToMotorTorque.make(K=0.03333, R=7.731)
+    graph.connect(actuator="u", target=action.inputs.action)

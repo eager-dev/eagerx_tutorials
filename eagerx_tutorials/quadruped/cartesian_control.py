@@ -1,14 +1,22 @@
+"""
+CPG in polar coordinates based on:
+Pattern generators with sensory feedback for the control of quadruped
+authors: L. Righetti, A. Ijspeert
+https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=4543306
+Original author: Guillaume Bellegarda
+"""
+
 from typing import Optional
-from gym.spaces import Box
 import numpy as np
 import eagerx
+from eagerx import Space, Node
 from eagerx import register
 from eagerx.utils.utils import Msg
 
 import eagerx_tutorials.quadruped.go1.configs_go1 as go1_config
 
 
-class CartesiandPDController(eagerx.Node):
+class CartesiandPDController(Node):
     @classmethod
     def make(
         cls,
@@ -38,14 +46,10 @@ class CartesiandPDController(eagerx.Node):
         pass
 
     # TODO: fix correct limits
-    @register.inputs(cartesian_pos=Box(
-            low=np.array(go1_config.NOMINAL_FOOT_POS_LEG_FRAME, dtype="float32"),
-            high=np.array(go1_config.NOMINAL_FOOT_POS_LEG_FRAME, dtype="float32"),
-        ))
-    @register.outputs(joint_pos=Box(
-            low=go1_config.RL_LOWER_ANGLE_JOINT.astype("float32"),
-            high=go1_config.RL_UPPER_ANGLE_JOINT.astype("float32"),
-        ))
+    @register.inputs(
+        cartesian_pos=Space(shape=(len(go1_config.NOMINAL_FOOT_POS_LEG_FRAME),), dtype="float32"),  # TODO: Set correct bounds
+    )
+    @register.outputs(joint_pos=Space(low=go1_config.RL_LOWER_ANGLE_JOINT, high=go1_config.RL_UPPER_ANGLE_JOINT))
     def callback(self, t_n: float, cartesian_pos: Msg):
         # desired [x, y, z] for each joint
         action = np.array(cartesian_pos.msgs[-1].data)
