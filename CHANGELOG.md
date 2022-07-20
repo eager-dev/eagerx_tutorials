@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.19 (2022-07-20)
+### Fix
+* Numpy api, backend, Space, ([#45](https://github.com/eager-dev/eagerx_tutorials/issues/45)) ([`b1278f3`](https://github.com/eager-dev/eagerx_tutorials/commit/b1278f3dd37c832f974904c3ca46c00c58fe1f79))
+
+### Documentation
+* Minor update to notebook text ([`d56d6a1`](https://github.com/eager-dev/eagerx_tutorials/commit/d56d6a1688351caf5a0076428df7ca1c5e5e3ef2))
+
 ## v0.1.18 (2022-05-22)
 ### Fix
 * Update quadruped notebook ([`526b8cc`](https://github.com/eager-dev/eagerx_tutorials/commit/526b8ccecd3f061710e57a608a6287eeab56bbc6))
