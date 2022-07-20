@@ -25,6 +25,7 @@ class EvaluateEnv(eagerx.BaseEnv):
 
         # Make the backend specification
         from eagerx.backends.single_process import SingleProcess
+
         backend = SingleProcess.make()
 
         super(EvaluateEnv, self).__init__(name, self.rate, graph, engine, backend, force_start=True)

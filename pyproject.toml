@@ -11,14 +11,13 @@ include = ["scripts"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
-eagerx = "^0.1.24"
-eagerx-ode = "^0.1.12"
-eagerx-pybullet = "^0.1.8"
+eagerx = "^0.1.25"
+eagerx-ode = "^0.1.13"
+eagerx-pybullet = "^0.1.9"
 stable-baselines3 = "^1.2"
 jupyterlab = "^3.3.4"
 nbconvert = "^6.5.0"
 PyVirtualDisplay = "^3.0"
-#huggingface-sb3 = "^2.0.0"
 sb3-contrib = "^1.5.0"
 ipywidgets = "^7.7.0"
 tqdm = "^4.64.0"
