@@ -7,6 +7,19 @@ class DecomposedAngle(eagerx.Processor):
     @classmethod
     def make(cls, convert_to: str = "theta_dtheta") -> ProcessorSpec:
         spec = cls.get_specification()
+        return spec
+
+    def initialize(self, spec: ProcessorSpec):
+        pass
+
+    def convert(self, msg: np.ndarray) -> np.ndarray:
+        return np.array([np.cos(msg), np.sin(msg)], dtype="float32")
+
+
+class ObsWithDecomposedAngle(eagerx.Processor):
+    @classmethod
+    def make(cls, convert_to: str = "theta_dtheta") -> ProcessorSpec:
+        spec = cls.get_specification()
         spec.config.convert_to = convert_to
         return spec
 

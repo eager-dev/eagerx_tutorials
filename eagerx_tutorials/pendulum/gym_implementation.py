@@ -42,10 +42,10 @@ def gym_engine(spec: eagerx.specs.ObjectSpec, graph: eagerx.EngineGraph):
 
     # Use the observations produced by the "Pendulum-v1" to obtain theta and dtheta.
     # Because this observation is [sin(theta), cos(theta), dtheta], so we first convert it to [theta, dtheta]
-    from eagerx_tutorials.pendulum.processor import DecomposedAngle
+    from eagerx_tutorials.pendulum.processor import ObsWithDecomposedAngle
 
     x = ObservationSensor.make("x", rate=spec.sensors.theta.rate, process=2)
-    x.outputs.observation.processor = DecomposedAngle.make(convert_to="theta_dtheta")
+    x.outputs.observation.processor = ObsWithDecomposedAngle.make(convert_to="theta_dtheta")
 
     # Add all engine nodes to the engine-specific graph
     graph.add([x, theta, image, action])

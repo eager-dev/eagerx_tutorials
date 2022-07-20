@@ -20,8 +20,8 @@ class Pendulum(Object):
     @register.engine_states(
         model_state=Space(low=[-3.14, -9], high=[3.14, 9], dtype="float32"),
         model_parameters=Space(dtype="float32"),  # shape, low & high determined at run-time
-        mass=Space(low=0.045, high=0.055, shape=(), dtype="float32"),
-        length=Space(low=0.04, high=0.07, shape=(), dtype="float32"),
+        mass=Space(low=0.01, high=0.07, shape=(), dtype="float32"),
+        length=Space(low=0.04, high=0.2, shape=(), dtype="float32"),
         max_speed=Space(low=22, high=22, shape=(), dtype="float32"),
     )
     def make(
