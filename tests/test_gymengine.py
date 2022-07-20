@@ -11,6 +11,11 @@ SP = 1
 @pytest.mark.parametrize("eng", [GYM, ODE])
 @pytest.mark.parametrize("bnd", [SP])
 def test_gymengine(eng, bnd):
+    # Start virtual display
+    from pyvirtualdisplay import Display
+    display = Display(visible=False, backend="xvfb")
+    display.start()
+
     eagerx.set_log_level(eagerx.WARN)
 
     # Initialize empty graph
@@ -62,7 +67,7 @@ def test_gymengine(eng, bnd):
         engine = OdeEngine.make(rate=rate)
     elif eng == GYM:
         from eagerx.engines.openai_gym.engine import GymEngine
-        engine = GymEngine.make(rate=rate, process=eagerx.process.ENVIRONMENT)
+        engine = GymEngine.make(rate=rate, process=eagerx.ENVIRONMENT)
     else:
         raise NotImplementedError("Select valid engine.")
 
@@ -153,6 +158,6 @@ def test_gymengine(eng, bnd):
 
 
 if __name__ == "__main__":
-    for e in [ODE, GYM]:
+    for e in [GYM, ODE]:
         for b in [ROS1, SP]:
             test_gymengine(eng=e, bnd=b)
