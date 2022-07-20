@@ -6,8 +6,9 @@ ODE = 1
 ROS1 = 0
 SP = 1
 
+
 @pytest.mark.timeout(60)
-@pytest.mark.parametrize("eng", [ODE, GYM])
+@pytest.mark.parametrize("eng", [GYM, ODE])
 @pytest.mark.parametrize("bnd", [SP])
 def test_gymengine(eng, bnd):
     eagerx.set_log_level(eagerx.WARN)

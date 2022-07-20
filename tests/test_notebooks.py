@@ -1,6 +1,5 @@
 import os
 import sys
-from glob import glob
 
 import nbformat
 from nbconvert.preprocessors import ExecutePreprocessor
