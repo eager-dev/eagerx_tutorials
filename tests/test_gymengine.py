@@ -8,7 +8,7 @@ SP = 1
 
 
 @pytest.mark.timeout(60)
-@pytest.mark.parametrize("eng", [GYM, ODE])
+@pytest.mark.parametrize("eng", [ODE])
 @pytest.mark.parametrize("bnd", [SP])
 def test_gymengine(eng, bnd):
     # Start virtual display
