@@ -31,7 +31,7 @@ DEFAULT_HIP_ANGLE = 0  # anca
 DEFAULT_THIGH_ANGLE = np.pi / 4  # coscia
 DEFAULT_CALF_ANGLE = -np.pi / 2  # ginocchio
 
-INIT_JOINT_ANGLES = np.array([DEFAULT_HIP_ANGLE, DEFAULT_THIGH_ANGLE, DEFAULT_CALF_ANGLE] * NUM_LEGS)
+INIT_JOINT_ANGLES = np.array([DEFAULT_HIP_ANGLE, DEFAULT_THIGH_ANGLE, DEFAULT_CALF_ANGLE] * NUM_LEGS, dtype="float32")
 INIT_MOTOR_ANGLES = INIT_JOINT_ANGLES
 # Used to convert the robot SDK joint angles to URDF joint angles.
 JOINT_DIRECTIONS = np.array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
@@ -42,7 +42,7 @@ THIGH_JOINT_OFFSET = 0.0
 CALF_JOINT_OFFSET = 0.0
 
 # Used to convert the robot SDK joint angles to URDF joint angles.
-JOINT_OFFSETS = np.array([HIP_JOINT_OFFSET, THIGH_JOINT_OFFSET, CALF_JOINT_OFFSET] * NUM_LEGS)
+JOINT_OFFSETS = np.array([HIP_JOINT_OFFSET, THIGH_JOINT_OFFSET, CALF_JOINT_OFFSET] * NUM_LEGS, dtype="float32")
 
 # Kinematics
 HIP_LINK_LENGTH = 0.0847
@@ -50,24 +50,25 @@ THIGH_LINK_LENGTH = 0.213
 CALF_LINK_LENGTH = 0.213
 
 NOMINAL_FOOT_POS_LEG_FRAME = np.array(
-    [0, -HIP_LINK_LENGTH, -0.32, 0, HIP_LINK_LENGTH, -0.32, 0, -HIP_LINK_LENGTH, -0.32, 0, HIP_LINK_LENGTH, -0.32]
+    [0, -HIP_LINK_LENGTH, -0.32, 0, HIP_LINK_LENGTH, -0.32, 0, -HIP_LINK_LENGTH, -0.32, 0, HIP_LINK_LENGTH, -0.32],
+    dtype="float32",
 )
 
 ##################################################################################
 # Actuation limits/gains, position, and velocity limits
 ##################################################################################
 # joint limits on real system
-REAL_UPPER_ANGLE_JOINT = np.array([1.0471975512, 2.96705972839, -0.837758040957] * NUM_LEGS)
-REAL_LOWER_ANGLE_JOINT = np.array([-1.0471975512, -0.663225115758, -2.72271363311] * NUM_LEGS)
+REAL_UPPER_ANGLE_JOINT = np.array([1.0471975512, 2.96705972839, -0.837758040957] * NUM_LEGS, dtype="float32")
+REAL_LOWER_ANGLE_JOINT = np.array([-1.0471975512, -0.663225115758, -2.72271363311] * NUM_LEGS, dtype="float32")
 
 # modified range in simulation (min observation space for RL)
-RL_UPPER_ANGLE_JOINT = np.array([0.2, DEFAULT_THIGH_ANGLE + 0.4, DEFAULT_CALF_ANGLE + 0.4] * NUM_LEGS)
-RL_LOWER_ANGLE_JOINT = np.array([-0.2, DEFAULT_THIGH_ANGLE - 0.4, DEFAULT_CALF_ANGLE - 0.4] * NUM_LEGS)
+RL_UPPER_ANGLE_JOINT = np.array([0.2, DEFAULT_THIGH_ANGLE + 0.6, DEFAULT_CALF_ANGLE + 0.6] * NUM_LEGS, dtype="float32")
+RL_LOWER_ANGLE_JOINT = np.array([-0.2, DEFAULT_THIGH_ANGLE - 0.6, DEFAULT_CALF_ANGLE - 0.6] * NUM_LEGS, dtype="float32")
 
 # torque and velocity limits
 # Set to 0.4 * ... to limit max torque
-TORQUE_LIMITS = 1.0 * np.asarray([23.7, 23.7, 1.0 * 33.55] * NUM_LEGS)
-VELOCITY_LIMITS = 1.0 * np.asarray([30.1, 30.1, 30.1] * NUM_LEGS)
+TORQUE_LIMITS = 1.0 * np.asarray([23.7, 23.7, 1.0 * 33.55] * NUM_LEGS, dtype="float32")
+VELOCITY_LIMITS = 1.0 * np.asarray([30.1, 30.1, 30.1] * NUM_LEGS, dtype="float32")
 
 # Sample Joint Gains
 MOTOR_KP = [100.0, 100.0, 100.0] * NUM_LEGS
@@ -134,4 +135,4 @@ SPRINGS_REST_ANGLE = [DEFAULT_HIP_ANGLE, DEFAULT_THIGH_ANGLE, DEFAULT_CALF_ANGLE
 ################################################
 # step size is equal to 0.001 * action_repeat(default_value = 10)
 MAX_MOTOR_ANGLE_CHANGE_PER_STEP = 0.2
-MAX_CARTESIAN_FOOT_POS_CHANGE_PER_STEP = np.array([0.1, 0.02, 0.08])
+MAX_CARTESIAN_FOOT_POS_CHANGE_PER_STEP = np.array([0.1, 0.02, 0.08], dtype="float32")

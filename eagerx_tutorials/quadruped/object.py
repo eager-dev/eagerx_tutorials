@@ -2,183 +2,42 @@ import os
 from typing import List, Optional
 
 import eagerx
+from eagerx import Space
 import eagerx.core.register as register
-import numpy as np
-from eagerx import EngineNode, EngineState, Object, SpaceConverter
 from eagerx.core.graph_engine import EngineGraph
 from eagerx.core.specs import ObjectSpec
 from eagerx_pybullet.engine import PybulletEngine
-from std_msgs.msg import Float32MultiArray
-from sensor_msgs.msg import Image
 
-import eagerx_tutorials.quadruped.cartesian_control  # noqa: F401
 import eagerx_tutorials.quadruped.go1.configs_go1 as go1_config
 
 
-class Quadruped(Object):
-    entity_id = "Quadruped"
-
-    @staticmethod
+class Quadruped(eagerx.Object):
+    @classmethod
     @register.sensors(
-        joint_position=Float32MultiArray,
-        joint_velocity=Float32MultiArray,
-        force_torque=Float32MultiArray,
-        orientation=Float32MultiArray,
-        position=Float32MultiArray,
-        velocity=Float32MultiArray,
-        image=Image,
+        joint_position=Space(low=go1_config.RL_LOWER_ANGLE_JOINT, high=go1_config.RL_UPPER_ANGLE_JOINT, dtype="float32"),
+        joint_velocity=Space(low=-go1_config.VELOCITY_LIMITS, high=go1_config.VELOCITY_LIMITS, dtype="float32"),
+        force_torque=Space(  # todo: set realistic bounds for forces and moments.
+            low=[-200.0] * 6 * len(go1_config.RL_LOWER_ANGLE_JOINT),
+            high=[200.0] * 6 * len(go1_config.RL_LOWER_ANGLE_JOINT),
+            dtype="float32",
+        ),
+        orientation=Space(low=go1_config.INIT_ORIENTATION, high=go1_config.INIT_ORIENTATION, dtype="float32"),
+        position=Space(low=[-10.0, -10.0, 0.0], high=[10.0, 10.0, 0.5], dtype="float32"),
+        velocity=Space(low=[-1.0, -1.0, -0.2], high=[1.0, 1.0, 0.2], dtype="float32"),
+        image=Space(dtype="uint8"),
     )
     @register.actuators(
-        joint_control=Float32MultiArray,
+        joint_control=Space(low=go1_config.RL_LOWER_ANGLE_JOINT, high=go1_config.RL_UPPER_ANGLE_JOINT),
     )
     @register.engine_states(
-        joint_position=Float32MultiArray,
-        position=Float32MultiArray,
-        orientation=Float32MultiArray,
-        velocity=Float32MultiArray,
-        angular_velocity=Float32MultiArray,
+        joint_position=Space(low=go1_config.INIT_JOINT_ANGLES, high=go1_config.INIT_JOINT_ANGLES, dtype="float32"),
+        position=Space(low=go1_config.INIT_POSITION, high=go1_config.INIT_POSITION, dtype="float32"),
+        orientation=Space(low=go1_config.INIT_ORIENTATION, high=go1_config.INIT_ORIENTATION, dtype="float32"),
+        velocity=Space(low=[0.0, 0.0, 0.0], high=[0.0, 0.0, 0.0], dtype="float32"),
+        angular_velocity=Space(low=[0.0, 0.0, 0.0], high=[0.0, 0.0, 0.0], dtype="float32"),
     )
-    @register.config(
-        joint_names=None,
-        fixed_base=False,
-        self_collision=True,
-        position=None,
-        orientation=None,
-        control_mode=None,
-        render_shape=None,
-    )
-    def agnostic(spec: ObjectSpec, rate):
-        """This methods builds the agnostic definition for a quadruped.
-
-        Registered (agnostic) config parameters (should probably be set in the spec() function):
-        - joint_names: List of quadruped joints.
-        - fixed_base: Force the base of the loaded object to be static.
-        - self_collision: Enable self collisions.
-        - base_pos: Base position of the object [x, y, z].
-        - base_orientation: Base orientation of the object in quaternion [x, y, z, w].
-        - control_mode: Control mode for the arm joints.
-                        Available: `position_control`, `velocity_control`, `pd_control`, and `torque_control`.
-
-        :param spec: Holds the desired configuration.
-        :param rate: Rate (Hz) at which the callback is called.
-        """
-        # Register standard converters, space_converters, and processors
-        import eagerx.converters  # noqa
-
-        # Set observation properties: (space_converters, rate, etc...)
-        # TODO: specify correct limits
-        spec.sensors.joint_position.rate = rate
-        spec.sensors.joint_position.space_converter = SpaceConverter.make(
-            "Space_Float32MultiArray",
-            dtype="float32",
-            low=go1_config.RL_LOWER_ANGLE_JOINT.tolist(),
-            high=go1_config.RL_UPPER_ANGLE_JOINT.tolist(),
-        )
-
-        # TODO: specify correct limits
-        spec.sensors.joint_velocity.rate = rate
-        spec.sensors.joint_velocity.space_converter = SpaceConverter.make(
-            "Space_Float32MultiArray",
-            dtype="float32",
-            low=(-go1_config.VELOCITY_LIMITS).tolist(),
-            high=go1_config.VELOCITY_LIMITS.tolist(),
-        )
-
-        # TODO: specify correct limits
-        # TODO: HIGH DIMENSIONAL!! 6 measurements / joint
-        spec.sensors.force_torque.rate = rate
-        spec.sensors.force_torque.space_converter = SpaceConverter.make(
-            "Space_Float32MultiArray",
-            dtype="float32",
-            low=[0] * 6 * len(go1_config.RL_LOWER_ANGLE_JOINT),
-            high=[0] * 6 * len(go1_config.RL_LOWER_ANGLE_JOINT),
-        )
-
-        # TODO: specify correct limits
-        spec.sensors.orientation.rate = rate
-        spec.sensors.orientation.space_converter = SpaceConverter.make(
-            "Space_Float32MultiArray",
-            dtype="float32",
-            low=list(go1_config.INIT_ORIENTATION),
-            high=list(go1_config.INIT_ORIENTATION),
-        )
-
-        # TODO: specify correct limits
-        spec.sensors.position.rate = rate
-        spec.sensors.position.space_converter = SpaceConverter.make(
-            "Space_Float32MultiArray",
-            dtype="float32",
-            low=[-10.0, -10.0, 0.0],
-            high=[10.0, 10.0, 0.5],
-        )
-
-        spec.sensors.velocity.rate = rate
-        spec.sensors.velocity.space_converter = SpaceConverter.make(
-            "Space_Float32MultiArray",
-            dtype="float32",
-            low=[-1.0, -1.0, -0.2],
-            high=[1.0, 1.0, 0.2],
-        )
-
-        # Rgb
-        spec.sensors.image.rate = rate
-        spec.sensors.image.space_converter = SpaceConverter.make(
-            "Space_Image",
-            dtype="float32",
-            low=0,
-            high=1,
-            shape=spec.config.render_shape + [3],
-        )
-
-        # Set actuator properties: (space_converters, rate, etc...)
-        spec.actuators.joint_control.rate = rate
-        spec.actuators.joint_control.space_converter = SpaceConverter.make(
-            "Space_Float32MultiArray",
-            dtype="float32",
-            low=go1_config.RL_LOWER_ANGLE_JOINT.tolist(),
-            high=go1_config.RL_UPPER_ANGLE_JOINT.tolist(),
-        )
-
-        # Set model_state properties: (space_converters)
-        spec.states.joint_position.space_converter = SpaceConverter.make(
-            "Space_Float32MultiArray",
-            dtype="float32",
-            low=go1_config.INIT_JOINT_ANGLES.tolist(),
-            high=go1_config.INIT_JOINT_ANGLES.tolist(),
-        )
-
-        spec.states.position.space_converter = SpaceConverter.make(
-            "Space_Float32MultiArray",
-            dtype="float32",
-            low=go1_config.INIT_POSITION,
-            high=go1_config.INIT_POSITION,
-        )
-
-        spec.states.orientation.space_converter = SpaceConverter.make(
-            "Space_Float32MultiArray",
-            dtype="float32",
-            low=list(go1_config.INIT_ORIENTATION),
-            high=list(go1_config.INIT_ORIENTATION),
-        )
-
-        spec.states.velocity.space_converter = SpaceConverter.make(
-            "Space_Float32MultiArray",
-            dtype="float32",
-            low=[0, 0, 0],
-            high=[0, 0, 0],
-        )
-
-        spec.states.angular_velocity.space_converter = SpaceConverter.make(
-            "Space_Float32MultiArray",
-            dtype="float32",
-            low=[0, 0, 0],
-            high=[0, 0, 0],
-        )
-
-    @staticmethod
-    @register.spec(entity_id, Object)
-    def spec(
-        spec: ObjectSpec,
+    def make(
+        cls,
         name: str,
         sensors: Optional[List[str]] = None,
         actuators: Optional[List[str]] = None,
@@ -190,10 +49,9 @@ class Quadruped(Object):
         fixed_base: bool = False,
         control_mode: str = "position_control",
         render_shape: Optional[List[int]] = None,
-    ):
-        """A spec to create a go1 robot.
+    ) -> ObjectSpec:
+        """Make a spec to create a go1 quadruped robot.
 
-        :param spec: The desired object configuration.
         :param name: Name of the object (topics are placed within this namespace).
         :param sensors: A list of selected sensors. Must be a subset of the registered sensors.
         :param actuators: A list of selected actuators. Must be a subset of the registered actuators.
@@ -207,6 +65,8 @@ class Quadruped(Object):
         :param render_shape: Render shape (height, width) of the image produced by the image sensor.
         :return: ObjectSpec
         """
+        spec = cls.get_specification()
+
         # Modify default agnostic params
         # Only allow changes to the agnostic params (rates, windows, (space)converters, etc...
         spec.config.name = name
@@ -225,40 +85,54 @@ class Quadruped(Object):
         spec.config.control_mode = control_mode
         spec.config.render_shape = render_shape if isinstance(render_shape, list) else [400, 400]
 
-        # Add agnostic implementation
-        Quadruped.agnostic(spec, rate)
+        # Set rates
+        spec.sensors.joint_position.rate = rate
+        spec.sensors.joint_velocity.rate = rate
+        spec.sensors.force_torque.rate = rate
+        spec.sensors.orientation.rate = rate
+        spec.sensors.position.rate = rate
+        spec.sensors.velocity.rate = rate
+        spec.sensors.image.rate = rate
+        spec.actuators.joint_control.rate = rate
 
-    @staticmethod
-    # This decorator pre-initializes engine implementation with default object_params
-    @register.engine(entity_id, PybulletEngine)
-    def pybullet_engine(spec: ObjectSpec, graph: EngineGraph):
-        """Engine-specific implementation (Pybullet) of the object."""
-        # Import any object specific entities for this engine
-        import eagerx_pybullet  # noqa
-
-        # Set object arguments (as registered per register.engine_params(..) above the engine.add_object(...) method.
-        urdf_file = os.path.join(go1_config.URDF_ROOT, go1_config.URDF_FILENAME)
-        spec.PybulletEngine.urdf = urdf_file
-        spec.PybulletEngine.basePosition = spec.config.position
-        spec.PybulletEngine.baseOrientation = spec.config.orientation
-        spec.PybulletEngine.fixed_base = spec.config.fixed_base
-        spec.PybulletEngine.self_collision = spec.config.self_collision
-
-        # Create engine_states (no agnostic states defined in this case)
-        spec.PybulletEngine.states.joint_position = EngineState.make(
-            "JointState", joints=spec.config.joint_names, mode="position"
+        # Set variable space limits
+        spec.sensors.image.space = Space(
+            dtype="uint8",
+            low=0,
+            high=255,
+            shape=tuple(spec.config.render_shape + [3]),
         )
 
-        spec.PybulletEngine.states.position = EngineState.make("LinkState", mode="position")
-        spec.PybulletEngine.states.orientation = EngineState.make("LinkState", mode="orientation")
-        spec.PybulletEngine.states.velocity = EngineState.make("LinkState", mode="velocity")
-        spec.PybulletEngine.states.angular_velocity = EngineState.make("LinkState", mode="angular_vel")
+        return spec
+
+    @staticmethod
+    @register.engine(PybulletEngine)
+    def pybullet_engine(spec: ObjectSpec, graph: EngineGraph):
+        """Engine-specific implementation (Pybullet) of the object."""
+        # Set object arguments (as registered per register.engine_params(..) above the engine.add_object(...) method.
+        urdf_file = os.path.join(go1_config.URDF_ROOT, go1_config.URDF_FILENAME)
+        spec.engine.urdf = urdf_file
+        spec.engine.basePosition = spec.config.position
+        spec.engine.baseOrientation = spec.config.orientation
+        spec.engine.fixed_base = spec.config.fixed_base
+        spec.engine.self_collision = spec.config.self_collision
+
+        # Create engine_states (no agnostic states defined in this case)
+        from eagerx_pybullet.enginestates import JointState, LinkState
+
+        spec.engine.states.joint_position = JointState.make(joints=spec.config.joint_names, mode="position")
+
+        spec.engine.states.position = LinkState.make(mode="position")
+        spec.engine.states.orientation = LinkState.make(mode="orientation")
+        spec.engine.states.velocity = LinkState.make(mode="velocity")
+        spec.engine.states.angular_velocity = LinkState.make(mode="angular_vel")
 
         # Create sensor engine nodes
         # Rate=None, but we will connect them to sensors (thus will use the rate set in the agnostic specification)
+        from eagerx_pybullet.enginenodes import JointSensor, LinkSensor, CameraSensor, JointController
+
         rate = spec.sensors.joint_position.rate
-        joint_position = EngineNode.make(
-            "JointSensor",
+        joint_position = JointSensor.make(
             "joint_position",
             rate=rate,
             process=eagerx.process.ENGINE,
@@ -266,16 +140,14 @@ class Quadruped(Object):
             mode="position",
         )
 
-        joint_velocity = EngineNode.make(
-            "JointSensor",
+        joint_velocity = JointSensor.make(
             "joint_velocity",
             rate=rate,
             process=eagerx.process.ENGINE,
             joints=spec.config.joint_names,
             mode="velocity",
         )
-        force_torque = EngineNode.make(
-            "JointSensor",
+        force_torque = JointSensor.make(
             "force_torque",
             rate=rate,
             process=eagerx.process.ENGINE,
@@ -284,32 +156,28 @@ class Quadruped(Object):
         )
 
         # TODO: convert to euler (currently quaternion)
-        orientation = EngineNode.make(
-            "LinkSensor",
+        orientation = LinkSensor.make(
             "orientation",
             rate=rate,
             process=eagerx.process.ENGINE,
             links=None,
             mode="orientation",
         )
-        position = EngineNode.make(
-            "LinkSensor",
+        position = LinkSensor.make(
             "position",
             rate=rate,
             process=eagerx.process.ENGINE,
             links=None,
             mode="position",
         )
-        velocity = EngineNode.make(
-            "LinkSensor",
+        velocity = LinkSensor.make(
             "velocity",
             rate=rate,
             process=eagerx.process.ENGINE,
             links=None,
             mode="velocity",
         )
-        image = EngineNode.make(
-            "CameraSensor",
+        image = CameraSensor.make(
             "image",
             rate=spec.sensors.image.rate,
             process=eagerx.process.ENGINE,
@@ -320,17 +188,16 @@ class Quadruped(Object):
 
         # Create actuator engine nodes
         # Rate=None, but we will connect it to an actuator (thus will use the rate set in the agnostic specification)
-        joint_control = EngineNode.make(
-            "JointController",
+        joint_control = JointController.make(
             "joint_control",
             rate=spec.actuators.joint_control.rate,
             process=eagerx.process.ENGINE,
             joints=spec.config.joint_names,
             mode=spec.config.control_mode,
-            vel_target=np.zeros(len(go1_config.JOINT_NAMES)).tolist(),
-            pos_gain=np.ones(len(go1_config.JOINT_NAMES)).tolist(),
-            vel_gain=np.ones(len(go1_config.JOINT_NAMES)).tolist(),
-            max_force=(10 * np.ones(len(go1_config.JOINT_NAMES))).tolist(),
+            vel_target=[0] * len(go1_config.JOINT_NAMES),
+            pos_gain=[1] * len(go1_config.JOINT_NAMES),
+            vel_gain=[1] * len(go1_config.JOINT_NAMES),
+            max_force=[10] * len(go1_config.JOINT_NAMES),
         )
         # Connect all engine nodes
         graph.add(
@@ -353,6 +220,3 @@ class Quadruped(Object):
         graph.connect(source=velocity.outputs.obs, sensor="velocity")
         graph.connect(source=image.outputs.image, sensor="image")
         graph.connect(actuator="joint_control", target=joint_control.inputs.action)
-
-        # Check graph validity (commented out)
-        # graph.is_valid(plot=True)

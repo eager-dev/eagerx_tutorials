@@ -1,36 +1,34 @@
-import rospy
 import eagerx
-from eagerx import register
+from eagerx.core.specs import EngineStateSpec, ObjectSpec
 from typing import Any
-from std_msgs.msg import Float32
 
 
 class DummyState(eagerx.EngineState):
-    @staticmethod
-    @register.spec("DummyState", eagerx.EngineState)
-    def spec(spec: eagerx.specs.EngineStateSpec):
+    @classmethod
+    def make(cls) -> EngineStateSpec:
+        return cls.get_specification()
+
+    def initialize(self, spec: EngineStateSpec, object_spec: ObjectSpec, simulator: Any):
         pass
 
-    def initialize(self):
-        pass
-
-    def reset(self, state: Any, done: bool):
+    def reset(self, state: Any):
         pass
 
 
 class SetGymAttribute(eagerx.EngineState):
-    @staticmethod
-    @register.spec("SetGymAttribute", eagerx.EngineState)
-    def spec(spec: eagerx.specs.EngineStateSpec, attribute: str):
-        spec.initialize(SetGymAttribute)
+    @classmethod
+    def make(cls, attribute: str) -> EngineStateSpec:
+        spec = cls.get_specification()
         spec.config.attribute = attribute
+        return spec
 
-    def initialize(self, attribute: str):
-        self.attribute = attribute
+    def initialize(self, spec: EngineStateSpec, object_spec: ObjectSpec, simulator: Any):
+        self.attribute = spec.config.attribute
+        self.simulator = simulator
 
-    def reset(self, state: Float32, done: bool):
+    def reset(self, state: Any):
         for _obj_name, sim in self.simulator.items():
             if hasattr(sim["env"].env, self.attribute):
-                setattr(sim["env"].env, self.attribute, state.data)
+                setattr(sim["env"].env, self.attribute, state)
             else:
-                rospy.logwarn_once(f"{self.attribute} is not an attribute of the environment.")
+                self.backend.logwarn_once(f"{self.attribute} is not an attribute of the environment.")

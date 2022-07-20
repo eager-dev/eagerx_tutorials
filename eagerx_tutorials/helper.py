@@ -16,6 +16,17 @@ def setup_notebook():
         print("Running on CoLab.")
         # Required to source ros in new processes
         os.environ["EAGERX_COLAB"] = "1"
+    else:
+        print("Not running on CoLab.")
+
+    os.environ["EAGERX_RELOAD"] = "1"
+
+
+def deprecated_setup_notebook():
+    if "google.colab" in str(get_ipython()):  # noqa:
+        print("Running on CoLab.")
+        # Required to source ros in new processes
+        os.environ["EAGERX_COLAB"] = "1"
         # Set paths to ROS libraries (instead of sourcing)
         site.addsitedir("/opt/ros/melodic/lib/python2.7/dist-packages")
         site.addsitedir("/usr/lib/python2.7/dist-packages")
@@ -116,21 +127,20 @@ def evaluate(model, env, n_eval_episodes=3, episode_length=100, video_rate=None,
         print(f"Start evaluation episode {i} of {n_eval_episodes}")
         img_array = []
         episodic_reward = 0
-        done = False
         obs = env.reset()
-        for step in tqdm(range(episode_length)):
+        for _step in tqdm(range(episode_length)):
             action, _ = model.predict(obs, deterministic=True)
             obs, reward, done, info = env.step(action)
             episodic_reward += reward
             if video_rate is not None:
                 img = env.render("rgb_array")
-                if not 0 in img.shape:
+                if 0 not in img.shape:
                     img_array.append(img)
 
         if video_rate is not None:
             video_file = f"{video_prefix}_{i}"
             path = Path(video_folder) / video_file
-            print(f"Start video writer")
+            print("Start video writer")
             height, width, _ = img_array[-1].shape
             size = (width, height)
             fourcc = cv2.VideoWriter_fourcc(*"mp4v")
