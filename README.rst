@@ -54,7 +54,7 @@ How to run the tutorials locally? (Only Python 3.8 and 3.9 supported)
 
 As an alternative to running the tutorials in Google Colab, they can also be run locally in order to speed up computations.
 
-*Prequisites*:  Install `ROS1 <http://wiki.ros.org/ROS/Installation>`_ and `Poetry <https://python-poetry.org/docs/master/#installation>`_.
+*Prequisites*:  Install `Poetry <https://python-poetry.org/docs/master/#installation>`_.
 
 Clone this repository and go to its root:
 
