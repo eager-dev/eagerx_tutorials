@@ -294,7 +294,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "eagerx"
-version = "0.1.25"
+version = "0.1.28"
 description = "Engine Angostic Graph Environments for Robotics"
 category = "main"
 optional = false
@@ -1822,7 +1822,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "7232b57080eb4bee2ca66b60418d5fd1ae4b8d21644c872269920661a58087c4"
+content-hash = "de521cdbaea56625af1fb3b467d4cd5c1ad81055699bf1a28b2fb88f3efab355"
 
 [metadata.files]
 alabaster = [
