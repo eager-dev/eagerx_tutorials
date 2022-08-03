@@ -64,23 +64,24 @@ Clone this repository and go to its root:
     git clone git@github.com:eager-dev/eagerx_tutorials.git
     cd eagerx_tutorials
 
+*Optional* Create and source a virtual environment, (if venv is not installed run `python3 -m pip install --user virtualenv`):
+
+.. code-block:: bash
+
+    python3 -m venv tutorial_env
+    source tutorial_env/bin/activate
+
 Install the *eagerx_tutorials* package:
 
 .. code-block:: bash
 
-    poetry install
+    pip3 install -e .
 
-*Optional*: To support eagerx visualization tools, install the *eagerx-gui* package:
-
-.. code-block:: bash
-
-    poetry run pip3 install eagerx-gui
-
-Start Jupyter Lab (make sure ROS1 is sourced):
+Start Jupyter Lab:
 
 .. code-block:: bash
 
-    poetry run jupyter lab
+    jupyter lab
 
 You will find the tutorials in the *tutorials* directory.
 
