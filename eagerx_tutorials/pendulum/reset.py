@@ -35,7 +35,7 @@ class ResetAngle(eagerx.ResetNode):
 
         # Modify default node params
         spec.config.update(name=name, rate=rate, process=eagerx.ENVIRONMENT, color="grey")
-        spec.config.update(inputs=["theta", "dtheta"], targets=["goal"], outputs=["u"])
+        spec.config.update(inputs=["theta", "theta_dot"], targets=["goal"], outputs=["u"])
         spec.config.update(u_range=u_range, threshold=threshold, timeout=timeout)
         spec.config.gains = gains if isinstance(gains, list) else [1.0, 0.5, 0.0]
 
@@ -62,17 +62,17 @@ class ResetAngle(eagerx.ResetNode):
 
     @eagerx.register.inputs(
         theta=Space(shape=(), dtype="float32"),
-        dtheta=Space(shape=(), dtype="float32"),
+        theta_dot=Space(shape=(), dtype="float32"),
     )
     @eagerx.register.targets(goal=Space(low=[-3.14, -9.0], high=[3.14, 9.0]))
     @eagerx.register.outputs(u=Space(low=[-2.0], high=[2.0]))
-    def callback(self, t_n: float, goal: Msg, theta: Msg = None, dtheta: Msg = None, x: Msg = None):
+    def callback(self, t_n: float, goal: Msg, theta: Msg = None, theta_dot: Msg = None, x: Msg = None):
         if self.ts_start_routine is None:
             self.ts_start_routine = t_n
 
         # Convert messages to floats and numpy array
         theta = theta.msgs[-1]  # Take the last received message
-        dtheta = dtheta.msgs[-1]  # Take the last received message
+        theta_dot = theta_dot.msgs[-1]  # Take the last received message
         goal = np.array(goal.msgs[-1], dtype="float32")  # Take the last received message
 
         # Define downward angle as theta=0 (resolve downward discontinuity)
@@ -91,7 +91,7 @@ class ResetAngle(eagerx.ResetNode):
         u = np.clip(u, self.u_min, self.u_max)  # Clip u to range
 
         # Determine if we have reached our goal state
-        done = np.isclose(np.array([theta, dtheta]), goal, atol=self.threshold).all()
+        done = np.isclose(np.array([theta, theta_dot]), goal, atol=self.threshold).all()
 
         # If the reset routine takes too long, we timeout the routine and simply assume that we are done.
         done = done.item() or (t_n - self.ts_start_routine) > self.timeout
