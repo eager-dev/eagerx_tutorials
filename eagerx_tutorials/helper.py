@@ -33,8 +33,7 @@ def run_command(cmd: str, stderr=subprocess.STDOUT) -> None:
             universal_newlines=True,
         )
     except subprocess.CalledProcessError as e:
-        print(f'ERROR {e.returncode}: {cmd}\n\t{e.output}',
-              flush=True, file=sys.stderr)
+        print(f"ERROR {e.returncode}: {cmd}\n\t{e.output}", flush=True, file=sys.stderr)
         raise e
     print(out)
 
@@ -49,10 +48,11 @@ def setup_notebook():
         # Reload pil
         import importlib
         import PIL
+
         importlib.reload(PIL.TiffTags)
 
         try:
-          import eagerx_gui
+            import eagerx_gui
         except ImportError:
             # Setup virtual display
             command = "echo 'Setting up virtual display for visualisation' && apt-get install ffmpeg freeglut3-dev xvfb >> /tmp/eagerx_xvfb.txt 2>&1"
@@ -61,7 +61,9 @@ def setup_notebook():
             os.environ["DISPLAY"] = ":1"
 
             # Install eagerx-gui and deps
-            command = "echo 'Installing eagerx-gui dependencies' && pip install pyqt5 pyqtgraph >> /tmp/eagerx_gui_deps.txt 2>&1"
+            command = (
+                "echo 'Installing eagerx-gui dependencies' && pip install pyqt5 pyqtgraph >> /tmp/eagerx_gui_deps.txt 2>&1"
+            )
             run_command(command)
 
             command = "echo 'Installing eagerx-gui' && pip install --ignore-requires-python --no-deps eagerx-gui >> /tmp/eagerx_gui.txt 2>&1"
@@ -174,8 +176,9 @@ def show_video(video_file, video_folder="videos/"):
     )
     ipythondisplay.display(ipythondisplay.HTML(data="<br>".join(html)))
 
-def show_svg(svg_file: str, width: str="100%"):
-    """ Show SVG image in Jupyter notebook with custom size.
+
+def show_svg(svg_file: str, width: str = "100%"):
+    """Show SVG image in Jupyter notebook with custom size.
 
     Adapted from https://stackoverflow.com/questions/51452569/how-to-resize-rescale-a-svg-graphic-in-an-ipython-jupyter-notebook
     (Comment from Jay M)
@@ -189,6 +192,7 @@ def show_svg(svg_file: str, width: str="100%"):
     b64 = base64.b64encode(svg).decode("utf=8")
     text = f'<img width="{width}" src="data:image/svg+xml;base64,{b64}" >'
     return ipythondisplay.HTML(text)
+
 
 def evaluate(model, env, n_eval_episodes=3, episode_length=100, video_rate=None, video_prefix=""):
     video_folder = "videos/"
