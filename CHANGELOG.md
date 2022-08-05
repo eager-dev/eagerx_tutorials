@@ -2,6 +2,15 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.20 (2022-08-05)
+### Fix
+* Rename dtheta to theta_dot, update setup_notebook, use gui to render graphs and add mp4 files. ([`fb39020`](https://github.com/eager-dev/eagerx_tutorials/commit/fb3902058d5793cbc930c42510573d1e313651ef))
+* Update pyproject.toml and add requirements.txt ([`67f6776`](https://github.com/eager-dev/eagerx_tutorials/commit/67f677668bce0d21c5a2ffc49610567bbf9accd4))
+* Add object tutorial ([`b769c89`](https://github.com/eager-dev/eagerx_tutorials/commit/b769c8976c1a5b95d1c3982cf52649f7e4aa41d3))
+
+### Documentation
+* Update local installation instructions ([`62bb344`](https://github.com/eager-dev/eagerx_tutorials/commit/62bb344f85333c70e617c521fbaf8b8de4e90523))
+
 ## v0.1.19 (2022-07-20)
 ### Fix
 * Numpy api, backend, Space, ([#45](https://github.com/eager-dev/eagerx_tutorials/issues/45)) ([`b1278f3`](https://github.com/eager-dev/eagerx_tutorials/commit/b1278f3dd37c832f974904c3ca46c00c58fe1f79))
