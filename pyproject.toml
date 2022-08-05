@@ -23,7 +23,7 @@ ipywidgets = "^7.7.0"
 tqdm = "^4.64.0"
 
 [tool.poetry.dev-dependencies]
-black = "^22.1.0"
+black = "^22.6.0"
 pytest = "^7.1"
 pytest-cov = "^3.0.0"
 flake8 = ">=3"
