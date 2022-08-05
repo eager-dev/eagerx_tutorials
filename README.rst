@@ -45,8 +45,9 @@ The following tutorials are currently available.
 - `Tutorial 3: Space and Processors <https://colab.research.google.com/github/eager-dev/eagerx_tutorials/blob/master/tutorials/pendulum/3_space_and_processors.ipynb>`_
 - `Tutorial 4: Nodes and Graph Validity <https://colab.research.google.com/github/eager-dev/eagerx_tutorials/blob/master/tutorials/pendulum/4_nodes.ipynb>`_
 - `Tutorial 5: Adding Engine Support for an Object <https://colab.research.google.com/github/eager-dev/eagerx_tutorials/blob/master/tutorials/pendulum/5_engine_implementation.ipynb>`_
-- `Tutorial 6: More Informative Rendering <https://colab.research.google.com/github/eager-dev/eagerx_tutorials/blob/master/tutorials/pendulum/6_rendering.ipynb>`_
-- `Tutorial 7: Reset Routines <https://colab.research.google.com/github/eager-dev/eagerx_tutorials/blob/master/tutorials/pendulum/7_reset_routine.ipynb>`_
+- `Tutorial 6: Defining a new Object <https://colab.research.google.com/github/eager-dev/eagerx_tutorials/blob/master/tutorials/pendulum/6_objects.ipynb>`_
+- `Tutorial 7: More Informative Rendering <https://colab.research.google.com/github/eager-dev/eagerx_tutorials/blob/master/tutorials/pendulum/7_rendering.ipynb>`_
+- `Tutorial 8: Reset Routines <https://colab.research.google.com/github/eager-dev/eagerx_tutorials/blob/master/tutorials/pendulum/8_reset_routine.ipynb>`_
 `The solutions are available in here <https://github.com/eager-dev/eagerx_tutorials/tree/master/tutorials/pendulum/solutions/>`_.
 
 How to run the tutorials locally? (Only Python 3.8 and 3.9 supported)
@@ -63,23 +64,24 @@ Clone this repository and go to its root:
     git clone git@github.com:eager-dev/eagerx_tutorials.git
     cd eagerx_tutorials
 
+*Optional* Create and source a virtual environment, (if venv is not installed run `python3 -m pip install --user virtualenv`):
+
+.. code-block:: bash
+
+    python3 -m venv tutorial_env
+    source tutorial_env/bin/activate
+
 Install the *eagerx_tutorials* package:
 
 .. code-block:: bash
 
-    poetry install
+    pip3 install -e .
 
-*Optional*: To support eagerx visualization tools, install the *eagerx-gui* package:
-
-.. code-block:: bash
-
-    poetry run pip3 install eagerx-gui
-
-Start Jupyter Lab (make sure ROS1 is sourced):
+Start Jupyter Lab:
 
 .. code-block:: bash
 
-    poetry run jupyter lab
+    jupyter lab
 
 You will find the tutorials in the *tutorials* directory.
 

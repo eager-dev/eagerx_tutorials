@@ -5,7 +5,7 @@ from eagerx.core.specs import ProcessorSpec
 
 class DecomposedAngle(eagerx.Processor):
     @classmethod
-    def make(cls, convert_to: str = "theta_dtheta") -> ProcessorSpec:
+    def make(cls, convert_to: str = "theta_theta_dot") -> ProcessorSpec:
         spec = cls.get_specification()
         return spec
 
@@ -18,7 +18,7 @@ class DecomposedAngle(eagerx.Processor):
 
 class ObsWithDecomposedAngle(eagerx.Processor):
     @classmethod
-    def make(cls, convert_to: str = "theta_dtheta") -> ProcessorSpec:
+    def make(cls, convert_to: str = "theta_theta_dot") -> ProcessorSpec:
         spec = cls.get_specification()
         spec.config.convert_to = convert_to
         return spec
@@ -29,9 +29,9 @@ class ObsWithDecomposedAngle(eagerx.Processor):
     def convert(self, msg: np.ndarray) -> np.ndarray:
         if not len(msg):  # No data
             data = np.array(msg, dtype="float32")
-        elif self.convert_to == "trig_dtheta":
+        elif self.convert_to == "trig_theta_dot":
             data = np.array([np.sin(-msg.data[0]), np.cos(msg.data[0]), -msg.data[1]], dtype="float32")
-        elif self.convert_to == "theta_dtheta":
+        elif self.convert_to == "theta_theta_dot":
             cos_th = msg.data[0]
             sin_th = msg.data[1]
             data = np.array([-np.arctan2(sin_th, cos_th), -msg.data[2]], dtype="float32")

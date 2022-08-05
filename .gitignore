@@ -8,7 +8,6 @@ logs/
 runs/
 wandb/
 *.zip
-*.mp4
 
 # C extensions
 *.so

@@ -28,18 +28,18 @@ def ode(omega_swing, omega_stance, mu, alpha, couple, coupling_strength, PHI, x)
     dr = alpha * r * (mu - r**2)
 
     # Calculate theta dot
-    dtheta = np.array([0, 0, 0, 0], dtype="float32")
+    theta_dot = np.array([0, 0, 0, 0], dtype="float32")
     mask = np.sin(theta) > 0
-    dtheta[mask] = omega_swing
-    dtheta[~mask] = omega_stance
+    theta_dot[mask] = omega_swing
+    theta_dot[~mask] = omega_stance
 
     # Calculate coupling
     if couple:
         for i in range(4):
             for j in range(4):
                 if j != i:
-                    dtheta[i] += r[j] * coupling_strength * np.sin(theta[j] - theta[i] - PHI[i, j])
-    return np.array([dr[0], dr[1], dr[2], dr[3], dtheta[0], dtheta[1], dtheta[2], dtheta[3]], dtype="float32")
+                    theta_dot[i] += r[j] * coupling_strength * np.sin(theta[j] - theta[i] - PHI[i, j])
+    return np.array([dr[0], dr[1], dr[2], dr[3], theta_dot[0], theta_dot[1], theta_dot[2], theta_dot[3]], dtype="float32")
 
 
 class HopfNetwork:

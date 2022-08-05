@@ -732,7 +732,7 @@ z
 " clip-path="url(#pa3cafbe546)" style="fill: #87ceeb; opacity: 0.5; stroke: #000000; stroke-linejoin: miter"/>
     </g>
     <g clip-path="url(#pa3cafbe546)">
-     <!-- pendulum/dtheta -->
+     <!-- pendulum/theta_dot -->
      <g transform="translate(331.79556 199.191436)scale(0.12 -0.12)">
       <use xlink:href="#DejaVuSans-70"/>
       <use xlink:href="#DejaVuSans-65" x="63.476562"/>

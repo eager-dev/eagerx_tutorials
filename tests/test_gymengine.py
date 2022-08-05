@@ -26,7 +26,7 @@ def test_gymengine(eng, bnd):
 
     # Object
     from eagerx_tutorials.pendulum.objects import Pendulum
-    pendulum = Pendulum.make("pendulum", actuators=["u"], sensors=["theta", "dtheta", "image"], states=["model_state"])
+    pendulum = Pendulum.make("pendulum", actuators=["u"], sensors=["theta", "theta_dot", "image"], states=["model_state"])
     graph.add(pendulum)
 
     # Create reset node
@@ -42,9 +42,9 @@ def test_gymengine(eng, bnd):
     graph.connect(source=reset.outputs.u, target=pendulum.actuators.u, window=1)
     graph.connect(source=pendulum.states.model_state, target=reset.targets.goal)
     graph.connect(source=pendulum.sensors.theta, target=reset.inputs.theta)
-    graph.connect(source=pendulum.sensors.dtheta, target=reset.inputs.dtheta)
+    graph.connect(source=pendulum.sensors.theta_dot, target=reset.inputs.theta_dot)
     graph.connect(source=pendulum.sensors.theta, observation="angle", window=1)
-    graph.connect(source=pendulum.sensors.dtheta, observation="angular_velocity", window=1)
+    graph.connect(source=pendulum.sensors.theta_dot, observation="angular_velocity", window=1)
 
     # Create overlay node
     from eagerx_tutorials.pendulum.overlay import Overlay

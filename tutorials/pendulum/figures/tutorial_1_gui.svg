@@ -157,7 +157,7 @@
 
 
                         <g fill="none" stroke="#000000" stroke-opacity="1" stroke-width="1" stroke-linecap="square" stroke-linejoin="bevel" transform="matrix(1.61725,0,0,1.61725,1050.81,306.738)" font-family="Ubuntu" font-size="14.6667" font-weight="400" font-style="normal">
-                            <text fill="#000000" fill-opacity="1" stroke="none" xml:space="preserve" x="4" y="17.9844" font-family="Ubuntu" font-size="14.6667" font-weight="400" font-style="normal">dtheta</text>
+                            <text fill="#000000" fill-opacity="1" stroke="none" xml:space="preserve" x="4" y="17.9844" font-family="Ubuntu" font-size="14.6667" font-weight="400" font-style="normal">theta_dot</text>
                         </g>
                         
 

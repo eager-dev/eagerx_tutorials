@@ -12,7 +12,7 @@ class Pendulum(Object):
     @classmethod
     @register.sensors(
         theta=Space(low=-999.0, high=999.0, shape=(), dtype="float32"),
-        dtheta=Space(low=-999.0, high=999.0, shape=(), dtype="float32"),
+        theta_dot=Space(low=-999.0, high=999.0, shape=(), dtype="float32"),
         image=Space(dtype="uint8"),  # shape, low & high determined at run-time
         u_applied=Space(low=[-2.0], high=[2.0], dtype="float32"),
     )
@@ -38,7 +38,7 @@ class Pendulum(Object):
 
         Sensors
         theta: angle of the pendulum wrt upward position
-        dtheta: angular velocity of the pendulum
+        theta_dot: angular velocity of the pendulum
         image: render of pendulum system
         u_applied: Applied DC motor voltage
 
@@ -60,7 +60,7 @@ class Pendulum(Object):
         # Modify default agnostic params
         # Only allow changes to the agnostic params (rates, windows, (space)converters, etc...
         spec.config.name = name
-        spec.config.sensors = ["theta", "dtheta"] if sensors is None else sensors
+        spec.config.sensors = ["theta", "theta_dot"] if sensors is None else sensors
         spec.config.actuators = ["u"] if actuators is None else actuators
         spec.config.states = ["model_state"] if states is None else states
 
@@ -70,7 +70,7 @@ class Pendulum(Object):
 
         # Set observation properties: (space_converters, rate, etc...)
         spec.sensors.theta.rate = rate
-        spec.sensors.dtheta.rate = rate
+        spec.sensors.theta_dot.rate = rate
         spec.sensors.image.rate = rate / 2
         spec.sensors.u_applied.rate = rate
         spec.actuators.u.rate = rate
@@ -137,7 +137,7 @@ class Pendulum(Object):
         # We could also have created a sensor that contains both, but in this way it is more clear which sensor
         # contains what information.
         theta = FloatOutput.make("theta", rate=spec.sensors.theta.rate, idx=0)
-        dtheta = FloatOutput.make("dtheta", rate=spec.sensors.dtheta.rate, idx=1)
+        theta_dot = FloatOutput.make("theta_dot", rate=spec.sensors.theta_dot.rate, idx=1)
 
         u_applied = ActionApplied.make("u_applied", rate=spec.sensors.u_applied.rate, process=2)
 
@@ -149,15 +149,15 @@ class Pendulum(Object):
         u = OdeInput.make("u", rate=spec.actuators.u.rate, process=2, default_action=[0])
 
         # Connect all engine nodes
-        graph.add([x, theta, dtheta, image, u, u_applied])
+        graph.add([x, theta, theta_dot, image, u, u_applied])
 
         # theta
         graph.connect(source=x.outputs.observation, target=theta.inputs.observation_array)
         graph.connect(source=theta.outputs.observation, sensor="theta")
 
-        # dtheta
-        graph.connect(source=x.outputs.observation, target=dtheta.inputs.observation_array)
-        graph.connect(source=dtheta.outputs.observation, sensor="dtheta")
+        # theta_dot
+        graph.connect(source=x.outputs.observation, target=theta_dot.inputs.observation_array)
+        graph.connect(source=theta_dot.outputs.observation, sensor="theta_dot")
 
         # image
         graph.connect(source=x.outputs.observation, target=image.inputs.observation)
