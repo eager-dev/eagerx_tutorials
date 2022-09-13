@@ -197,6 +197,7 @@ class Quadruped(eagerx.Object):
             vel_target=[0] * len(go1_config.JOINT_NAMES),
             pos_gain=[1] * len(go1_config.JOINT_NAMES),
             vel_gain=[1] * len(go1_config.JOINT_NAMES),
+            max_vel=[99] * len(go1_config.JOINT_NAMES),
             max_force=[10] * len(go1_config.JOINT_NAMES),
         )
         # Connect all engine nodes
