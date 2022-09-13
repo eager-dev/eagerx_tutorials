@@ -1,5 +1,5 @@
 import eagerx
-from eagerx.core.specs import EngineStateSpec, ObjectSpec
+from eagerx.core.specs import EngineStateSpec
 from typing import Any
 
 
@@ -8,7 +8,7 @@ class DummyState(eagerx.EngineState):
     def make(cls) -> EngineStateSpec:
         return cls.get_specification()
 
-    def initialize(self, spec: EngineStateSpec, object_spec: ObjectSpec, simulator: Any):
+    def initialize(self, spec: EngineStateSpec, simulator: Any):
         pass
 
     def reset(self, state: Any):
@@ -22,7 +22,7 @@ class SetGymAttribute(eagerx.EngineState):
         spec.config.attribute = attribute
         return spec
 
-    def initialize(self, spec: EngineStateSpec, object_spec: ObjectSpec, simulator: Any):
+    def initialize(self, spec: EngineStateSpec, simulator: Any):
         self.attribute = spec.config.attribute
         self.simulator = simulator
 

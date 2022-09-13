@@ -9,8 +9,8 @@ SP = 1
 
 @pytest.mark.timeout(60)
 @pytest.mark.parametrize("eng", [ODE])
-@pytest.mark.parametrize("bnd", [SP])
-def test_gymengine(eng, bnd):
+@pytest.mark.parametrize("backend", [SP])
+def test_gymengine(eng, backend):
     # Start virtual display
     from pyvirtualdisplay import Display
     display = Display(visible=False, backend="xvfb")
@@ -72,10 +72,10 @@ def test_gymengine(eng, bnd):
         raise NotImplementedError("Select valid engine.")
 
     # Make backend
-    if bnd == ROS1:
+    if backend == ROS1:
         from eagerx.backends.ros1 import Ros1
         backend = Ros1.make()
-    elif bnd == SP:
+    elif backend == SP:
         from eagerx.backends.single_process import SingleProcess
         backend = SingleProcess.make()
     else:
@@ -160,4 +160,4 @@ def test_gymengine(eng, bnd):
 if __name__ == "__main__":
     for e in [GYM, ODE]:
         for b in [ROS1, SP]:
-            test_gymengine(eng=e, bnd=b)
+            test_gymengine(eng=e, backend=b)
