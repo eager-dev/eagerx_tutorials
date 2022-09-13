@@ -7,7 +7,7 @@ SP = 1
 
 
 @pytest.mark.timeout(30)
-@pytest.mark.parametrize("backend", [ROS1, SP])
+@pytest.mark.parametrize("backend", [ROS1])
 def test_quadruped(backend):
     import eagerx_tutorials
     from eagerx_tutorials import helper
