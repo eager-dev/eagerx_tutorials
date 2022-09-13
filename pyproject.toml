@@ -14,7 +14,7 @@ python = "^3.7"
 eagerx = "^0.1.32"
 eagerx-ode = "^0.1.26"
 eagerx-pybullet = "^0.1.10"
-stable-baselines3 = {extras = ["extra"], version = "^1.5.0"}
+stable-baselines3 = "^1.2.0"
 jupyterlab = "^3.3.4"
 nbconvert = "^6.5.0"
 PyVirtualDisplay = "^3.0"
