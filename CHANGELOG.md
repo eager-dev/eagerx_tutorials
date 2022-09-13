@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.21 (2022-09-13)
+### Fix
+* Graph refactor ([#55](https://github.com/eager-dev/eagerx_tutorials/issues/55)) ([`710e2fb`](https://github.com/eager-dev/eagerx_tutorials/commit/710e2fb20f7c3783ad83eafdf39a03793bef0e89))
+
+### Documentation
+* Minor updates ([`a34d139`](https://github.com/eager-dev/eagerx_tutorials/commit/a34d1394cbf07b85024b5390489c6ff72634ab54))
+
 ## v0.1.20 (2022-08-05)
 ### Fix
 * Rename dtheta to theta_dot, update setup_notebook, use gui to render graphs and add mp4 files. ([`fb39020`](https://github.com/eager-dev/eagerx_tutorials/commit/fb3902058d5793cbc930c42510573d1e313651ef))
