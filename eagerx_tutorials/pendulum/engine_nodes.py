@@ -37,8 +37,7 @@ class FloatOutput(EngineNode):
         spec.config.idx = idx
         return spec
 
-    def initialize(self, spec, object_spec, simulator):
-        self.obj_name = object_spec.config.name
+    def initialize(self, spec, simulator):
         self.idx = spec.config.idx
 
     @register.states()

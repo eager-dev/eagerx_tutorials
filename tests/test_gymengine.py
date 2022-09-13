@@ -9,8 +9,8 @@ SP = 1
 
 @pytest.mark.timeout(60)
 @pytest.mark.parametrize("eng", [ODE])
-@pytest.mark.parametrize("bnd", [SP])
-def test_gymengine(eng, bnd):
+@pytest.mark.parametrize("backend", [SP])
+def test_gymengine(eng, backend):
     # Start virtual display
     from pyvirtualdisplay import Display
     display = Display(visible=False, backend="xvfb")
@@ -160,4 +160,4 @@ def test_gymengine(eng, bnd):
 if __name__ == "__main__":
     for e in [GYM, ODE]:
         for b in [ROS1, SP]:
-            test_gymengine(eng=e, bnd=b)
+            test_gymengine(eng=e, backend=b)
