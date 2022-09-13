@@ -208,7 +208,7 @@ if __name__ == "__main__":
         graph.render(xy_plane.outputs.image, rate=overlay_rate)
 
     # Show in the gui
-    graph.gui()
+    # graph.gui()
 
     show_gui = args.render or args.load_checkpoint is not None
 
@@ -220,7 +220,7 @@ if __name__ == "__main__":
         egl=True,
         sync=True,
         real_time_factor=0,
-        process=eagerx.process.ENVIRONMENT,
+        process=eagerx.process.NEW_PROCESS,
     )
 
     # Make backend
@@ -259,12 +259,11 @@ if __name__ == "__main__":
             states = self.state_space.sample()
 
             # set image location
-            # states["quadruped/image/pos"] = np.array([0, -3, 1.5])  # todo: works side view
-            # tmp = list(pybullet.getQuaternionFromEuler(np.deg2rad([180, 0, 0])))
-
-            states["quadruped/image/pos"] = np.array([-1, -1, 0.5], dtype="float32")
+            if "quadruped/image/pos" in states:
+                states["quadruped/image/pos"] = np.array([0, -3, 1.5])  # todo: works side view
             tmp = list(pybullet.getQuaternionFromEuler(np.deg2rad([-90, 0, 0])))
-            states["quadruped/image/orientation"] = np.array(tmp, dtype="float32")
+            if "quadruped/image/orientation" in states:
+                states["quadruped/image/orientation"] = np.array(tmp, dtype="float32")
 
             # Perform reset
             obs = self._reset(states)

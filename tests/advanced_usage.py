@@ -5,7 +5,7 @@ from eagerx_tutorials import helper
 import eagerx
 eagerx.set_log_level(eagerx.WARN)
 
-import eagerx_gui
+# import eagerx_gui
 
 # Available sensors
 sensors = ["joint_position", "joint_velocity", "force_torque", "orientation", "position", "velocity"]
@@ -181,28 +181,28 @@ try:
     # Render top-view of the quadruped's movement
     env.render("human")
     # Start training!
-    model.learn(100)
+    model.learn(10000)
     # Save the final policy
     model.save("last_policy")
 except KeyboardInterrupt:
     model.save("last_policy")
 
-# Evaluate
-from eagerx_tutorials.quadruped.evaluate import EvaluateEnv
-
-# Load last policy
-model = TQC.load("last_policy")
-
-# Create an evaluation environment (renders 3D images).
-eval_env = EvaluateEnv(env, graph, engine, episode_timeout=40, render="pybullet")
-eval_env.render("human")
-
-# Evaluate policy
-# helper.evaluate(model, Flatten(eval_env), episode_length=int(40*20), video_rate=20, video_prefix="3d_eval", n_eval_episodes=2)
-
-# Create an evaluation environment (renders xy-plane).
-eval_env = EvaluateEnv(env, graph, engine, episode_timeout=40, render="xy-plane")
-eval_env.render("human")
-
-# Evaluate policy
-helper.evaluate(model, Flatten(eval_env), episode_length=int(40*20), video_rate=20, video_prefix="xy_eval", n_eval_episodes=2)
+# # Evaluate
+# from eagerx_tutorials.quadruped.evaluate import EvaluateEnv
+#
+# # Load last policy
+# model = TQC.load("last_policy")
+#
+# # Create an evaluation environment (renders 3D images).
+# eval_env = EvaluateEnv(env, graph, engine, episode_timeout=40, render="pybullet")
+# eval_env.render("human")
+#
+# # Evaluate policy
+# # helper.evaluate(model, Flatten(eval_env), episode_length=int(40*20), video_rate=20, video_prefix="3d_eval", n_eval_episodes=2)
+#
+# # Create an evaluation environment (renders xy-plane).
+# eval_env = EvaluateEnv(env, graph, engine, episode_timeout=40, render="xy-plane")
+# eval_env.render("human")
+#
+# # Evaluate policy
+# helper.evaluate(model, Flatten(eval_env), episode_length=int(40*20), video_rate=20, video_prefix="xy_eval", n_eval_episodes=2)
