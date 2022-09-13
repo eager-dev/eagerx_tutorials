@@ -6,7 +6,7 @@ ROS1 = 0
 SP = 1
 
 
-@pytest.mark.timeout(60)
+@pytest.mark.timeout(30)
 @pytest.mark.parametrize("backend", [ROS1, SP])
 def test_quadruped(backend):
     import eagerx_tutorials
@@ -55,17 +55,17 @@ def test_quadruped(backend):
     graph.connect(observation="xs_zs", source=cpg.outputs.xs_zs, skip=True)
 
     # Create xy-plane render node
-    from eagerx_tutorials.quadruped.overlay import XyPlane
-    xy_plane = XyPlane.make("xy_plane", rate=5)
+    # from eagerx_tutorials.quadruped.overlay import XyPlane
+    # xy_plane = XyPlane.make("xy_plane", rate=5)
     # Add node to graph
-    graph.add(xy_plane)
+    # graph.add(xy_plane)
 
     # The node renders images, based on the x,y position sensor measurements.
-    graph.connect(source=robot.sensors.position, target=xy_plane.inputs.position)
+    # graph.connect(source=robot.sensors.position, target=xy_plane.inputs.position)
 
     # Select the output of the node for rendering.
     # Can be commented out for faster training
-    graph.render(xy_plane.outputs.image, rate=5)
+    # graph.render(xy_plane.outputs.image, rate=5)
 
     # Define Gym Environment
     import pybullet
@@ -155,7 +155,6 @@ def test_quadruped(backend):
             info = {"TimeLimit.truncated": timeout and not has_fallen}
             return obs, reward, done, info
 
-
     # Define the pybullet engine
     from eagerx_pybullet.engine import PybulletEngine
 
@@ -193,7 +192,7 @@ def test_quadruped(backend):
     try:
         train_steps = int(train_episodes * episode_timeout * 20)
         # Render top-view of the quadruped's movement
-        env.render("human")
+        # env.render("human")
         # Start training!
         model.learn(10)
         # Save the final policy
