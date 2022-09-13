@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.22 (2022-09-13)
+### Fix
+* Fixed max_velocity bug in quadruped, and attribute error in enginestate bug. ([#58](https://github.com/eager-dev/eagerx_tutorials/issues/58)) ([`c6beb43`](https://github.com/eager-dev/eagerx_tutorials/commit/c6beb439df2973accc7102717131477f3f78eb05))
+
 ## v0.1.21 (2022-09-13)
 ### Fix
 * Graph refactor ([#55](https://github.com/eager-dev/eagerx_tutorials/issues/55)) ([`710e2fb`](https://github.com/eager-dev/eagerx_tutorials/commit/710e2fb20f7c3783ad83eafdf39a03793bef0e89))
