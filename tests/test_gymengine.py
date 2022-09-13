@@ -72,10 +72,10 @@ def test_gymengine(eng, backend):
         raise NotImplementedError("Select valid engine.")
 
     # Make backend
-    if bnd == ROS1:
+    if backend == ROS1:
         from eagerx.backends.ros1 import Ros1
         backend = Ros1.make()
-    elif bnd == SP:
+    elif backend == SP:
         from eagerx.backends.single_process import SingleProcess
         backend = SingleProcess.make()
     else:
