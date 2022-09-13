@@ -7,10 +7,10 @@ import copy
 
 
 class EvaluateEnv(eagerx.BaseEnv):
-    def __init__(self, env, engine, episode_timeout, render="pybullet"):
+    def __init__(self, env, graph, engine, episode_timeout, render="pybullet"):
         self.rate = env.rate
-        graph = copy.deepcopy(env.graph)
         self._wrapped = env
+        graph = copy.deepcopy(graph)
         if render == "pybullet":
             name = f"{env.name}_pybullet_eval"
             robot = graph.get_spec("quadruped")
