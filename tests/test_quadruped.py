@@ -1,3 +1,4 @@
+import pytest
 
 GYM = 0
 ODE = 1
@@ -5,7 +6,9 @@ ROS1 = 0
 SP = 1
 
 
-def advanced_usage(backend):
+@pytest.mark.timeout(60)
+@pytest.mark.parametrize("backend", [ROS1, SP])
+def test_quadruped(backend):
     import eagerx_tutorials
     from eagerx_tutorials import helper
 
@@ -221,4 +224,4 @@ def advanced_usage(backend):
 
 if __name__ == "__main__":
     for b in [SP, ROS1]:
-        advanced_usage(backend=b)
+        test_quadruped(backend=b)
