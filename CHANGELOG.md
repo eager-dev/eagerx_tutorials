@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.24 (2022-11-30)
+### Fix
+* Do update before installing xvfb in colab ([`af24253`](https://github.com/eager-dev/eagerx_tutorials/commit/af242534f8345939f2c8171cedbc4d661431c85c))
+
 ## v0.1.23 (2022-09-14)
 ### Fix
 * Update eagerx ([`0c07eff`](https://github.com/eager-dev/eagerx_tutorials/commit/0c07effa1834e1d572baad71c587d83270af2991))
