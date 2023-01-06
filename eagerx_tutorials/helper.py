@@ -55,7 +55,7 @@ def setup_notebook():
             import eagerx_gui
         except ImportError:
             # Setup virtual display
-            command = "echo '\nSetting up virtual display for visualisation' && apt-get update >> /tmp/apt_update.txt 2>&1 && apt-get install ffmpeg freeglut3-dev xvfb >> /tmp/eagerx_xvfb.txt 2>&1"
+            command = "echo 'Setting up virtual display for visualisation' && apt-get update >> /tmp/apt_update.txt 2>&1 && apt-get install ffmpeg freeglut3-dev xvfb >> /tmp/eagerx_xvfb.txt 2>&1"
             run_command(command)
             os.system("Xvfb :1 -screen 0 1024x768x24 &")
             os.environ["DISPLAY"] = ":1"
