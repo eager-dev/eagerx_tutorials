@@ -59,7 +59,8 @@ jobs:
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run:  |
           poetry run pip install setuptools==65.5.0
-          poetry run pip install gym==0.21.0poetry install --no-interaction --no-root
+          poetry run pip install gym==0.21.0
+          poetry install --no-interaction --no-root
       #----------------------------------------------
       # install your root project, if required
       #----------------------------------------------
