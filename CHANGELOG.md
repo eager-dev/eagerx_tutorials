@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.25 (2023-03-27)
+### Fix
+* Use specific setuptools version to fix gym installation problems ([`72a8ccd`](https://github.com/eager-dev/eagerx_tutorials/commit/72a8ccd12386a1ee32f658e37ea14b79b7f72a6a))
+
 ## v0.1.24 (2022-11-30)
 ### Fix
 * Do update before installing xvfb in colab ([`af24253`](https://github.com/eager-dev/eagerx_tutorials/commit/af242534f8345939f2c8171cedbc4d661431c85c))
