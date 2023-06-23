@@ -6,7 +6,6 @@ import base64
 import numpy as np
 from tqdm import tqdm
 from datetime import datetime
-from stable_baselines3.common.vec_env import VecVideoRecorder, DummyVecEnv
 from pathlib import Path
 from IPython import display as ipythondisplay
 import subprocess
@@ -155,6 +154,7 @@ def record_video(env, model, video_length=500, prefix="", video_folder="videos/"
     :param prefix: (str)
     :param video_folder: (str)
     """
+    from stable_baselines3.common.vec_env import VecVideoRecorder, DummyVecEnv
     eval_env = DummyVecEnv([lambda: env])
 
     # Start the video at step=0 and record for video length
