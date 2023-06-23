@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.27 (2023-06-23)
+
+### Fix
+
+* Codestyle ([`6b95220`](https://github.com/eager-dev/eagerx_tutorials/commit/6b952209617544faeda7bea49329dfc2f10e52c5))
+* Remove setuptools and move sb3 dependency ([`b87e44c`](https://github.com/eager-dev/eagerx_tutorials/commit/b87e44cdf753087d0ff31d588a8dfd065428cb76))
+
 ## v0.1.26 (2023-06-23)
 
 ### Fix
