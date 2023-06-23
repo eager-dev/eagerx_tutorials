@@ -82,13 +82,13 @@ def test_gymengine(eng, backend):
         raise NotImplementedError("Select valid backend.")
 
     # Open GUI
-    graph.gui()
+    # graph.gui()
 
     # Define environment
     class PendulumEnv(eagerx.BaseEnv):
-        def __init__(self, name, rate, graph, engine, backend, force_start):
+        def __init__(self, name, rate, graph, engine, backend, force_start, render_mode: str = None):
             self.steps = 0
-            super().__init__(name, rate, graph, engine, backend=backend, force_start=force_start)
+            super().__init__(name, rate, graph, engine, backend=backend, force_start=force_start, render_mode=render_mode)
 
         def step(self, action):
             obs = self._step(action)
@@ -112,14 +112,16 @@ def test_gymengine(eng, backend):
             # currently just a timeout after 100 steps
             self.steps += 1
             done = self.steps > 100
+            truncated = self.steps > 100
 
             # Set info, tell the algorithm the termination was due to a timeout
             # (the episode was truncated)
             info = {"TimeLimit.truncated": self.steps > 100}
+            if self.render_mode == "human":
+                self.render()
+            return obs, -cost, truncated, done, info
 
-            return obs, -cost, done, info
-
-        def reset(self):
+        def reset(self, seed=None, options=None):
             # Reset steps counter
             self.steps = 0
 
@@ -131,28 +133,39 @@ def test_gymengine(eng, backend):
 
             # Perform reset
             obs = self._reset(states)
-            return obs
+            if self.render_mode == "human":
+                self.render()
+            return obs, {}
 
     # Initialize Environment
     import eagerx_tutorials.pendulum.gym_implementation  # noqa: registers gym implementation
     env = PendulumEnv("PendulumEnv", rate, graph, engine, backend, force_start=True)
 
     import numpy as np
-    import stable_baselines3 as sb
     from eagerx.wrappers import Flatten
 
     # Toggle render
-    env.render("human")
+    env.render()
 
     # Stable Baselines3 expects flattened actions & observations
     # Convert observation and action space from Dict() to Box()
     env = Flatten(env)
 
-    # Initialize learner
-    model = sb.SAC("MlpPolicy", env, verbose=1, device="auto")
+    # Evaluate in simulation
+    (_obs, _info), action = env.reset(), env.action_space.sample()
+    for i in range(3):
+        obs, reward, truncated, done, info = env.step(action)
+        if done:
+            (_obs, _info), action = env.reset(), env.action_space.sample()
+            print(f"Episode {i}")
+    print("\n[Finished]")
 
-    # Train for 1 minute (sim time)
-    model.learn(total_timesteps=int(3 * rate))
+    # # Initialize learner
+    # import stable_baselines3 as sb
+    # model = sb.SAC("MlpPolicy", env, verbose=1, device="auto")
+    #
+    # # Train for 1 minute (sim time)
+    # model.learn(total_timesteps=int(3 * rate))
 
     env.shutdown()
 

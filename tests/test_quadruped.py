@@ -10,7 +10,6 @@ SP = 1
 @pytest.mark.parametrize("backend", [ROS1])
 def test_quadruped(backend):
     import eagerx_tutorials
-    from eagerx_tutorials import helper
 
     # Import eagerx
     import eagerx
@@ -70,7 +69,7 @@ def test_quadruped(backend):
     # Define Gym Environment
     import pybullet
     import numpy as np
-    import gym
+    import gymnasium as gym
     from typing import Dict, Tuple
 
     # Make backend
@@ -84,8 +83,8 @@ def test_quadruped(backend):
         raise NotImplementedError("Select valid backend.")
 
     class QuadrupedEnv(eagerx.BaseEnv):
-        def __init__(self, name, rate, graph, engine, episode_timeout):
-            super().__init__(name, rate, graph, engine, backend, force_start=True)
+        def __init__(self, name, rate, graph, engine, episode_timeout, render_mode: str = None):
+            super().__init__(name, rate, graph, engine, backend, force_start=True, render_mode=render_mode)
 
             self.steps = None
             self.timeout_steps = int(episode_timeout * rate)
@@ -107,7 +106,7 @@ def test_quadruped(backend):
             """
             return self._action_space
 
-        def reset(self):
+        def reset(self, seed=None, options=None):
             """A method that resets the environment to an initial state and returns an initial observation."""
             # Reset number of steps
             self.steps = 0
@@ -121,9 +120,11 @@ def test_quadruped(backend):
             # Set initial observation for skipped connection 'xs_zs`
             if "xs_zs" in obs:
                 obs["xs_zs"][0][:] = [-0.01354526, -0.26941818, 0.0552178, -0.25434446]
-            return obs
+            if self.render_mode == "human":
+                self.render()
+            return obs, {}
 
-        def step(self, action: Dict) -> Tuple[Dict, float, bool, Dict]:
+        def step(self, action: Dict) -> Tuple[Dict, float, bool, bool, Dict]:
             """A method that runs one timestep of the environment's dynamics."""
 
             # Here, we apply a step (i.e. we step the graph dynamics).
@@ -150,10 +151,14 @@ def test_quadruped(backend):
 
             # Determine done flag
             done = timeout or has_fallen
+            truncated = timeout
 
             # Set info about episode truncation
             info = {"TimeLimit.truncated": timeout and not has_fallen}
-            return obs, reward, done, info
+
+            if self.render_mode == "human":
+                self.render()
+            return obs, reward, truncated, done, info
 
     # Define the pybullet engine
     from eagerx_pybullet.engine import PybulletEngine
@@ -165,7 +170,6 @@ def test_quadruped(backend):
     env = QuadrupedEnv(name="QuadEnv", rate=20, graph=graph, engine=engine, episode_timeout=episode_timeout)
 
     # Stable-baselines
-    from sb3_contrib import TQC
     from eagerx.wrappers import Flatten
 
     # Define hyper parameters for the TQC policy.
@@ -184,21 +188,31 @@ def test_quadruped(backend):
         policy_kwargs=dict(n_critics=1, net_arch=dict(pi=[64, 64], qf=[64, 64])),
     )
 
-    # Initialize the model
-    model = TQC("MlpPolicy", Flatten(env), **hyperparams)
+    # Evaluate in simulation
+    (_obs, _info), action = env.reset(), env.action_space.sample()
+    for i in range(3):
+        obs, reward, truncated, done, info = env.step(action)
+        if done:
+            (_obs, _info), action = env.reset(), env.action_space.sample()
+            print(f"Episode {i}")
+    print("\n[Finished]")
 
-    # Train for 30 episodes
-    train_episodes = 30
-    try:
-        train_steps = int(train_episodes * episode_timeout * 20)
-        # Render top-view of the quadruped's movement
-        # env.render("human")
-        # Start training!
-        model.learn(10)
-        # Save the final policy
-        model.save("last_policy")
-    except KeyboardInterrupt:
-        model.save("last_policy")
+    # Initialize the model
+    # from sb3_contrib import TQC
+    # model = TQC("MlpPolicy", Flatten(env), **hyperparams)
+    #
+    # # Train for 30 episodes
+    # train_episodes = 30
+    # try:
+    #     train_steps = int(train_episodes * episode_timeout * 20)
+    #     # Render top-view of the quadruped's movement
+    #     # env.render("human")
+    #     # Start training!
+    #     model.learn(10)
+    #     # Save the final policy
+    #     model.save("last_policy")
+    # except KeyboardInterrupt:
+    #     model.save("last_policy")
 
     # # Evaluate
     # from eagerx_tutorials.quadruped.evaluate import EvaluateEnv

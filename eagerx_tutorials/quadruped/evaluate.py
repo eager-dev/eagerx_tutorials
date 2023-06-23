@@ -7,7 +7,7 @@ import copy
 
 
 class EvaluateEnv(eagerx.BaseEnv):
-    def __init__(self, env, graph, engine, episode_timeout, render="pybullet"):
+    def __init__(self, env, graph, engine, episode_timeout, render="pybullet", render_mode: str = "rgb_array"):
         self.rate = env.rate
         self._wrapped = env
         graph = copy.deepcopy(graph)
@@ -28,7 +28,7 @@ class EvaluateEnv(eagerx.BaseEnv):
 
         backend = SingleProcess.make()
 
-        super(EvaluateEnv, self).__init__(name, self.rate, graph, engine, backend, force_start=True)
+        super(EvaluateEnv, self).__init__(name, self.rate, graph, engine, backend, force_start=True, render_mode=render_mode)
         self.timeout_steps = int(episode_timeout * self.rate)
         self.steps = None
 
@@ -40,7 +40,7 @@ class EvaluateEnv(eagerx.BaseEnv):
     def action_space(self) -> gym.spaces.Dict:
         return self._wrapped.action_space
 
-    def reset(self):
+    def reset(self, seed=None, options=None) -> Tuple[Dict, Dict]:
         # Reset number of steps
         self.steps = 0
 
@@ -58,15 +58,24 @@ class EvaluateEnv(eagerx.BaseEnv):
         obs = self._reset(states)
         if "xs_zs" in obs:
             obs["xs_zs"][0][:] = [-0.01354526, -0.26941818, 0.0552178, -0.25434446]
-        return obs
 
-    def step(self, action: Dict) -> Tuple[Dict, float, bool, Dict]:
+        # Render
+        if self.render_mode == "human":
+            self.render()
+        return obs, {}
+
+    def step(self, action: Dict) -> Tuple[Dict, float, bool, bool, Dict]:
         obs = self._step(action)
         self.steps += 1
 
+        truncated = self.steps >= self.timeout_steps
         done = self.steps >= self.timeout_steps
 
         # Determine done flag
         # Set info about episode truncation
         info = {"TimeLimit.truncated": done}
-        return obs, 0.0, done, info
+
+        # Render
+        if self.render_mode == "human":
+            self.render()
+        return obs, 0.0, truncated, done, info

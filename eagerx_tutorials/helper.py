@@ -2,6 +2,7 @@ import os
 import site
 import cv2
 import base64
+
 import numpy as np
 from tqdm import tqdm
 from datetime import datetime
@@ -10,6 +11,7 @@ from pathlib import Path
 from IPython import display as ipythondisplay
 import subprocess
 import sys
+import gymnasium as gym
 
 
 def run_command(cmd: str, stderr=subprocess.STDOUT) -> None:
@@ -52,7 +54,7 @@ def setup_notebook():
         importlib.reload(PIL.TiffTags)
 
         try:
-            import eagerx_gui
+            import eagerx_gui  # noqa:
         except ImportError:
             # Setup virtual display
             command = "echo 'Setting up virtual display for visualisation' && apt-get update >> /tmp/apt_update.txt 2>&1 && apt-get install ffmpeg freeglut3-dev xvfb >> /tmp/eagerx_xvfb.txt 2>&1"
@@ -75,11 +77,30 @@ def setup_notebook():
     else:
         print("Not running on CoLab.")
         try:
-            import eagerx_gui
+            import eagerx_gui  # noqa:
         except ImportError:
             command = "echo 'Installing eagerx-gui' && pip install eagerx-gui >> /tmp/eagerx_gui.txt 2>&1"
             run_command(command)
     os.environ["EAGERX_RELOAD"] = "1"
+
+    # Install stable-baselines3
+    try:
+        import stable_baselines3  # noqa:
+    except ImportError:
+        command = (
+            "echo 'Installing stable-baselines3 with pip.' && pip install stable-baselines3==2.0.0a13 >> /tmp/sb3.txt 2>&1"
+        )
+        run_command(command)
+    try:
+        import sb3_contrib  # noqa:
+    except ImportError:
+        command = "echo 'Installing sb3-contrib with pip.' && pip install sb3-contrib==2.0.0a13 >> /tmp/sb3_contrib.txt 2>&1"
+        run_command(command)
+    try:
+        import moviepy  # noqa:
+    except ImportError:
+        command = "echo 'Installing moviepy with pip.' && pip install moviepy >> /tmp/moviepy.txt 2>&1"
+        run_command(command)
 
 
 def deprecated_setup_notebook():
@@ -144,11 +165,12 @@ def record_video(env, model, video_length=500, prefix="", video_folder="videos/"
         video_length=video_length,
         name_prefix=prefix,
     )
-
-    obs = eval_env.reset()
+    o = eval_env.reset()
+    obs = o[0] if isinstance(o, tuple) else o
     for _ in range(video_length):
         action, _ = model.predict(obs, deterministic=True)
-        obs, _, _, _ = eval_env.step(action)
+        o = eval_env.step(action)
+        obs = o[0] if isinstance(o, tuple) else o
 
     # Close the video recorder
     eval_env.close()
@@ -204,13 +226,13 @@ def evaluate(model, env, n_eval_episodes=3, episode_length=100, video_rate=None,
         print(f"Start evaluation episode {i} of {n_eval_episodes}")
         img_array = []
         episodic_reward = 0
-        obs = env.reset()
+        obs, _info = env.reset()
         for _step in tqdm(range(episode_length)):
             action, _ = model.predict(obs, deterministic=True)
-            obs, reward, done, info = env.step(action)
+            obs, reward, truncated, done, info = env.step(action)
             episodic_reward += reward
             if video_rate is not None:
-                img = env.render("rgb_array")
+                img = env.render()
                 if 0 not in img.shape:
                     img_array.append(img)
 
@@ -240,3 +262,14 @@ def evaluate(model, env, n_eval_episodes=3, episode_length=100, video_rate=None,
         episodic_rewards.append(episodic_reward)
     mean_episodic_reward = np.mean(episodic_rewards)
     print(f"Finished evaluation with mean episodic reward: {mean_episodic_reward}")
+
+
+def RescaleAction(env, min_action, max_action):
+    env = gym.wrappers.rescale_action.RescaleAction(env, min_action, max_action)
+    env.action_space = gym.spaces.Box(
+        low=min_action,
+        high=max_action,
+        shape=env.action_space.shape,
+        dtype=env.action_space.dtype,
+    )
+    return env
