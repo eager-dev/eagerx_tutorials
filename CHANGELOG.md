@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.26 (2023-06-23)
+
+### Fix
+
+* Refactor to gymnasium ([`7885f03`](https://github.com/eager-dev/eagerx_tutorials/commit/7885f03389bd63671270188ab166a2c996ab9735))
+
 ## v0.1.25 (2023-03-27)
 ### Fix
 * Use specific setuptools version to fix gym installation problems ([`72a8ccd`](https://github.com/eager-dev/eagerx_tutorials/commit/72a8ccd12386a1ee32f658e37ea14b79b7f72a6a))
