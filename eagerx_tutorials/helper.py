@@ -155,6 +155,7 @@ def record_video(env, model, video_length=500, prefix="", video_folder="videos/"
     :param video_folder: (str)
     """
     from stable_baselines3.common.vec_env import VecVideoRecorder, DummyVecEnv
+
     eval_env = DummyVecEnv([lambda: env])
 
     # Start the video at step=0 and record for video length
