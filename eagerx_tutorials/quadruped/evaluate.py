@@ -68,14 +68,12 @@ class EvaluateEnv(eagerx.BaseEnv):
         obs = self._step(action)
         self.steps += 1
 
+        # Determine termination
         truncated = self.steps >= self.timeout_steps
-        done = self.steps >= self.timeout_steps
-
-        # Determine done flag
-        # Set info about episode truncation
-        info = {"TimeLimit.truncated": done}
+        terminated = False
+        info = {}
 
         # Render
         if self.render_mode == "human":
             self.render()
-        return obs, 0.0, truncated, done, info
+        return obs, 0.0, terminated, truncated, info

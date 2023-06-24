@@ -150,15 +150,12 @@ def test_quadruped(backend):
             timeout = self.steps >= self.timeout_steps
 
             # Determine done flag
-            done = timeout or has_fallen
+            terminated = has_fallen
             truncated = timeout
-
-            # Set info about episode truncation
-            info = {"TimeLimit.truncated": timeout and not has_fallen}
 
             if self.render_mode == "human":
                 self.render()
-            return obs, reward, truncated, done, info
+            return obs, reward, terminated, truncated, info
 
     # Define the pybullet engine
     from eagerx_pybullet.engine import PybulletEngine
@@ -191,8 +188,8 @@ def test_quadruped(backend):
     # Evaluate in simulation
     (_obs, _info), action = env.reset(), env.action_space.sample()
     for i in range(3):
-        obs, reward, truncated, done, info = env.step(action)
-        if done:
+        obs, reward, terminated, truncated, info = env.step(action)
+        if terminated or truncated:
             (_obs, _info), action = env.reset(), env.action_space.sample()
             print(f"Episode {i}")
     print("\n[Finished]")

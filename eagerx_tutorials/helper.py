@@ -230,7 +230,7 @@ def evaluate(model, env, n_eval_episodes=3, episode_length=100, video_rate=None,
         obs, _info = env.reset()
         for _step in tqdm(range(episode_length)):
             action, _ = model.predict(obs, deterministic=True)
-            obs, reward, truncated, done, info = env.step(action)
+            obs, reward, terminated, truncated, info = env.step(action)
             episodic_reward += reward
             if video_rate is not None:
                 img = env.render()

@@ -111,15 +111,14 @@ def test_gymengine(eng, backend):
             # Determine when is the episode over
             # currently just a timeout after 100 steps
             self.steps += 1
-            done = self.steps > 100
+            terminated = False
             truncated = self.steps > 100
+            info = {}
 
-            # Set info, tell the algorithm the termination was due to a timeout
-            # (the episode was truncated)
-            info = {"TimeLimit.truncated": self.steps > 100}
+            # Render
             if self.render_mode == "human":
                 self.render()
-            return obs, -cost, truncated, done, info
+            return obs, -cost, terminated, truncated, info
 
         def reset(self, seed=None, options=None):
             # Reset steps counter
@@ -154,8 +153,8 @@ def test_gymengine(eng, backend):
     # Evaluate in simulation
     (_obs, _info), action = env.reset(), env.action_space.sample()
     for i in range(3):
-        obs, reward, truncated, done, info = env.step(action)
-        if done:
+        obs, reward, terminated, truncated, info = env.step(action)
+        if terminated or truncated:
             (_obs, _info), action = env.reset(), env.action_space.sample()
             print(f"Episode {i}")
     print("\n[Finished]")

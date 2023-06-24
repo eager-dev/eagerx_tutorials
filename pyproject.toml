@@ -11,7 +11,7 @@ include = ["scripts"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
-eagerx = "^0.1.37"
+eagerx = "^0.1.38"
 eagerx-ode = "^0.1.26"  # todo: bump to 0.1.27
 eagerx-pybullet = "^0.1.11"
 #stable-baselines3 = { version="^2.0.0a13", allow-prereleases = true } # todo: bump to 2.0.0a?

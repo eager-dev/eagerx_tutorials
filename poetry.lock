@@ -661,13 +661,13 @@ files = [
 
 [[package]]
 name = "eagerx"
-version = "0.1.37"
+version = "0.1.38"
 description = "Engine Angostic Graph Environments for Robotics"
 optional = false
 python-versions = ">=3.7,<4.0"
 files = [
-    {file = "eagerx-0.1.37-py3-none-any.whl", hash = "sha256:1b15840f71ce6bcca40e9e0feca199c8e49ce4f8c60de625d71c325e74975547"},
-    {file = "eagerx-0.1.37.tar.gz", hash = "sha256:7039315e0f777e3e76c2efcd1e861309dc15f17fba5777ead839c413a7ced98e"},
+    {file = "eagerx-0.1.38-py3-none-any.whl", hash = "sha256:e50638d7b374e021383ac7044eb1543abf0dc10cd8ca6053fd82c2e16c8e079d"},
+    {file = "eagerx-0.1.38.tar.gz", hash = "sha256:a5927a12d8526b32eed3480c3d5068e739909a03e07d2163fc406a83ea308a6f"},
 ]
 
 [package.dependencies]
@@ -3644,4 +3644,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.7"
-content-hash = "8864b1ce3062b9206ec9f7a51b9bd10fe0c4750399534b4caf9c9389f2501928"
+content-hash = "1e005b1edb136ad23e6a2cffcc624340e432c3ff8707c3f8dd91df68665aff1a"
