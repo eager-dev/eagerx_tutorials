@@ -27,7 +27,12 @@ class SetGymAttribute(eagerx.EngineState):
         self.simulator = simulator
 
     def reset(self, state: Any):
-        if hasattr(self.simulator["env"].env, self.attribute):
-            setattr(self.simulator["env"].env, self.attribute, state)
-        else:
+        attr_set = False
+        env = self.simulator["env"]
+        while hasattr(env, "env"):
+            env = env.env
+            if hasattr(env, self.attribute):
+                setattr(env, self.attribute, state)
+                attr_set = True
+        if not attr_set:
             self.backend.logwarn_once(f"{self.attribute} is not an attribute of the environment.")
