@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.28 (2023-07-05)
+
+### Fix
+
+* Terminated and truncated bug ([`b27e8ed`](https://github.com/eager-dev/eagerx_tutorials/commit/b27e8ed5e625cbc4a0585d3ba71658a2f518cc86))
+
 ## v0.1.27 (2023-06-23)
 
 ### Fix
