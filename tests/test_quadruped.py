@@ -152,6 +152,7 @@ def test_quadruped(backend):
             # Determine done flag
             terminated = has_fallen
             truncated = timeout
+            info = {}
 
             if self.render_mode == "human":
                 self.render()
