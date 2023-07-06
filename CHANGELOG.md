@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.29 (2023-07-06)
+
+### Fix
+
+* Use pybullet wheel to speed up installation on colab ([`697cee9`](https://github.com/eager-dev/eagerx_tutorials/commit/697cee98683f17bc04152e7f5419778b92062b8b))
+* Gym attr engine state ([`7df8dea`](https://github.com/eager-dev/eagerx_tutorials/commit/7df8dea2661deb0a0b8d5a2b1dbf5001352a5dc7))
+
 ## v0.1.28 (2023-07-05)
 
 ### Fix
