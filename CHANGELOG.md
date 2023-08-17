@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.30 (2023-08-17)
+
+### Fix
+
+* Qt gui bug ([#100](https://github.com/eager-dev/eagerx_tutorials/issues/100)) ([`54177e2`](https://github.com/eager-dev/eagerx_tutorials/commit/54177e2ebd131d13be784ac0eea3277e51b10786))
+
 ## v0.1.29 (2023-07-06)
 
 ### Fix
