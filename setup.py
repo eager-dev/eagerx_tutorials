@@ -21,7 +21,7 @@ install_requires = \
  'jupyterlab>=3.3.4,<4.0.0',
  'nbconvert>=6.5.0,<7.0.0',
  'sb3-contrib>=1.5.0,<2.0.0',
- 'stable-baselines3>=1.2,<2.0',
+ 'stable-baselines3>=1.2,<3.0',
  'tqdm>=4.64.0,<5.0.0']
 
 setup_kwargs = {
