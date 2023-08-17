@@ -73,6 +73,8 @@ def setup_notebook():
             # Install opencv headless
             command = "echo 'Installing opencv-python-headless' && pip uninstall -y opencv-python opencv-python-headless >> /tmp/opencv_uninstall.txt 2>&1 && pip install opencv-python-headless >> /tmp/opencv_uninstall.txt"
             run_command(command)
+
+            os.environ["QT_QPA_PLATFORM"] = "offscreen"
     else:
         print("Not running on CoLab.")
         try:
