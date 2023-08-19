@@ -50,8 +50,8 @@ The following tutorials are currently available.
 - `Tutorial 8: Reset Routines <https://colab.research.google.com/github/eager-dev/eagerx_tutorials/blob/master/tutorials/pendulum/8_reset_routine.ipynb>`_
 `The solutions are available in here <https://github.com/eager-dev/eagerx_tutorials/tree/master/tutorials/pendulum/solutions/>`_.
 
-How to run the tutorials locally? (Only Python 3.8 and 3.9 supported)
-=====================================================================
+How to run the tutorials locally?
+=================================
 
 As an alternative to running the tutorials in Google Colab, they can also be run locally in order to speed up computations.
 
