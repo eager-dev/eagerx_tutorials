@@ -92,14 +92,12 @@ If you are using EAGERx for your scientific publications, please cite:
 
 .. code:: bibtex
 
-    @article{eagerx,
-        author  = {van der Heijden, Bas and Luijkx, Jelle, and Ferranti, Laura and Kober, Jens and Babuska, Robert},
-        title = {EAGERx: Engine Agnostic Graph Environments for Robotics},
-        year = {2022},
-        publisher = {GitHub},
-        journal = {GitHub repository},
-        howpublished = {\url{https://github.com/eager-dev/eagerx}}
-    }
+      @article{vanderheijden2024eagerx,
+        title={EAGERx: Graph-Based Framework for Sim2real Robot Learning},
+        author={van der Heijden, Bas and Luijkx, Jelle and Ferranti, Laura and Kober, Jens and Babuska, Robert},
+        journal={arXiv preprint arXiv:2407.04328},
+        year={2024}
+      }
 
 Acknowledgements
 ================
