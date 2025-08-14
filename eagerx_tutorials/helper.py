@@ -42,6 +42,7 @@ def run_command(cmd: str, stderr=subprocess.STDOUT) -> None:
 def setup_notebook():
     if "google.colab" in str(get_ipython()):  # noqa:
         print("Running on CoLab.")
+        os.environ["DISPLAY"] = ""
 
         # Required to source ros in new processes
         os.environ["EAGERX_COLAB"] = "1"
@@ -63,7 +64,7 @@ def setup_notebook():
 
             # Install eagerx-gui and deps
             command = (
-                "echo 'Installing eagerx-gui dependencies' && pip install pyqt5 pyqtgraph >> /tmp/eagerx_gui_deps.txt 2>&1"
+                "echo 'Installing eagerx-gui dependencies' && pip install pyqt5 pyqtgraph gymnasium==1.2.0 >> /tmp/eagerx_gui_deps.txt 2>&1"
             )
             run_command(command)
 
@@ -89,13 +90,13 @@ def setup_notebook():
         import stable_baselines3  # noqa:
     except ImportError:
         command = (
-            "echo 'Installing stable-baselines3 with pip.' && pip install stable-baselines3==2.0.0a13 >> /tmp/sb3.txt 2>&1"
+            "echo 'Installing stable-baselines3 with pip.' && pip install stable-baselines3==2.3.0 >> /tmp/sb3.txt 2>&1"
         )
         run_command(command)
     try:
         import sb3_contrib  # noqa:
     except ImportError:
-        command = "echo 'Installing sb3-contrib with pip.' && pip install sb3-contrib==2.0.0a13 >> /tmp/sb3_contrib.txt 2>&1"
+        command = "echo 'Installing sb3-contrib with pip.' && pip install sb3-contrib==2.3.0 >> /tmp/sb3_contrib.txt 2>&1"
         run_command(command)
     try:
         import moviepy  # noqa:
