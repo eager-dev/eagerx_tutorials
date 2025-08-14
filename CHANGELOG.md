@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.34 (2025-08-14)
+
+### Fix
+
+* Specify classic-control for gymnasium ([`948c22b`](https://github.com/eager-dev/eagerx_tutorials/commit/948c22b1021b12d6ebcaec3b21540b7b8048a2b2))
+
 ## v0.1.33 (2025-08-14)
 
 ### Fix
