@@ -96,7 +96,7 @@ def setup_notebook():
     except ImportError:
         command = "echo 'Installing sb3-contrib with pip.' && pip install sb3-contrib==2.3.0 >> /tmp/sb3_contrib.txt 2>&1"
         run_command(command)
-        command = "echo 'Installing gymnasium with pip.' && pip install --upgrade gymnasium==1.2.0 >> /tmp/gymnasium.txt 2>&1"
+        command = "echo 'Installing gymnasium with pip.' && pip install --upgrade gymnasium[classic-control]==1.2.0 >> /tmp/gymnasium.txt 2>&1"
         run_command(command)
     try:
         import moviepy  # noqa:
