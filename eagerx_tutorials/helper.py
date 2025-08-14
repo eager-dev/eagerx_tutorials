@@ -63,7 +63,9 @@ def setup_notebook():
             os.environ["DISPLAY"] = ":1"
 
             # Install eagerx-gui and deps
-            command = "echo 'Installing eagerx-gui dependencies' && pip install pyqt5 pyqtgraph gymnasium==1.2.0 >> /tmp/eagerx_gui_deps.txt 2>&1"
+            command = (
+                "echo 'Installing eagerx-gui dependencies' && pip install pyqt5 pyqtgraph >> /tmp/eagerx_gui_deps.txt 2>&1"
+            )
             run_command(command)
 
             command = "echo 'Installing eagerx-gui' && pip install --ignore-requires-python --no-deps eagerx-gui >> /tmp/eagerx_gui.txt 2>&1"
@@ -87,6 +89,8 @@ def setup_notebook():
     try:
         import stable_baselines3  # noqa:
     except ImportError:
+        command = "echo 'Installing gymnasium with pip.' && pip install --upgrade gymnasium==1.2.0 >> /tmp/gymnasium.txt 2>&1"
+        run_command(command)
         command = "echo 'Installing stable-baselines3 with pip.' && pip install stable-baselines3==2.3.0 >> /tmp/sb3.txt 2>&1"
         run_command(command)
     try:
