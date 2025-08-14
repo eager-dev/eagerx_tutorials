@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.32 (2025-08-14)
+
+### Fix
+
+* Upgrade gymnasium when installing sb3 ([`4f9a41b`](https://github.com/eager-dev/eagerx_tutorials/commit/4f9a41b33d7d8fa7e8c68319ab31494a70396a18))
+
 ## v0.1.31 (2025-08-14)
 
 ### Fix
