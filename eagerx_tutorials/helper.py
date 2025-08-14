@@ -89,12 +89,12 @@ def setup_notebook():
     try:
         import stable_baselines3  # noqa:
     except ImportError:
-        command = "echo 'Installing stable-baselines3 with pip.' && pip install stable-baselines3==2.3.0 >> /tmp/sb3.txt 2>&1"
+        command = "echo 'Installing stable-baselines3 with pip.' && pip install stable-baselines3==2.7.0 >> /tmp/sb3.txt 2>&1"
         run_command(command)
     try:
         import sb3_contrib  # noqa:
     except ImportError:
-        command = "echo 'Installing sb3-contrib with pip.' && pip install sb3-contrib==2.3.0 >> /tmp/sb3_contrib.txt 2>&1"
+        command = "echo 'Installing sb3-contrib with pip.' && pip install sb3-contrib==2.7.0 >> /tmp/sb3_contrib.txt 2>&1"
         run_command(command)
         command = "echo 'Installing gymnasium with pip.' && pip install --upgrade gymnasium[classic-control]==1.2.0 >> /tmp/gymnasium.txt 2>&1"
         run_command(command)
