@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.33 (2025-08-14)
+
+### Fix
+
+* Install gymnasium after sb-contrib ([`01114cf`](https://github.com/eager-dev/eagerx_tutorials/commit/01114cf1247eb7efdb0088382248955a87405540))
+
 ## v0.1.32 (2025-08-14)
 
 ### Fix
