@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.35 (2025-08-14)
+
+### Fix
+
+* Bump sb3 to 2.7 ([`9e7ea2e`](https://github.com/eager-dev/eagerx_tutorials/commit/9e7ea2e3b7f388f90fcb2fbc83620c86c9dc34d4))
+
 ## v0.1.34 (2025-08-14)
 
 ### Fix
