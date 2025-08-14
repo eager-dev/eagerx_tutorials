@@ -2,6 +2,20 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.31 (2025-08-14)
+
+### Fix
+
+* Run black ([`cda3178`](https://github.com/eager-dev/eagerx_tutorials/commit/cda31788a66abeb3608e2fb08a19f4e49e557bb7))
+* Bump sb3 in colab to 2.3.0 ([`8c7e862`](https://github.com/eager-dev/eagerx_tutorials/commit/8c7e8629258593010d3ee697ae14fc1f002a8769))
+* Bump sb3 to 2.3.0 ([`a2e5164`](https://github.com/eager-dev/eagerx_tutorials/commit/a2e5164f3c3b71704853cc3d9c8db356cdbc2bd3))
+
+### Documentation
+
+* Update README.rst ([`5d9271d`](https://github.com/eager-dev/eagerx_tutorials/commit/5d9271dbaab86c1982705034b50b428062a5aaab))
+* Update citation ([`7bd21f1`](https://github.com/eager-dev/eagerx_tutorials/commit/7bd21f127644b87ee7890031e3f0e24e71572c60))
+* Update README.rst [ci skip] ([`3617ddb`](https://github.com/eager-dev/eagerx_tutorials/commit/3617ddb0d4d77d3d33be7f8df44b6994cc50db69))
+
 ## v0.1.30 (2023-08-17)
 
 ### Fix
